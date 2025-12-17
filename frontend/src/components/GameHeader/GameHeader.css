@@ -1,6 +1,6 @@
 .game-header {
 text-align: center;
-padding: 10px;
+padding: 5px 10px 0 10px;
 position: relative;
 z-index: 3;
 }
@@ -8,7 +8,7 @@ z-index: 3;
 .game-header h1 {
 font-size: 2.5rem;
 color: #0f0;
-margin: 0 0 10px 0;
+margin: 0 0 5px 0;
 font-weight: 700;
 text-transform: uppercase;
 letter-spacing: 3px;
@@ -17,17 +17,6 @@ font-family: 'Courier New', monospace;
 position: relative;
 }
 
-.game-header h1::after {
-content: '';
-position: absolute;
-bottom: -5px;
-left: 25%;
-width: 50%;
-height: 2px;
-background: #0f0;
-box-shadow: 0 0 10px #0f0;
-animation: blink 1s infinite;
-}
 
 .game-subtitle {
 color: #0a0;
