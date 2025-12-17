@@ -56,13 +56,37 @@ async function getUserInfo(req, res) {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        const calculateAccuracy = (stats) => {
+            if (stats.shotsFired === 0) return 0;
+            return Number(((stats.hits / stats.shotsFired) * 100).toFixed(2));
+        };
+
         const token = generateToken(user._id);
 
         return res.status(200).json({
             username: user.username,
             wins: user.gamesWon,
             losses: user.gamesLost,
+            totalAccuracy: user.totalAccuracy,
+            totalTimePlayed: user.totalTimePlayed,
             dateCreated: user.dateCreated.toISOString().split('T')[0],
+            difficultyStats: {
+                easy: {
+                    wins: user.difficultyStats.easy.wins,
+                    losses: user.difficultyStats.easy.losses,
+                    accuracy: calculateAccuracy(user.difficultyStats.easy)
+                },
+                medium: {
+                    wins: user.difficultyStats.medium.wins,
+                    losses: user.difficultyStats.medium.losses,
+                    accuracy: calculateAccuracy(user.difficultyStats.medium)
+                },
+                hard: {
+                    wins: user.difficultyStats.hard.wins,
+                    losses: user.difficultyStats.hard.losses,
+                    accuracy: calculateAccuracy(user.difficultyStats.hard)
+                }
+            },
             token: token
         });
     } catch (err) {
@@ -73,18 +97,67 @@ async function getUserInfo(req, res) {
 async function update(req, res) {
     try {
         const username = req.username; 
-        const { outcome } = req.body; 
+        const { outcome, difficulty, shotsFired, hits, duration } = req.body; 
 
-        if (!outcome || (outcome !== 'win' && outcome !== 'loss')) {
+        if (!outcome || !difficulty || shotsFired === undefined || hits === undefined || duration === undefined) {
+            return res.status(400).json({ 
+                message: 'Missing required fields: outcome, difficulty, shotsFired, hits, duration' 
+            });
+        }
+        if (outcome !== 'win' && outcome !== 'loss') {
             return res.status(400).json({ message: 'Invalid outcome. Must be "win" or "loss"' });
         }
-
-        const updateData = {};
-        if (outcome === 'win') {
-            updateData.$inc = { gamesWon: 1 };
-        } else {
-            updateData.$inc = { gamesLost: 1 };
+        if (!['easy', 'medium', 'hard'].includes(difficulty)) {
+            return res.status(400).json({ message: 'Invalid difficulty. Must be "easy", "medium", or "hard"' });
         }
+        if (shotsFired < 0 || hits < 0 || hits > shotsFired) {
+            return res.status(400).json({ message: 'Invalid shotsFired or hits values' });
+        }
+        if (duration < 0) {
+            return res.status(400).json({ message: 'Invalid duration. Must be a positive number' });
+        }
+
+        const currentUser = await User.findOne({ username: username });
+        if (!currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const newTotalShots = currentUser.totalShotsFired + shotsFired;
+        const newTotalHits = currentUser.totalHits + hits;
+        
+        const newTotalAccuracy = newTotalShots > 0 
+            ? Number(((newTotalHits / newTotalShots) * 100).toFixed(2)) 
+            : 0;
+        
+        const gameAccuracy = shotsFired > 0 
+            ? Number(((hits / shotsFired) * 100).toFixed(2)) 
+            : 0;
+
+        const updateData = {
+            $inc: {
+                [`games${outcome === 'win' ? 'Won' : 'Lost'}`]: 1,
+                totalShotsFired: shotsFired,
+                totalHits: hits,
+                totalTimePlayed: duration,
+                [`difficultyStats.${difficulty}.${outcome === 'win' ? 'wins' : 'losses'}`]: 1,
+                [`difficultyStats.${difficulty}.shotsFired`]: shotsFired,
+                [`difficultyStats.${difficulty}.hits`]: hits
+            },
+            $set: {
+                totalAccuracy: newTotalAccuracy
+            },
+            $push: {
+                gameHistory: {
+                    date: new Date(),
+                    difficulty: difficulty,
+                    outcome: outcome,
+                    shotsFired: shotsFired,
+                    hits: hits,
+                    accuracy: gameAccuracy,
+                    duration: duration
+                }
+            }
+        };
 
         const updatedUser = await User.findOneAndUpdate(
             { username: username },
@@ -93,16 +166,43 @@ async function update(req, res) {
         );
 
         if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User not found during update' });
         }
 
+        const calculateDifficultyAccuracy = (stats) => {
+            if (stats.shotsFired === 0) return 0;
+            return Number(((stats.hits / stats.shotsFired) * 100).toFixed(2));
+        };
+
         return res.status(200).json({
-            message: 'Game result updated',
-            wins: updatedUser.gamesWon,
-            losses: updatedUser.gamesLost
+            message: 'Game result and statistics updated successfully',
+            totals: {
+                wins: updatedUser.gamesWon,
+                losses: updatedUser.gamesLost,
+                totalAccuracy: updatedUser.totalAccuracy,
+                totalTimePlayed: updatedUser.totalTimePlayed
+            },
+            difficultyStats: {
+                easy: {
+                    wins: updatedUser.difficultyStats.easy.wins,
+                    losses: updatedUser.difficultyStats.easy.losses,
+                    accuracy: calculateDifficultyAccuracy(updatedUser.difficultyStats.easy)
+                },
+                medium: {
+                    wins: updatedUser.difficultyStats.medium.wins,
+                    losses: updatedUser.difficultyStats.medium.losses,
+                    accuracy: calculateDifficultyAccuracy(updatedUser.difficultyStats.medium)
+                },
+                hard: {
+                    wins: updatedUser.difficultyStats.hard.wins,
+                    losses: updatedUser.difficultyStats.hard.losses,
+                    accuracy: calculateDifficultyAccuracy(updatedUser.difficultyStats.hard)
+                }
+            }
         });
     } catch (err) {
-        return res.status(500).json({ message: 'Error updating user' });
+        console.error('Update error:', err);
+        return res.status(500).json({ message: 'Error updating user and game statistics' });
     }
 }
 
