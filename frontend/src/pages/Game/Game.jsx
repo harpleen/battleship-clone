@@ -7,15 +7,7 @@ import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import './Game.css';
 
-export default function Game() {
-    // Timer state
-    const [gameTime, setGameTime] = useState(180);
-    const [currentPlayer, setCurrentPlayer] = useState('player');
-    const [playerTurnTime, setPlayerTurnTime] = useState(10);
-    const [cpuTurnTime, setCpuTurnTime] = useState(10);
-    const [showQuitConfirm, setShowQuitConfirm] = useState(false);
-    
-    // Battleship game state
+export default function Game(props) {
     const [playerBattleships, setPlayerBattleships] = useState([]);
     const [cpuBattleships, setCpuBattleships] = useState([]);
     const [playerStrikes, setPlayerStrikes] = useState([]);
@@ -304,6 +296,22 @@ export default function Game() {
                 <div className="top-bar-center">
                     <GameHeader />
                 </div>
+            )}
+            
+            <div style={{ display: 'flex', gap: '50px' }}>
+                <Grid 
+                    title={`${props.playername} Board`} 
+                    battleships={playerBattleships} 
+                    strikes={cpuStrikes}
+                    isPlayerBoard={true}
+                />
+                <Grid 
+                    title="CPU Board" 
+                    battleships={cpuBattleships} 
+                    strikes={playerStrikes}
+                    onStrike={handlePlayerStrike}
+                    isPlayerBoard={false}
+                />
             </div>
 
             {/* Main Content */}
