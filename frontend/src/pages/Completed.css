@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" );
 
-/* Базові стилі */
+
 .crt {
   background: #020202;
   height: 100vh;
@@ -17,7 +17,6 @@
   animation: flicker 0.15s infinite;
 }
 
-/* Стиль для ПЕРЕМОГИ (Зелений) */
 .win-mode {
   color: #00ff9c;
 }
@@ -25,7 +24,7 @@
 .win-mode .start-btn { border-color: #00ff9c; color: #00ff9c; box-shadow: 0 0 15px #00ff9c; }
 .win-mode .start-btn:hover { background: #00ff9c; color: black; }
 
-/* Стиль для ПРОГРАШУ (Червоний) */
+
 .lose-mode {
   color: #ff003c;
 }
@@ -33,7 +32,7 @@
 .lose-mode .start-btn { border-color: #ff003c; color: #ff003c; box-shadow: 0 0 15px #ff003c; }
 .lose-mode .start-btn:hover { background: #ff003c; color: black; }
 
-/* Загальні стилі */
+
 .title { font-size: 48px; margin-bottom: 20px; text-transform: uppercase; line-height: 1.2; }
 .subtitle { font-size: 16px; margin-bottom: 60px; opacity: 0.8; text-transform: uppercase; letter-spacing: 2px; }
 .menu { display: flex; flex-direction: column; gap: 25px; width: 100%; max-width: 400px; align-items: center; }
