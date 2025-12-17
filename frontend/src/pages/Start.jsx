@@ -12,7 +12,7 @@ return (
 
       {/* menu */}
     <div className="menu">
-        <Link to="/" className="start-btn">
+        <Link to="/game" className="start-btn">
         PLAY WITH ROBOT
         </Link>
 

@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import './App.css'
 import Home from './pages/Home'
-import GamePage from './pages/GamePage/GamePage'
 import Game from './pages/Game/Game'
 import CreatePlayer from './pages/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
-
+import GamePage from './pages/GamePage/GamePage'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
 const router = createBrowserRouter([
@@ -14,13 +13,13 @@ const router = createBrowserRouter([
     element: <Home />
   },
   {
+    path: '/game-page',
+    element: <GamePage />
+  },
+  {
     path: '/game',
     element: <Game />
   }, 
-  {
-    path: '/gamepage',
-    elemnt: <GamePage />
-  }
   {
     path: '/create-player',
     element: <CreatePlayer />
@@ -37,7 +36,7 @@ function App() {
 
   return (
     <>
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </>
   )
 }
