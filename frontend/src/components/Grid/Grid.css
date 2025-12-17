@@ -1,0 +1,45 @@
+.board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 0;
+}
+
+.squares {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #00FF9C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.squares:hover {
+    background-color: rgba(0, 255, 156, 0.2);
+}
+
+.squares.hit {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+.squares.miss {
+    background-color: rgba(100, 100, 100, 0.3);
+}
+
+.strike-marker {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    z-index: 10;
+}
