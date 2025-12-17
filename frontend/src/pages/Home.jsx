@@ -1,20 +1,20 @@
 import "./Home.css";
-import Navbar from '../components/Navbar.jsx'
+import { Link } from "react-router-dom";
 
 export default function Home() {
-  const handleStart = () => {
-    console.log("Start Game");
-  };
-  
   return (
     <div className="crt">
-    <Navbar />
       <h1 className="title">WARHEADS</h1>
-      <p className="subtitle">COMBAT SIMULATOR</p>
+      <p className="subtitle">NAVAL WAR SIMULATOR</p>
 
-      <button className="start-btn" onClick={handleStart}>
+      <Link to="/create-player" className="start-btn">
         ▶ Quick Game
-      </button>
+      </Link>
+
+      {/* Radar pings */}
+      <div className="ping ring-1"></div>
+      <div className="ping ring-2"></div>
+      <div className="ping ring-3"></div>
 
       <p className="footer">
         © Shemaiah | Hafieza | Ismail | Daniel | Nazar | Imran
