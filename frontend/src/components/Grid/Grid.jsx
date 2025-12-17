@@ -35,7 +35,7 @@ export default function Grid({ title, battleships = [], strikes = [], onStrike, 
                         className={getSquareClass(idx)}
                         onClick={() => handleClick(idx)}
                     >
-                        {isPlayerBoard && battleships.includes(idx) && <Battleship />}
+                        {isPlayerBoard && battleships.includes(idx) && !strikes.includes(idx) && <Battleship />}
                         {strikes.includes(idx) && (
                             <div className="strike-marker">
                                 {battleships.includes(idx) ? '✕' : '○'}

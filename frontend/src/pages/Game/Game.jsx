@@ -72,7 +72,6 @@ export default function Game() {
                 return false;
             };
             
-            // Place ships of different lengths (2-5)
             const shipLengths = [5, 4, 3, 2];
             shipLengths.forEach(length => placeShip(length));
             
@@ -96,7 +95,6 @@ export default function Game() {
         console.log(result.message);
         setMessage(result.message);
 
-
         // Check if player won
         if (checkGameOver(newStrikes, cpuBattleships)) {
             console.log('🎉 YOU WIN! All enemy ships destroyed!');
@@ -104,18 +102,19 @@ export default function Game() {
             return;
         }
 
-        // CPU's turn - random attack
-        setTimeout(() => {
-            cpuAttack();
-        }, 1000);
+        if (!result.isHit) {
+            setTimeout(() => {
+                cpuAttack();
+            }, 1000);
+        }
     };
 
-    const cpuAttack = () => {
-        const result = cpuStrike(cpuStrikes, playerBattleships);
+    const cpuAttack = (currentStrikes = cpuStrikes) => {
+        const result = cpuStrike(currentStrikes, playerBattleships);
         
         if (!result) return;
 
-        const newStrikes = [...cpuStrikes, result.position];
+        const newStrikes = [...currentStrikes, result.position];
         setCpuStrikes(newStrikes);
         console.log(result.message);
         setMessage(result.message);
@@ -124,6 +123,13 @@ export default function Game() {
         if (checkGameOver(newStrikes, playerBattleships)) {
             console.log('💀 CPU WINS! All your ships destroyed!');
             setGameStatus('cpu');
+            return;
+        }
+
+        if (result.isHit) {
+            setTimeout(() => {
+                cpuAttack(newStrikes);
+            }, 1000);
         }
     };
 
