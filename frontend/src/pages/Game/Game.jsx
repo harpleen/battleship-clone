@@ -3,7 +3,7 @@ import Grid from "../../components/Grid/Grid";
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import './Game.css';
 
-export default function Game() {
+export default function Game(props) {
     const [playerBattleships, setPlayerBattleships] = useState([]);
     const [cpuBattleships, setCpuBattleships] = useState([]);
     const [playerStrikes, setPlayerStrikes] = useState([]);
@@ -156,7 +156,7 @@ export default function Game() {
             
             <div style={{ display: 'flex', gap: '50px' }}>
                 <Grid 
-                    title="Player Board" 
+                    title={`${props.playername} Board`} 
                     battleships={playerBattleships} 
                     strikes={cpuStrikes}
                     isPlayerBoard={true}
