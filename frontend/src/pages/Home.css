@@ -1,57 +1,50 @@
-/* CRT Container with Naval Radar and Pings */
+
 .crt {
   position: relative;
   background: #000;
-  color: #0f0; 
+  color: #0f0;
   font-family: "Press Start 2P", monospace;
-  text-align: center;
   min-height: 100vh;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   overflow: hidden;
 
-  /* CRT scanlines */
-  background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-image: linear-gradient(
+    rgba(0,0,0,0.05) 1px,
+    transparent 1px
+  );
   background-size: 100% 2px;
 }
 
-/* Thin radar rings */
+
+/* RADAR RINGS */
 .crt::before {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 400px;
-  height: 400px;
+  width: 380px;
+  height: 380px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  box-shadow: 
-    0 0 0 1px rgba(0, 255, 0, 0.2),
-    0 0 0 80px rgba(0, 255, 0, 0.08),
-    0 0 0 160px rgba(0, 255, 0, 0.08),
-    0 0 0 240px rgba(0, 255, 0, 0.08);
+
+  box-shadow:
+    0 0 0 1px rgba(0,255,0,0.12),
+    0 0 0 90px rgba(0,255,0,0.04),
+    0 0 0 180px rgba(0,255,0,0.03),
+    0 0 0 260px rgba(0,255,0,0.02);
+
   pointer-events: none;
-}
-.crt .ping {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #0f0;
-  opacity: 0;
-  pointer-events: none;
-  animation: ping 2s ease-in-out infinite;
+  z-index: 0;
 }
 
-@keyframes ping {
-  0% { opacity: 0; transform: scale(0); }
-  50% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0); }
-}
 
-/* Sweeping radar line */
+/* RADAR SWEEP */
+
 .crt::after {
   content: "";
   position: absolute;
@@ -59,97 +52,137 @@
   left: 50%;
   width: 400px;
   height: 400px;
+
   transform: translate(-50%, -50%) rotate(0deg);
   border-radius: 50%;
+
   background: conic-gradient(
-    rgba(0, 255, 0, 0.25) 0deg,
-    rgba(0, 255, 0, 0.1) 30deg,
-    rgba(0, 255, 0, 0) 120deg
+    rgba(0,255,0,0.18) 0deg,
+    rgba(0,255,0,0.08) 35deg,
+    rgba(0,255,0,0) 120deg
   );
-  animation: sweep 3s linear infinite;
+
+  animation: sweep 4s linear infinite;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
-/* Radar pings/dots */
+
+/* PINGS */
+
 .crt .ping {
   position: absolute;
+  top: 50%;
+  left: 50%;
+
   width: 4px;
   height: 4px;
   border-radius: 50%;
   background: #0f0;
+
   opacity: 0;
   pointer-events: none;
-  animation: ping 2s linear infinite;
+
+  transform-origin: center center;
+  animation: ping 3s ease-in-out infinite;
+  z-index: 2;
 }
 
-/* Ping animation: appears and fades */
+/* Inner ring */
+.crt .ping.ring-1 {
+  transform: rotate(45deg) translateX(60px);
+}
+
+/* Middle ring */
+.crt .ping.ring-2 {
+  transform: rotate(140deg) translateX(120px);
+  animation-delay: 1s;
+}
+
+/* Outer ring */
+.crt .ping.ring-3 {
+  transform: rotate(260deg) translateX(180px);
+  animation-delay: 2s;
+}
+
+/* ANIMATIONS */
+
 @keyframes ping {
-  0% { opacity: 0; transform: scale(0); }
-  50% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0); }
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  60%  { opacity: 0; }
+  100% { opacity: 0; }
 }
 
-/* Sweeping animation */
 @keyframes sweep {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to   { transform: translate(-50%, -50%) rotate(360deg); }
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
-/* Titles */
+
+/* UI TEXT */
+
 .title {
   font-size: 24px;
-  color: #0f0 !important; 
   margin-bottom: 10px;
+  color: #00ff00; /* match button exactly */
 }
 
 .subtitle {
   font-size: 12px;
-  color: #0f0 !important;
   margin-bottom: 20px;
+  color: #00ff00; /* match button exactly */
 }
 
 .footer {
   font-size: 8px;
-  color: #0f0 !important;
   margin-top: 30px;
+  color: #00ff00;
 }
 
-/* Quick Game Button */
-.start-btn {
-  width: 60px;            
-  height: 30px;
-  font-size: 6px;
-  line-height: 1;
-  padding: 0;
+/* BUTTON */
 
-  background: #000 !important;
-  color: #0f0 !important;
-  border: 1px solid #0f0 !important;
-  border-radius: 3px;
+.start-btn {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px 30px;
+  font-size: 16px;
+
+  background-color: #000;
+  color: #00ff00 !important;
+  border: 3px solid #00ff00 !important;
 
   font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
 
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 
   cursor: pointer;
   text-decoration: none;
 
   box-shadow:
-    0 0 2px #0f0,
-    0 0 4px #0f0;
+    0 0 6px #00ff00,
+    0 0 14px #00ff00;
 
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease,
+              box-shadow 0.15s ease,
+              background-color 0.15s ease,
+              color 0.15s ease;
 }
 
 .start-btn:hover {
-  transform: translateY(-3px) scale(1.05);
-  background: #0f0 !important;
+  background-color: #00ff00 !important;
   color: #000 !important;
+
   box-shadow:
-    0 0 8px #0f0,
-    0 0 16px #0f0;
+    0 0 12px #00ff00,
+    0 0 24px #00ff00;
+
+  transform: translateY(-2px) scale(1.04);
 }
