@@ -1,5 +1,5 @@
 import React from 'react';
-// import './GameTimer.css';
+import './GameTimer.css';
 
 const GameTimer = ({ gameTime }) => {
 const formatTime = (seconds) => {
