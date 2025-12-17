@@ -1,5 +1,5 @@
 import React from 'react';
-// import './GameHeader.css';
+import './GameHeader.css';
 
 const GameHeader = () => {
 return (

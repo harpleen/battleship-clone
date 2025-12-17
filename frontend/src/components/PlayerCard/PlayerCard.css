@@ -1,10 +1,10 @@
 .player-card {
 background: rgba(0, 0, 0, 0.7);
 border-radius: 5px;
-padding: 25px;
+padding: 15px;
 text-align: center;
 transition: all 0.3s ease;
-height: 100%;
+height: auto;
 position: relative;
 overflow: hidden;
 }
@@ -34,13 +34,13 @@ animation: scan 3s linear infinite;
 display: flex;
 flex-direction: column;
 align-items: center;
-gap: 15px;
-margin-bottom: 20px;
+gap: 8px;
+margin-bottom: 12px;
 }
 
 .player-icon-container {
-width: 70px;
-height: 70px;
+width: 50px;
+height: 50px;
 border-radius: 50%;
 display: flex;
 align-items: center;
@@ -49,20 +49,20 @@ border: 2px solid #0a0;
 }
 
 .player-icon {
-width: 60px;
-height: 60px;
+width: 42px;
+height: 42px;
 border-radius: 50%;
 display: flex;
 align-items: center;
 justify-content: center;
-font-size: 1.8rem;
+font-size: 1.4rem;
 font-weight: bold;
 border: 2px solid;
 font-family: 'Courier New', monospace;
 }
 
 .player-header h3 {
-font-size: 1.5rem;
+font-size: 1.2rem;
 margin: 0;
 font-weight: 700;
 letter-spacing: 2px;
@@ -71,27 +71,27 @@ font-family: 'Courier New', monospace;
 }
 
 .turn-timer-section {
-margin: 20px 0;
-padding: 15px;
+margin: 10px 0;
+padding: 10px;
 background: rgba(0, 10, 0, 0.5);
 border-radius: 3px;
 border: 1px solid #0a0;
 }
 
 .turn-timer-label {
-font-size: 0.9rem;
+font-size: 0.75rem;
 text-transform: uppercase;
 letter-spacing: 2px;
-margin-bottom: 10px;
+margin-bottom: 5px;
 font-family: 'Courier New', monospace;
 }
 
 .turn-timer {
-font-size: 4.5rem;
+font-size: 3rem;
 font-weight: 700;
 font-family: 'Courier New', monospace;
 text-shadow: 0 0 10px currentColor;
-margin: 10px 0;
+margin: 5px 0;
 line-height: 1;
 }
 
@@ -104,18 +104,18 @@ animation: pulse 0.5s infinite;
 }
 
 .timer-unit {
-font-size: 0.8rem;
+font-size: 0.7rem;
 text-transform: uppercase;
 letter-spacing: 2px;
-margin-top: 5px;
+margin-top: 3px;
 font-family: 'Courier New', monospace;
 }
 
 .player-info {
 background: rgba(0, 10, 0, 0.3);
 border-radius: 3px;
-padding: 15px;
-margin-top: 15px;
+padding: 10px;
+margin-top: 10px;
 border: 1px solid;
 }
 
@@ -123,7 +123,7 @@ border: 1px solid;
 display: flex;
 justify-content: space-between;
 align-items: center;
-padding: 8px 0;
+padding: 5px 0;
 border-bottom: 1px solid rgba(0, 255, 0, 0.1);
 font-family: 'Courier New', monospace;
 }
@@ -133,13 +133,13 @@ border-bottom: none;
 }
 
 .info-label {
-font-size: 0.9rem;
+font-size: 0.75rem;
 text-transform: uppercase;
 letter-spacing: 1px;
 }
 
 .info-value {
-font-size: 1.1rem;
+font-size: 0.95rem;
 font-weight: 600;
 }
 

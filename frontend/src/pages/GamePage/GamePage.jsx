@@ -3,6 +3,8 @@ import GameHeader from '../../components/GameHeader/GameHeader';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
 import GameTimer from '../../components/GameTimer/GameTimer';
 import QuitButton from '../../components/QuitButton/QuitButton';
+import Grid from '../../components/Grid/Grid';
+import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import './GamePage.css';
 
 const GamePage = () => {
@@ -16,10 +18,18 @@ const [cpuMoves, setCpuMoves] = useState(0);
 const [gameMessage, setGameMessage] = useState('Game started! Player\'s turn.');
 const [showQuitConfirm, setShowQuitConfirm] = useState(false);
 
+// Battleship game state
+const [playerBattleships, setPlayerBattleships] = useState([]);
+const [cpuBattleships, setCpuBattleships] = useState([]);
+const [playerStrikes, setPlayerStrikes] = useState([]);
+const [cpuStrikes, setCpuStrikes] = useState([]);
+const [gameStatus, setGameStatus] = useState(null);
+
 // Refs for timers
 const playerTimerRef = useRef(null);
 const gameTimerRef = useRef(null);
 const cpuTimeoutRef = useRef(null);
+const isInitialized = useRef(false);
 
 // Cleanup all timers
 const cleanupTimers = () => {
@@ -36,6 +46,79 @@ if (cpuTimeoutRef.current) {
     cpuTimeoutRef.current = null;
 }
 };
+
+// Generate random ship positions
+const generateRandomPositions = () => {
+    const positions = new Set();
+    
+    const canPlaceShip = (startPos, length, isHorizontal) => {
+        const row = Math.floor(startPos / 10);
+        const col = startPos % 10;
+        
+        for (let i = 0; i < length; i++) {
+            let pos;
+            if (isHorizontal) {
+                if (col + i >= 10) return false;
+                pos = startPos + i;
+            } else {
+                if (row + i >= 10) return false;
+                pos = startPos + (i * 10);
+            }
+            
+            if (positions.has(pos)) return false;
+            
+            const currentRow = Math.floor(pos / 10);
+            const currentCol = pos % 10;
+            const adjacentOffsets = [-11, -10, -9, -1, 1, 9, 10, 11];
+            
+            for (let offset of adjacentOffsets) {
+                const adjacentPos = pos + offset;
+                const adjacentRow = Math.floor(adjacentPos / 10);
+                const adjacentCol = adjacentPos % 10;
+                
+                if (adjacentPos >= 0 && adjacentPos < 100) {
+                    if (Math.abs(adjacentRow - currentRow) <= 1 && 
+                        Math.abs(adjacentCol - currentCol) <= 1) {
+                        if (positions.has(adjacentPos)) return false;
+                    }
+                }
+            }
+        }
+        return true;
+    };
+    
+    const placeShip = (length) => {
+        let attempts = 0;
+        while (attempts < 100) {
+            const startPos = Math.floor(Math.random() * 100);
+            const isHorizontal = Math.random() < 0.5;
+            
+            if (canPlaceShip(startPos, length, isHorizontal)) {
+                for (let i = 0; i < length; i++) {
+                    const pos = isHorizontal ? startPos + i : startPos + (i * 10);
+                    positions.add(pos);
+                }
+                return true;
+            }
+            attempts++;
+        }
+        return false;
+    };
+    
+    const shipLengths = [5, 4, 3, 2];
+    shipLengths.forEach(length => placeShip(length));
+    
+    return Array.from(positions);
+};
+
+// Initialize battleship positions
+useEffect(() => {
+    if (!isInitialized.current) {
+        setPlayerBattleships(generateRandomPositions());
+        setCpuBattleships(generateRandomPositions());
+        isInitialized.current = true;
+    }
+}, []);
 
 // Game timer (3 minutes)
 useEffect(() => {
@@ -103,49 +186,86 @@ return () => {
 };
 }, [currentPlayer]);
 
-// CPU turn
+// CPU turn - actual battleship attack
 useEffect(() => {
-if (currentPlayer === 'cpu') {
-    setCpuTurnTime(10); // Reset display to 10
+if (currentPlayer === 'cpu' && !gameStatus) {
+    setCpuTurnTime(10);
     
-    // Clear any existing CPU timeout
     if (cpuTimeoutRef.current) {
-    clearTimeout(cpuTimeoutRef.current);
+        clearTimeout(cpuTimeoutRef.current);
     }
     
-    // CPU "thinks" for 2 seconds, then makes a move
     cpuTimeoutRef.current = setTimeout(() => {
-    // Add 1 move for CPU
-    setCpuMoves(prev => prev + 1);
-    setGameMessage('CPU made a move. Player\'s turn!');
-    
-    // Switch back to player
-    setCurrentPlayer('player');
-    }, 2000);
+        cpuAttack();
+    }, 1500);
 }
 
 return () => {
     if (cpuTimeoutRef.current) {
-    clearTimeout(cpuTimeoutRef.current);
+        clearTimeout(cpuTimeoutRef.current);
     }
 };
-}, [currentPlayer]);
+}, [currentPlayer, gameStatus]);
 
-const handleEndTurn = () => {
-if (currentPlayer === 'player') {
+const handlePlayerStrike = (idx) => {
+    if (currentPlayer !== 'player' || gameStatus) return;
+    
+    const result = handleStrike(idx, playerStrikes, cpuBattleships);
+    
+    if (!result.success) {
+        console.log(result.message);
+        return;
+    }
+
+    const newStrikes = [...playerStrikes, idx];
+    setPlayerStrikes(newStrikes);
+    setPlayerMoves(prev => prev + 1);
+    setGameMessage(result.message);
+
     // Clear player timer
     if (playerTimerRef.current) {
-    clearInterval(playerTimerRef.current);
-    playerTimerRef.current = null;
+        clearInterval(playerTimerRef.current);
+        playerTimerRef.current = null;
     }
+
+    if (checkGameOver(newStrikes, cpuBattleships)) {
+        setGameMessage('🎉 YOU WIN! All enemy ships destroyed!');
+        setGameStatus('player');
+        cleanupTimers();
+        return;
+    }
+
+    if (!result.isHit) {
+        setCurrentPlayer('cpu');
+    }
+};
+
+const cpuAttack = (currentStrikes = cpuStrikes) => {
+    if (gameStatus) return;
     
-    // Add 1 move for player
-    setPlayerMoves(prev => prev + 1);
-    setGameMessage('Player made a move. CPU\'s turn...');
+    const result = cpuStrike(currentStrikes, playerBattleships);
     
-    // Switch to CPU
-    setCurrentPlayer('cpu');
-}
+    if (!result) return;
+
+    const newStrikes = [...currentStrikes, result.position];
+    setCpuStrikes(newStrikes);
+    setCpuMoves(prev => prev + 1);
+    setGameMessage(result.message);
+
+    if (checkGameOver(newStrikes, playerBattleships)) {
+        setGameMessage('💀 CPU WINS! All your ships destroyed!');
+        setGameStatus('cpu');
+        cleanupTimers();
+        return;
+    }
+
+    if (result.isHit) {
+        setTimeout(() => {
+            cpuAttack(newStrikes);
+        }, 1500);
+    } else {
+        setCurrentPlayer('player');
+    }
 };
 
 const handleQuit = () => {
@@ -169,9 +289,13 @@ setPlayerTurnTime(10);
 setCpuTurnTime(10);
 setPlayerMoves(0);
 setCpuMoves(0);
+setPlayerStrikes([]);
+setCpuStrikes([]);
+setGameStatus(null);
+setPlayerBattleships(generateRandomPositions());
+setCpuBattleships(generateRandomPositions());
 setGameMessage('Game reset. Ready to start!');
 
-// Restart timers after reset
 setTimeout(() => {
     setGameMessage('Game started! Player\'s turn.');
 }, 100);
@@ -200,29 +324,39 @@ return (
         />
         
         <div className="vs-section">
-        <div className="vs-text">VS</div>
-        <div className="game-status">
-            <div className="status-message">
-            {gameMessage}
+        <div className="game-grids-container">
+            <Grid 
+                title="Player Board" 
+                battleships={playerBattleships} 
+                strikes={cpuStrikes}
+                isPlayerBoard={true}
+            />
+            <div className="center-info">
+                <div className="vs-text">VS</div>
+                <div className="game-status">
+                    <div className="status-message">
+                        {gameMessage}
+                    </div>
+                    <div className="moves-display">
+                        Strikes: <span className="player-moves">{playerMoves}</span> - <span className="cpu-moves">{cpuMoves}</span>
+                    </div>
+                    <div className="game-controls">
+                        <button 
+                            className="reset-btn"
+                            onClick={resetGame}
+                        >
+                            Reset Game
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div className="moves-display">
-            Moves: <span className="player-moves">{playerMoves}</span> - <span className="cpu-moves">{cpuMoves}</span>
-            </div>
-            <div className="game-controls">
-            <button 
-                className="end-turn-btn"
-                onClick={handleEndTurn}
-                disabled={currentPlayer !== 'player'}
-            >
-                End Turn
-            </button>
-            <button 
-                className="reset-btn"
-                onClick={resetGame}
-            >
-                Reset Game
-            </button>
-            </div>
+            <Grid 
+                title="CPU Board" 
+                battleships={cpuBattleships} 
+                strikes={playerStrikes}
+                onStrike={handlePlayerStrike}
+                isPlayerBoard={false}
+            />
         </div>
         </div>
         
