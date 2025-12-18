@@ -4,7 +4,7 @@ import Home from './pages/Home'
 import Game from './pages/Game/Game'
 import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
-import Completed from "./pages/Completed.jsx";
+import Completed from "./pages/Completed/Completed.jsx";
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 

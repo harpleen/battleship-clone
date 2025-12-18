@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Grid from "../../components/Grid/Grid";
 import GameHeader from '../../components/GameHeader/GameHeader';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
@@ -10,10 +10,11 @@ import './Game.css';
 
 export default function Game() {
     const location = useLocation();
+    const navigate = useNavigate();
     const playerName = location.state?.playerName || 'Player';
     
     // Timer state
-    const [gameTime, setGameTime] = useState(180);
+    const [gameTime, setGameTime] = useState(60);
     const [currentPlayer, setCurrentPlayer] = useState('player');
     const [playerTurnTime, setPlayerTurnTime] = useState(10);
     const [cpuTurnTime, setCpuTurnTime] = useState(10);
@@ -22,6 +23,24 @@ export default function Game() {
     const [cpuBattleships, setCpuBattleships] = useState([]);
     const [playerStrikes, setPlayerStrikes] = useState([]);
     const [cpuStrikes, setCpuStrikes] = useState([]);
+    
+    // Update refs when strikes change
+    useEffect(() => {
+        playerStrikesRef.current = playerStrikes;
+    }, [playerStrikes]);
+    
+    useEffect(() => {
+        cpuStrikesRef.current = cpuStrikes;
+    }, [cpuStrikes]);
+    
+    // Update refs when battleships change
+    useEffect(() => {
+        playerBattleshipsRef.current = playerBattleships;
+    }, [playerBattleships]);
+    
+    useEffect(() => {
+        cpuBattleshipsRef.current = cpuBattleships;
+    }, [cpuBattleships]);
     const [gameStatus, setGameStatus] = useState(null);
     const [message, setMessage] = useState('Game started! It\'s your turn.');
     
@@ -31,6 +50,10 @@ export default function Game() {
     const cpuTimeoutRef = useRef(null);
     const isInitialized = useRef(false);
     const pausedPlayerTime = useRef(null);
+    const playerStrikesRef = useRef([]);
+    const cpuStrikesRef = useRef([]);
+    const playerBattleshipsRef = useRef([]);
+    const cpuBattleshipsRef = useRef([]);
     
     // Cleanup timers
     const cleanupTimers = () => {
@@ -124,6 +147,11 @@ export default function Game() {
         }
     }, []);
     
+    // Helper function to count ship hits
+    const countHits = (strikes, battleships) => {
+        return strikes.filter(pos => battleships.includes(pos)).length;
+    };
+    
     // Game timer (3 minutes)
     useEffect(() => {
         if (gameStatus) {
@@ -138,8 +166,29 @@ export default function Game() {
             setGameTime(prev => {
                 if (prev <= 0) {
                     cleanupTimers();
-                    setMessage('Game Over! Time has run out.');
-                    setGameStatus('timeout');
+                    // Compare hit counts to determine winner
+                    const playerHits = countHits(playerStrikesRef.current, cpuBattleshipsRef.current);
+                    const cpuHits = countHits(cpuStrikesRef.current, playerBattleshipsRef.current);
+                    
+                    if (playerHits > cpuHits) {
+                        setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
+                        setGameStatus('player');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'win', playerHits, cpuHits } });
+                        }, 2000);
+                    } else if (cpuHits > playerHits) {
+                        setMessage(`⏰ Time's up! CPU WINS with ${cpuHits} hits vs ${playerHits}!`);
+                        setGameStatus('cpu');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits } });
+                        }, 2000);
+                    } else {
+                        setMessage(`⏰ Time's up! It's a TIE with ${playerHits} hits each!`);
+                        setGameStatus('tie');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'tie', playerHits, cpuHits } });
+                        }, 2000);
+                    }
                     return 0;
                 }
                 return prev - 1;
@@ -236,10 +285,16 @@ export default function Game() {
             playerTimerRef.current = null;
         }
 
+        // Check if all enemy ships are destroyed
         if (checkGameOver(newStrikes, cpuBattleships)) {
+            cleanupTimers();
+            const playerHits = countHits(newStrikes, cpuBattleships);
+            const cpuHits = countHits(cpuStrikes, playerBattleships);
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
-            cleanupTimers();
+            setTimeout(() => {
+                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true } });
+            }, 2000);
             return;
         }
 
@@ -259,10 +314,16 @@ export default function Game() {
         setCpuStrikes(newStrikes);
         setMessage(result.message);
 
+        // Check if all player ships are destroyed
         if (checkGameOver(newStrikes, playerBattleships)) {
+            cleanupTimers();
+            const playerHits = countHits(playerStrikes, cpuBattleships);
+            const cpuHits = countHits(newStrikes, playerBattleships);
             setMessage('💀 CPU WINS! All your ships destroyed!');
             setGameStatus('cpu');
-            cleanupTimers();
+            setTimeout(() => {
+                navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
+            }, 2000);
             return;
         }
 
@@ -383,7 +444,22 @@ export default function Game() {
                                     {message}
                                 </div>
                                 <div className="moves-display">
-                                    Strikes: <span className="player-moves">{playerStrikes.length}</span> - <span className="cpu-moves">{cpuStrikes.length}</span>
+                                    <div className="stat-section">
+                                        <p className="stat-title">Strikes Landed</p>
+                                        <div className="stat-values">
+                                            <span className="player-moves">You {countHits(playerStrikes, cpuBattleships)}</span>
+                                            <span className="separator"> | </span>
+                                            <span className="cpu-moves">CPU {countHits(cpuStrikes, playerBattleships)}</span>
+                                        </div>
+                                    </div>
+                                    <div className="stat-section">
+                                        <p className="stat-title">Accuracy</p>
+                                        <div className="stat-values">
+                                            <span className="player-moves">
+                                                {playerStrikes.length > 0 ? Math.round((countHits(playerStrikes, cpuBattleships) / playerStrikes.length) * 100) : 0}%
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="game-controls">
                                     <button 
