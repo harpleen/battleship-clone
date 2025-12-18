@@ -1,18 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import Grid from "../../components/Grid/Grid";
+import GameHeader from '../../components/GameHeader/GameHeader';
+import PlayerCard from '../../components/PlayerCard/PlayerCard';
+import GameTimer from '../../components/GameTimer/GameTimer';
+import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import './Game.css';
 
 export default function Game() {
+    const location = useLocation();
+    const playerName = location.state?.playerName || 'Player';
+    
+    // Timer state
+    const [gameTime, setGameTime] = useState(180);
+    const [currentPlayer, setCurrentPlayer] = useState('player');
+    const [playerTurnTime, setPlayerTurnTime] = useState(10);
+    const [cpuTurnTime, setCpuTurnTime] = useState(10);
+    const [showQuitConfirm, setShowQuitConfirm] = useState(false);
     const [playerBattleships, setPlayerBattleships] = useState([]);
     const [cpuBattleships, setCpuBattleships] = useState([]);
     const [playerStrikes, setPlayerStrikes] = useState([]);
     const [cpuStrikes, setCpuStrikes] = useState([]);
     const [gameStatus, setGameStatus] = useState(null);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('Game started! It\'s your turn.');
+    
+    // Refs
+    const playerTimerRef = useRef(null);
+    const gameTimerRef = useRef(null);
+    const cpuTimeoutRef = useRef(null);
+    const isInitialized = useRef(false);
+    
+    // Cleanup timers
+    const cleanupTimers = () => {
+        if (playerTimerRef.current) {
+            clearInterval(playerTimerRef.current);
+            playerTimerRef.current = null;
+        }
+        if (gameTimerRef.current) {
+            clearInterval(gameTimerRef.current);
+            gameTimerRef.current = null;
+        }
+        if (cpuTimeoutRef.current) {
+            clearTimeout(cpuTimeoutRef.current);
+            cpuTimeoutRef.current = null;
+        }
+    };
 
-    useEffect(() => {
-        const generateRandomPositions = () => {
+    // Generate random ship positions
+    const generateRandomPositions = () => {
             const positions = new Set();
             
             const canPlaceShip = (startPos, length, isHorizontal) => {
@@ -76,13 +112,106 @@ export default function Game() {
             shipLengths.forEach(length => placeShip(length));
             
             return Array.from(positions);
-        };
-
-        setPlayerBattleships(generateRandomPositions());
-        setCpuBattleships(generateRandomPositions());
+    };
+    
+    // Initialize battleship positions
+    useEffect(() => {
+        if (!isInitialized.current) {
+            setPlayerBattleships(generateRandomPositions());
+            setCpuBattleships(generateRandomPositions());
+            isInitialized.current = true;
+        }
     }, []);
+    
+    // Game timer (3 minutes)
+    useEffect(() => {
+        if (gameStatus) {
+            if (gameTimerRef.current) {
+                clearInterval(gameTimerRef.current);
+                gameTimerRef.current = null;
+            }
+            return;
+        }
+
+        gameTimerRef.current = setInterval(() => {
+            setGameTime(prev => {
+                if (prev <= 0) {
+                    cleanupTimers();
+                    setMessage('Game Over! Time has run out.');
+                    setGameStatus('timeout');
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => {
+            if (gameTimerRef.current) {
+                clearInterval(gameTimerRef.current);
+            }
+        };
+    }, [gameStatus]);
+    
+    // Player turn timer
+    useEffect(() => {
+        if (playerTimerRef.current) {
+            clearInterval(playerTimerRef.current);
+            playerTimerRef.current = null;
+        }
+
+        if (currentPlayer === 'player' && !gameStatus) {
+            setPlayerTurnTime(10);
+            
+            playerTimerRef.current = setInterval(() => {
+                setPlayerTurnTime(prev => {
+                    if (prev <= 1) {
+                        clearInterval(playerTimerRef.current);
+                        playerTimerRef.current = null;
+                        setMessage('⏰ Time\'s up! CPU\'s turn...');
+                        setTimeout(() => {
+                            setCurrentPlayer('cpu');
+                        }, 100);
+                        return 0;
+                    }
+                    if (prev <= 3) {
+                        setMessage(`Hurry! ${prev - 1} seconds left!`);
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+
+        return () => {
+            if (playerTimerRef.current) {
+                clearInterval(playerTimerRef.current);
+            }
+        };
+    }, [currentPlayer, gameStatus]);
+    
+    // CPU turn
+    useEffect(() => {
+        if (currentPlayer === 'cpu' && !gameStatus) {
+            setCpuTurnTime(10);
+            
+            if (cpuTimeoutRef.current) {
+                clearTimeout(cpuTimeoutRef.current);
+            }
+            
+            cpuTimeoutRef.current = setTimeout(() => {
+                cpuAttack();
+            }, 1500);
+        }
+
+        return () => {
+            if (cpuTimeoutRef.current) {
+                clearTimeout(cpuTimeoutRef.current);
+            }
+        };
+    }, [currentPlayer, gameStatus]);
 
     const handlePlayerStrike = (idx) => {
+        if (currentPlayer !== 'player' || gameStatus) return;
+        
         const result = handleStrike(idx, playerStrikes, cpuBattleships);
         
         if (!result.success) {
@@ -92,87 +221,174 @@ export default function Game() {
 
         const newStrikes = [...playerStrikes, idx];
         setPlayerStrikes(newStrikes);
-        console.log(result.message);
         setMessage(result.message);
+        
+        // Clear player timer
+        if (playerTimerRef.current) {
+            clearInterval(playerTimerRef.current);
+            playerTimerRef.current = null;
+        }
 
-        // Check if player won
         if (checkGameOver(newStrikes, cpuBattleships)) {
-            console.log('🎉 YOU WIN! All enemy ships destroyed!');
+            setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
+            cleanupTimers();
             return;
         }
 
         if (!result.isHit) {
-            setTimeout(() => {
-                cpuAttack();
-            }, 1000);
+            setCurrentPlayer('cpu');
         }
     };
 
     const cpuAttack = (currentStrikes = cpuStrikes) => {
+        if (gameStatus) return;
+        
         const result = cpuStrike(currentStrikes, playerBattleships);
         
         if (!result) return;
 
         const newStrikes = [...currentStrikes, result.position];
         setCpuStrikes(newStrikes);
-        console.log(result.message);
         setMessage(result.message);
 
-        // Check if CPU won
         if (checkGameOver(newStrikes, playerBattleships)) {
-            console.log('💀 CPU WINS! All your ships destroyed!');
+            setMessage('💀 CPU WINS! All your ships destroyed!');
             setGameStatus('cpu');
+            cleanupTimers();
             return;
         }
 
         if (result.isHit) {
             setTimeout(() => {
                 cpuAttack(newStrikes);
-            }, 1000);
+            }, 1500);
+        } else {
+            setCurrentPlayer('player');
         }
+    };
+    
+    const handleQuit = () => {
+        setShowQuitConfirm(true);
+    };
+
+    const confirmQuit = () => {
+        cleanupTimers();
+        window.history.back();
+    };
+
+    const cancelQuit = () => {
+        setShowQuitConfirm(false);
+    };
+    
+    const resetGame = () => {
+        Game();
+        cleanupTimers();
+        setGameTime(180);
+        setCurrentPlayer('player');
+        setPlayerTurnTime(10);
+        setCpuTurnTime(10);
+        setPlayerStrikes([]);
+        setCpuStrikes([]);
+        setGameStatus(null);
+        setPlayerBattleships(generateRandomPositions());
+        setCpuBattleships(generateRandomPositions());
+        setMessage('Game reset. Ready to start!');
+
+        setTimeout(() => {
+            setMessage('Game started! It\'s your turn.');
+        }, 100);
     };
 
     return (
-        <div>
-            <h1>Game</h1>
-            <h3>{message}</h3>            
-            {gameStatus && (
-                <div style={{ 
-                    padding: '20px', 
-                    margin: '20px', 
-                    backgroundColor: gameStatus === 'player' ? '#00FF9C' : '#FF0000',
-                    color: 'white',
-                    borderRadius: '10px',
-                    textAlign: 'center'
-                }}>
-                    <h2>
-                        {gameStatus === 'player' 
-                            ? '🎉 YOU WIN! All enemy ships destroyed!' 
-                            : '💀 CPU WINS! All your ships destroyed!'}
-                    </h2>
+        <div className="game-page">
+            {/* Top Bar with Header */}
+            <div className="top-bar">
+                <div className="top-bar-center">
+                    <GameHeader playerName={playerName}/>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="game-content">
+                <div className="players-container">
+                    <PlayerCard
+                        playerType="player"
+                        isActive={currentPlayer === 'player'}
+                        turnTime={playerTurnTime}
+                        moves={playerStrikes.length}
+                    />
+                    
+                    <div className="vs-section">
+                        <div className="center-info">
+                            <GameTimer gameTime={gameTime} />
+                            <div className="vs-text">VS</div>
+                        </div>
+                        
+                        <div className="game-grids-container">
+                            <Grid 
+                                title={`${playerName}\'s Board`}
+                                battleships={playerBattleships} 
+                                strikes={cpuStrikes}
+                                isPlayerBoard={true}
+                            />
+                            <div className="game-status">
+                                <div className="status-message">
+                                    {message}
+                                </div>
+                                <div className="moves-display">
+                                    Strikes: <span className="player-moves">{playerStrikes.length}</span> - <span className="cpu-moves">{cpuStrikes.length}</span>
+                                </div>
+                                <div className="game-controls">
+                                    <button 
+                                        className="reset-btn"
+                                        onClick={resetGame}
+                                    >
+                                        Reset Game
+                                    </button>
+                                </div>
+                            </div>
+                            <Grid 
+                                title="CPU Board" 
+                                battleships={cpuBattleships} 
+                                strikes={playerStrikes}
+                                onStrike={handlePlayerStrike}
+                                isPlayerBoard={false}
+                            />
+                        </div>
+                    </div>
+                    
+                    <PlayerCard
+                        playerType="cpu"
+                        isActive={currentPlayer === 'cpu'}
+                        turnTime={cpuTurnTime}
+                        moves={cpuStrikes.length}
+                    />
+                </div>
+            </div>
+
+            {/* Quit Button at the Bottom */}
+            <div className="bottom-bar">
+                <QuitButton onClick={handleQuit} />
+            </div>
+
+            {/* Quit Confirmation Modal */}
+            {showQuitConfirm && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Quit Game?</h3>
+                        <p>Are you sure you want to quit? Your progress will be lost.</p>
+                        <div className="modal-buttons">
+                            <button className="modal-btn confirm-btn" onClick={confirmQuit}>
+                                Yes, Quit
+                            </button>
+                            <button className="modal-btn cancel-btn" onClick={cancelQuit}>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
-            
-            <div style={{ display: 'flex', gap: '50px' }}>
-                <Grid 
-                    title="Player Board" 
-                    battleships={playerBattleships} 
-                    strikes={cpuStrikes}
-                    isPlayerBoard={true}
-                />
-                <Grid 
-                    title="CPU Board" 
-                    battleships={cpuBattleships} 
-                    strikes={playerStrikes}
-                    onStrike={handlePlayerStrike}
-                    isPlayerBoard={false}
-                />
-            </div>
-            <div>
-                <p>Player Strikes: {playerStrikes.length}</p>
-                <p>CPU Strikes: {cpuStrikes.length}</p>
-            </div>
         </div>
     )
 }

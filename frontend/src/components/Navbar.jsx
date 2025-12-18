@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/War-removebg-preview.png";
+import logo from "../assets/Warr.png";
 
 function Navbar() {
 

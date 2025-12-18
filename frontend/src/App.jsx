@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Home from './pages/Home'
 import Game from './pages/Game/Game'
-import CreatePlayer from './pages/Create_Player.jsx'
+import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
 import Completed from "./pages/Completed.jsx";
 
@@ -37,7 +37,7 @@ function App() {
 
   return (
     <>
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </>
   )
 }
