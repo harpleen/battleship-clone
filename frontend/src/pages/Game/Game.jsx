@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import Grid from "../../components/Grid/Grid";
 import GameHeader from '../../components/GameHeader/GameHeader';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
@@ -7,13 +8,22 @@ import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import './Game.css';
 
-export default function Game(props) {
+export default function Game() {
+    const location = useLocation();
+    const playerName = location.state?.playerName || 'Player';
+    
+    // Timer state
+    const [gameTime, setGameTime] = useState(180);
+    const [currentPlayer, setCurrentPlayer] = useState('player');
+    const [playerTurnTime, setPlayerTurnTime] = useState(10);
+    const [cpuTurnTime, setCpuTurnTime] = useState(10);
+    const [showQuitConfirm, setShowQuitConfirm] = useState(false);
     const [playerBattleships, setPlayerBattleships] = useState([]);
     const [cpuBattleships, setCpuBattleships] = useState([]);
     const [playerStrikes, setPlayerStrikes] = useState([]);
     const [cpuStrikes, setCpuStrikes] = useState([]);
     const [gameStatus, setGameStatus] = useState(null);
-    const [message, setMessage] = useState('Game started! Player\'s turn.');
+    const [message, setMessage] = useState('Game started! It\'s your turn.');
     
     // Refs
     const playerTimerRef = useRef(null);
@@ -272,6 +282,7 @@ export default function Game(props) {
     };
     
     const resetGame = () => {
+        Game();
         cleanupTimers();
         setGameTime(180);
         setCurrentPlayer('player');
@@ -285,7 +296,7 @@ export default function Game(props) {
         setMessage('Game reset. Ready to start!');
 
         setTimeout(() => {
-            setMessage('Game started! Player\'s turn.');
+            setMessage('Game started! It\'s your turn.');
         }, 100);
     };
 
@@ -294,24 +305,8 @@ export default function Game(props) {
             {/* Top Bar with Header */}
             <div className="top-bar">
                 <div className="top-bar-center">
-                    <GameHeader />
+                    <GameHeader playerName={playerName}/>
                 </div>
-            )}
-            
-            <div style={{ display: 'flex', gap: '50px' }}>
-                <Grid 
-                    title={`${props.playername} Board`} 
-                    battleships={playerBattleships} 
-                    strikes={cpuStrikes}
-                    isPlayerBoard={true}
-                />
-                <Grid 
-                    title="CPU Board" 
-                    battleships={cpuBattleships} 
-                    strikes={playerStrikes}
-                    onStrike={handlePlayerStrike}
-                    isPlayerBoard={false}
-                />
             </div>
 
             {/* Main Content */}
@@ -332,7 +327,7 @@ export default function Game(props) {
                         
                         <div className="game-grids-container">
                             <Grid 
-                                title="Player Board" 
+                                title={`${playerName}\'s Board`}
                                 battleships={playerBattleships} 
                                 strikes={cpuStrikes}
                                 isPlayerBoard={true}

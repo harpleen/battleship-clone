@@ -29,7 +29,8 @@
     /* text-shadow: 0 0 8px #00ff26; */
 }
 
-.create-player-content a {
+.create-player-content a,
+.create-player-content button {
     background: black;
     color: #00ff9c;
     border: 3px solid #00ff9c;
@@ -39,11 +40,20 @@
     box-shadow: 0 0 15px #00ff9c;
     min-width: 350px;
     text-align: center;
+    font-family: "Press Start 2P", monospace;
+    transition: all 0.3s ease;
 }
 
-.create-player-content a:hover {
+.create-player-content a:hover,
+.create-player-content button:hover:not(:disabled) {
     background: #00ff9c;
     color: black;
+}
+
+.create-player-content button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: 0 0 5px #00ff9c;
 }
 
 .create-player-header {

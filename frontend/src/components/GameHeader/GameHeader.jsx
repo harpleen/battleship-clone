@@ -1,10 +1,10 @@
 import React from 'react';
 import './GameHeader.css';
 
-const GameHeader = () => {
+const GameHeader = ({ playerName }) => {
 return (
 <header className="game-header">
-    <h1>Player vs CPU</h1>
+    <h1>{playerName} vs CPU</h1>
     <p className="game-subtitle">Strategic Battle with Time Constraints</p>
 </header>
 );
