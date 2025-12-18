@@ -14,7 +14,7 @@ export default function CreatePlayer() {
 
     const handleContinue = () => {
         if (playerName.trim()) {
-            navigate('/game', { state: { playerName } });
+            navigate('/start', { state: { playerName } });
         }
     }
     
