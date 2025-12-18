@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" );
+
+.profile-container {
+  background: #020202;
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Press Start 2P", monospace;
+  color: #00ff9c;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.profile-title {
+  font-size: 32px;
+  margin-bottom: 40px;
+  text-shadow: 0 0 10px #00ff9c;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+  max-width: 450px;
+  align-items: center;
+}
+
+.profile-block {
+  background: rgba(0, 255, 156, 0.05);
+  border: 2px solid #00ff9c;
+  padding: 35px 25px 25px;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 255, 156, 0.2);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.block-title {
+  font-size: 14px;
+  margin: 0;
+  text-align: center;
+  background: #020202;
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 15px;
+  color: #00ff9c;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed rgba(0, 255, 156, 0.3);
+  padding-bottom: 8px;
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.stat-value {
+  font-size: 18px;
+  text-shadow: 0 0 5px #00ff9c;
+}
+
+.profile-start-btn {
+  width: 100%;
+  background: #00ff9c;
+  color: #000 !important;
+  border: none;
+  box-shadow: 0 0 15px #00ff9c;
+  text-decoration: none;
+  padding: 18px;
+  text-align: center;
+  display: block;
+  font-size: 16px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  font-weight: bold;
+}
+
+.profile-start-btn:hover {
+  background: #fff;
+  color: #000 !important;
+  box-shadow: 0 0 20px #fff;
+  transform: scale(1.02);
+}
+
+.back-link {
+  color: #00ff9c !important;
+  font-size: 12px;
+  text-decoration: none;
+  opacity: 0.7;
+  margin-top: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.back-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-shadow: 0 0 5px #00ff9c;
+}
