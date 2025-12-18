@@ -210,7 +210,7 @@ margin-top: 15px;
 width: 100%;
 }
 
-.end-turn-btn, .reset-btn {
+.end-turn-btn, .reset-btn, .pause-btn, .resume-btn {
 background: rgba(0, 0, 0, 0.8);
 color: #0f0;
 border: 2px solid #0f0;
@@ -244,6 +244,20 @@ color: #0a0;
 }
 
 .reset-btn:hover {
+background: #0f0;
+color: #000;
+box-shadow: 0 0 20px #0f0;
+transform: translateY(-2px);
+}
+
+.pause-btn:hover {
+background: #0f0;
+color: #000;
+box-shadow: 0 0 20px #0f0;
+transform: translateY(-2px);
+}
+
+.resume-btn:hover {
 background: #0f0;
 color: #000;
 box-shadow: 0 0 20px #0f0;
@@ -447,7 +461,7 @@ font-size: 1.1rem;
 font-size: 1rem;
 }
 
-.end-turn-btn, .reset-btn {
+.end-turn-btn, .reset-btn, .pause-btn, .resume-btn {
 padding: 10px 15px;
 font-size: 0.9rem;
 min-width: 150px;
