@@ -5,6 +5,7 @@ import Game from './pages/Game/Game'
 import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
 import Completed from "./pages/Completed.jsx";
+import PlayerProfile from "./pages/PlayerProfile.jsx";
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: '/create-player',
     element: <CreatePlayer />
+  },
+  {
+  path: "/profile",
+  element: <PlayerProfile />,
   },
   {
     path: '/start', 
