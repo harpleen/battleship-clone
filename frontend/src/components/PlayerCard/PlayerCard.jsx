@@ -8,7 +8,7 @@ turnTime,
 moves = 0 
 }) => {
 const isPlayer = playerType === 'player';
-const playerName = isPlayer ? 'Player' : 'CPU';
+const playerName = isPlayer ? 'You' : 'CPU';
 const borderColor = isActive ? '#0f0' : '#0a0';
 const textColor = isActive ? '#0f0' : '#0a0';
 
