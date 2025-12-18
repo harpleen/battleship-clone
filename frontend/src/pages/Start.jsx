@@ -1,8 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './Start.css';
 
 const Start = () => {
+  const location = useLocation();
+  const playerName = location.state?.playerName || 'Player';
+
   return (
     <div className="start-crt">
       
@@ -12,6 +15,9 @@ const Start = () => {
       <div className="menu">
         <Link to="/game" state={{ isRanked: false, playerName: "Guest" }} className="start-btn">
           START MISSION
+
+        <Link to="/game-modes" state={{ playerName }} className="start-btn">
+          GAME MODE
         </Link>
 
         <Link to="/" className="start-btn btn-back">

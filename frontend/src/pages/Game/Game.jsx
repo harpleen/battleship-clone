@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Grid from "../../components/Grid/Grid";
 import GameHeader from '../../components/GameHeader/GameHeader';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
@@ -10,10 +10,11 @@ import './Game.css';
 
 export default function Game() {
     const location = useLocation();
+    const navigate = useNavigate();
     const playerName = location.state?.playerName || 'Player';
     
     // Timer state
-    const [gameTime, setGameTime] = useState(180);
+    const [gameTime, setGameTime] = useState(60);
     const [currentPlayer, setCurrentPlayer] = useState('player');
     const [playerTurnTime, setPlayerTurnTime] = useState(10);
     const [cpuTurnTime, setCpuTurnTime] = useState(10);
@@ -22,6 +23,24 @@ export default function Game() {
     const [cpuBattleships, setCpuBattleships] = useState([]);
     const [playerStrikes, setPlayerStrikes] = useState([]);
     const [cpuStrikes, setCpuStrikes] = useState([]);
+    
+    // Update refs when strikes change
+    useEffect(() => {
+        playerStrikesRef.current = playerStrikes;
+    }, [playerStrikes]);
+    
+    useEffect(() => {
+        cpuStrikesRef.current = cpuStrikes;
+    }, [cpuStrikes]);
+    
+    // Update refs when battleships change
+    useEffect(() => {
+        playerBattleshipsRef.current = playerBattleships;
+    }, [playerBattleships]);
+    
+    useEffect(() => {
+        cpuBattleshipsRef.current = cpuBattleships;
+    }, [cpuBattleships]);
     const [gameStatus, setGameStatus] = useState(null);
     const [message, setMessage] = useState('Game started! It\'s your turn.');
     
@@ -31,6 +50,10 @@ export default function Game() {
     const cpuTimeoutRef = useRef(null);
     const isInitialized = useRef(false);
     const pausedPlayerTime = useRef(null);
+    const playerStrikesRef = useRef([]);
+    const cpuStrikesRef = useRef([]);
+    const playerBattleshipsRef = useRef([]);
+    const cpuBattleshipsRef = useRef([]);
     
     // Cleanup timers
     const cleanupTimers = () => {
@@ -50,69 +73,69 @@ export default function Game() {
 
     // Generate random ship positions
     const generateRandomPositions = () => {
-            const positions = new Set();
+        const positions = new Set();
+        
+        const canPlaceShip = (startPos, length, isHorizontal) => {
+            const row = Math.floor(startPos / 10);
+            const col = startPos % 10;
             
-            const canPlaceShip = (startPos, length, isHorizontal) => {
-                const row = Math.floor(startPos / 10);
-                const col = startPos % 10;
+            // Check ship positions and surrounding area
+            for (let i = 0; i < length; i++) {
+                let pos;
+                if (isHorizontal) {
+                    // Check if ship goes off right edge
+                    if (col + i >= 10) return false;
+                    pos = startPos + i;
+                } else {
+                    // Check if ship goes off bottom edge
+                    if (row + i >= 10) return false;
+                    pos = startPos + (i * 10);
+                }
                 
-                // Check ship positions and surrounding area
-                for (let i = 0; i < length; i++) {
-                    let pos;
-                    if (isHorizontal) {
-                        // Check if ship goes off right edge
-                        if (col + i >= 10) return false;
-                        pos = startPos + i;
-                    } else {
-                        // Check if ship goes off bottom edge
-                        if (row + i >= 10) return false;
-                        pos = startPos + (i * 10);
-                    }
+                if (positions.has(pos)) return false;
+                
+                const currentRow = Math.floor(pos / 10);
+                const currentCol = pos % 10;
+                const adjacentOffsets = [-11, -10, -9, -1, 1, 9, 10, 11];
+                
+                for (let offset of adjacentOffsets) {
+                    const adjacentPos = pos + offset;
+                    const adjacentRow = Math.floor(adjacentPos / 10);
+                    const adjacentCol = adjacentPos % 10;
                     
-                    if (positions.has(pos)) return false;
-                    
-                    const currentRow = Math.floor(pos / 10);
-                    const currentCol = pos % 10;
-                    const adjacentOffsets = [-11, -10, -9, -1, 1, 9, 10, 11];
-                    
-                    for (let offset of adjacentOffsets) {
-                        const adjacentPos = pos + offset;
-                        const adjacentRow = Math.floor(adjacentPos / 10);
-                        const adjacentCol = adjacentPos % 10;
-                        
-                        if (adjacentPos >= 0 && adjacentPos < 100) {
-                            if (Math.abs(adjacentRow - currentRow) <= 1 && 
-                                Math.abs(adjacentCol - currentCol) <= 1) {
-                                if (positions.has(adjacentPos)) return false;
-                            }
+                    if (adjacentPos >= 0 && adjacentPos < 100) {
+                        if (Math.abs(adjacentRow - currentRow) <= 1 && 
+                            Math.abs(adjacentCol - currentCol) <= 1) {
+                            if (positions.has(adjacentPos)) return false;
                         }
                     }
                 }
-                return true;
-            };
-            
-            const placeShip = (length) => {
-                let attempts = 0;
-                while (attempts < 100) {
-                    const startPos = Math.floor(Math.random() * 100);
-                    const isHorizontal = Math.random() < 0.5;
-                    
-                    if (canPlaceShip(startPos, length, isHorizontal)) {
-                        for (let i = 0; i < length; i++) {
-                            const pos = isHorizontal ? startPos + i : startPos + (i * 10);
-                            positions.add(pos);
-                        }
-                        return true;
+            }
+            return true;
+        };
+        
+        const placeShip = (length) => {
+            let attempts = 0;
+            while (attempts < 100) {
+                const startPos = Math.floor(Math.random() * 100);
+                const isHorizontal = Math.random() < 0.5;
+                
+                if (canPlaceShip(startPos, length, isHorizontal)) {
+                    for (let i = 0; i < length; i++) {
+                        const pos = isHorizontal ? startPos + i : startPos + (i * 10);
+                        positions.add(pos);
                     }
-                    attempts++;
+                    return true;
                 }
-                return false;
-            };
-            
-            const shipLengths = [5, 4, 3, 2];
-            shipLengths.forEach(length => placeShip(length));
-            
-            return Array.from(positions);
+                attempts++;
+            }
+            return false;
+        };
+        
+        const shipLengths = [5, 4, 3, 2];
+        shipLengths.forEach(length => placeShip(length));
+        
+        return Array.from(positions);
     };
     
     // Initialize battleship positions
@@ -124,20 +147,30 @@ export default function Game() {
         }
     }, []);
     
+    // Helper function to count ship hits
+    const countHits = (strikes, battleships) => {
+        return strikes.filter(pos => battleships.includes(pos)).length;
+    };
+    
     // Game timer (3 minutes)
     useEffect(() => {
-        if (gameStatus) {
-            if (gameTimerRef.current) {
-                clearInterval(gameTimerRef.current);
-                gameTimerRef.current = null;
-            }
+        // Clear any existing timer first
+        if (gameTimerRef.current) {
+            clearInterval(gameTimerRef.current);
+            gameTimerRef.current = null;
+        }
+
+        // Don't start timer if game is over or paused
+        if (gameStatus === 'paused' || gameStatus === 'player' || gameStatus === 'cpu' || gameStatus === 'timeout') {
             return;
         }
 
+        // Start game timer
         gameTimerRef.current = setInterval(() => {
             setGameTime(prev => {
-                if (prev <= 0) {
-                    cleanupTimers();
+                if (prev <= 1) {
+                    clearInterval(gameTimerRef.current);
+                    gameTimerRef.current = null;
                     setMessage('Game Over! Time has run out.');
                     setGameStatus('timeout');
                     return 0;
@@ -146,20 +179,74 @@ export default function Game() {
             });
         }, 1000);
 
+        // Cleanup on unmount or when dependencies change
         return () => {
             if (gameTimerRef.current) {
                 clearInterval(gameTimerRef.current);
+                gameTimerRef.current = null;
             }
         };
-    }, [gameStatus]);
+    }, [gameStatus]); // Runs when gameStatus changes
+    
+    // Start timer on initial load
+    useEffect(() => {
+        // Clear any existing timer first
+        if (gameTimerRef.current) {
+            clearInterval(gameTimerRef.current);
+            gameTimerRef.current = null;
+        }
+        
+        // Start new game timer
+        gameTimerRef.current = setInterval(() => {
+            setGameTime(prev => {
+                if (prev <= 0) {
+                    cleanupTimers();
+                    // Compare hit counts to determine winner
+                    const playerHits = countHits(playerStrikesRef.current, cpuBattleshipsRef.current);
+                    const cpuHits = countHits(cpuStrikesRef.current, playerBattleshipsRef.current);
+                    
+                    if (playerHits > cpuHits) {
+                        setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
+                        setGameStatus('player');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'win', playerHits, cpuHits } });
+                        }, 2000);
+                    } else if (cpuHits > playerHits) {
+                        setMessage(`⏰ Time's up! CPU WINS with ${cpuHits} hits vs ${playerHits}!`);
+                        setGameStatus('cpu');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits } });
+                        }, 2000);
+                    } else {
+                        setMessage(`⏰ Time's up! It's a TIE with ${playerHits} hits each!`);
+                        setGameStatus('tie');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'tie', playerHits, cpuHits } });
+                        }, 2000);
+                    }
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+        
+        return () => {
+            if (gameTimerRef.current) {
+                clearInterval(gameTimerRef.current);
+                gameTimerRef.current = null;
+            }
+        };
+    }, []); // Empty dependency array - runs once on mount
     
     // Player turn timer
     useEffect(() => {
+        // Clear any existing player timer
         if (playerTimerRef.current) {
             clearInterval(playerTimerRef.current);
             playerTimerRef.current = null;
         }
 
+        // Start player turn timer if it's player's turn and game is not paused/over
         if (currentPlayer === 'player' && !gameStatus) {
             // Use paused time if available, otherwise reset to 10
             if (pausedPlayerTime.current !== null) {
@@ -169,6 +256,7 @@ export default function Game() {
                 setPlayerTurnTime(10);
             }
             
+            // Start the player turn timer
             playerTimerRef.current = setInterval(() => {
                 setPlayerTurnTime(prev => {
                     if (prev <= 1) {
@@ -191,29 +279,46 @@ export default function Game() {
         return () => {
             if (playerTimerRef.current) {
                 clearInterval(playerTimerRef.current);
+                playerTimerRef.current = null;
             }
         };
-    }, [currentPlayer, gameStatus]);
+    }, [currentPlayer, gameStatus]); // Runs when currentPlayer or gameStatus changes
     
-    // CPU turn
+    // CPU turn timer and attack
     useEffect(() => {
         if (currentPlayer === 'cpu' && !gameStatus) {
             setCpuTurnTime(10);
             
+            // Clear any existing CPU timeout
             if (cpuTimeoutRef.current) {
                 clearTimeout(cpuTimeoutRef.current);
             }
             
+            // Set CPU turn timer to count down
+            const cpuTimerInterval = setInterval(() => {
+                setCpuTurnTime(prev => {
+                    if (prev <= 1) {
+                        clearInterval(cpuTimerInterval);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+            
+            // CPU attacks after 1.5 seconds
             cpuTimeoutRef.current = setTimeout(() => {
+                clearInterval(cpuTimerInterval);
                 cpuAttack();
             }, 1500);
-        }
 
-        return () => {
-            if (cpuTimeoutRef.current) {
-                clearTimeout(cpuTimeoutRef.current);
-            }
-        };
+            // Cleanup for CPU timer
+            return () => {
+                clearInterval(cpuTimerInterval);
+                if (cpuTimeoutRef.current) {
+                    clearTimeout(cpuTimeoutRef.current);
+                }
+            };
+        }
     }, [currentPlayer, gameStatus]);
 
     const handlePlayerStrike = (idx) => {
@@ -236,10 +341,16 @@ export default function Game() {
             playerTimerRef.current = null;
         }
 
+        // Check if all enemy ships are destroyed
         if (checkGameOver(newStrikes, cpuBattleships)) {
+            cleanupTimers();
+            const playerHits = countHits(newStrikes, cpuBattleships);
+            const cpuHits = countHits(cpuStrikes, playerBattleships);
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
-            cleanupTimers();
+            setTimeout(() => {
+                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true } });
+            }, 2000);
             return;
         }
 
@@ -259,10 +370,16 @@ export default function Game() {
         setCpuStrikes(newStrikes);
         setMessage(result.message);
 
+        // Check if all player ships are destroyed
         if (checkGameOver(newStrikes, playerBattleships)) {
+            cleanupTimers();
+            const playerHits = countHits(playerStrikes, cpuBattleships);
+            const cpuHits = countHits(newStrikes, playerBattleships);
             setMessage('💀 CPU WINS! All your ships destroyed!');
             setGameStatus('cpu');
-            cleanupTimers();
+            setTimeout(() => {
+                navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
+            }, 2000);
             return;
         }
 
@@ -289,8 +406,10 @@ export default function Game() {
     };
     
     const resetGame = () => {
-        Game();
+        // Clean up all timers
         cleanupTimers();
+        
+        // Reset all state variables
         setGameTime(180);
         setCurrentPlayer('player');
         setPlayerTurnTime(10);
@@ -298,12 +417,55 @@ export default function Game() {
         setPlayerStrikes([]);
         setCpuStrikes([]);
         setGameStatus(null);
+        
+        // Generate new ship positions
         setPlayerBattleships(generateRandomPositions());
         setCpuBattleships(generateRandomPositions());
-        setMessage('Game reset. Ready to start!');
-
+        
+        // Reset message
+        setMessage('Game started! It\'s your turn.');
+        
+        // Reset the initialization flag if needed
+        isInitialized.current = false;
+        
+        // Clear any paused time
+        pausedPlayerTime.current = null;
+        
+        // Clear any pending timeouts
+        if (cpuTimeoutRef.current) {
+            clearTimeout(cpuTimeoutRef.current);
+            cpuTimeoutRef.current = null;
+        }
+        
+        // Force restart of game timer
         setTimeout(() => {
-            setMessage('Game started! It\'s your turn.');
+            if (gameTimerRef.current) {
+                clearInterval(gameTimerRef.current);
+                gameTimerRef.current = null;
+            }
+            
+            gameTimerRef.current = setInterval(() => {
+                setGameTime(prev => {
+                    if (prev <= 1) {
+                        clearInterval(gameTimerRef.current);
+                        gameTimerRef.current = null;
+                        setMessage('Game Over! Time has run out.');
+                        setGameStatus('timeout');
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }, 50);
+        
+        // Force restart of player turn timer by toggling currentPlayer
+        // This ensures the player turn timer useEffect runs
+        setTimeout(() => {
+            // Temporarily set to cpu then back to player to trigger useEffect
+            setCurrentPlayer('cpu');
+            setTimeout(() => {
+                setCurrentPlayer('player');
+            }, 100);
         }, 100);
     };
 
@@ -320,6 +482,11 @@ export default function Game() {
             playerTimerRef.current = null;
         }
         
+        if (gameTimerRef.current) {
+            clearInterval(gameTimerRef.current);
+            gameTimerRef.current = null;
+        }
+        
         if (cpuTimeoutRef.current) {
             clearTimeout(cpuTimeoutRef.current);
             cpuTimeoutRef.current = null;
@@ -332,9 +499,15 @@ export default function Game() {
     const resumeGame = () => {
         if (gameStatus !== 'paused') return;
         
+        // Clear any existing timers
         if (playerTimerRef.current) {
             clearInterval(playerTimerRef.current);
             playerTimerRef.current = null;
+        }
+        
+        if (gameTimerRef.current) {
+            clearInterval(gameTimerRef.current);
+            gameTimerRef.current = null;
         }
         
         if (cpuTimeoutRef.current) {
@@ -342,8 +515,30 @@ export default function Game() {
             cpuTimeoutRef.current = null;
         }
         
+        // Set game back to active
         setGameStatus(null);
         setMessage('Game resumed. It\'s your turn.');
+        
+        // Restart the game timer
+        setTimeout(() => {
+            if (gameTimerRef.current) {
+                clearInterval(gameTimerRef.current);
+                gameTimerRef.current = null;
+            }
+            
+            gameTimerRef.current = setInterval(() => {
+                setGameTime(prev => {
+                    if (prev <= 1) {
+                        clearInterval(gameTimerRef.current);
+                        gameTimerRef.current = null;
+                        setMessage('Game Over! Time has run out.');
+                        setGameStatus('timeout');
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }, 50);
     };
 
     return (
@@ -383,7 +578,22 @@ export default function Game() {
                                     {message}
                                 </div>
                                 <div className="moves-display">
-                                    Strikes: <span className="player-moves">{playerStrikes.length}</span> - <span className="cpu-moves">{cpuStrikes.length}</span>
+                                    <div className="stat-section">
+                                        <p className="stat-title">Strikes Landed</p>
+                                        <div className="stat-values">
+                                            <span className="player-moves">You {countHits(playerStrikes, cpuBattleships)}</span>
+                                            <span className="separator"> | </span>
+                                            <span className="cpu-moves">CPU {countHits(cpuStrikes, playerBattleships)}</span>
+                                        </div>
+                                    </div>
+                                    <div className="stat-section">
+                                        <p className="stat-title">Accuracy</p>
+                                        <div className="stat-values">
+                                            <span className="player-moves">
+                                                {playerStrikes.length > 0 ? Math.round((countHits(playerStrikes, cpuBattleships) / playerStrikes.length) * 100) : 0}%
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="game-controls">
                                     <button 
