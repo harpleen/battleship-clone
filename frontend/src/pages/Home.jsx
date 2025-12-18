@@ -7,11 +7,19 @@ export default function Home() {
       <h1 className="title">WARHEADS</h1>
       <p className="subtitle">NAVAL WAR SIMULATOR</p>
 
-      <Link to="/create-player" className="start-btn">
-        ▶ Quick Game
-      </Link>
+      <div className="menu">
+        <Link 
+          to="/create-player" 
+          className="start-btn"
+        >
+          ▶ Quick Game
+        </Link>
 
-      {/* Radar pings */}
+        <Link to="/login" className="start-btn">
+            ▶ Ranked Match
+        </Link>
+      </div>
+
       <div className="ping ring-1"></div>
       <div className="ping ring-2"></div>
       <div className="ping ring-3"></div>

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import './App.css'
 import Home from './pages/Home'
-import Game from './pages/Game/Game'
-import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
+import Game from "./pages/Game/Game";import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
 import Completed from "./pages/Completed.jsx";
-
+import LoginPage from './pages/LoginPage/LoginPage';
+import SignUpPage from "./pages/SignUpPage/SignUp";
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
 const router = createBrowserRouter([
@@ -28,13 +28,19 @@ const router = createBrowserRouter([
   {
     path: '/start', 
     element: <Start />
+  },
+  {
+    path: '/login',
+    element: <LoginPage />
+  },
+  {
+    path: '/signup',
+    element: <SignUpPage />
   }
 
 ])
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <RouterProvider router={router} />
