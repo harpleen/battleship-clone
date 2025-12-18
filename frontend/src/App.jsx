@@ -4,18 +4,23 @@ import Home from './pages/Home'
 import Game from './pages/Game/Game'
 import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
-import GamePage from './pages/GamePage/GamePage'
+import Completed from "./pages/Completed.jsx";
+
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/home',
     element: <Home />
   },
   {
     path: '/game',
     element: <Game />
   }, 
+  {
+    path: '/completed',
+    element: <Completed />
+  },
   {
     path: '/create-player',
     element: <CreatePlayer />

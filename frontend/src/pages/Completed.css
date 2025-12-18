@@ -1,0 +1,69 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" );
+
+
+.crt {
+  background: #020202;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Press Start 2P", monospace;
+  text-align: center;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 9999;
+  animation: flicker 0.15s infinite;
+}
+
+.win-mode {
+  color: #00ff9c;
+}
+.win-mode .title { text-shadow: 0 0 15px #00ff9c; }
+.win-mode .start-btn { border-color: #00ff9c; color: #00ff9c; box-shadow: 0 0 15px #00ff9c; }
+.win-mode .start-btn:hover { background: #00ff9c; color: black; }
+
+
+.lose-mode {
+  color: #ff003c;
+}
+.lose-mode .title { text-shadow: 0 0 15px #ff003c; }
+.lose-mode .start-btn { border-color: #ff003c; color: #ff003c; box-shadow: 0 0 15px #ff003c; }
+.lose-mode .start-btn:hover { background: #ff003c; color: black; }
+
+
+.title { font-size: 48px; margin-bottom: 20px; text-transform: uppercase; line-height: 1.2; }
+.subtitle { font-size: 16px; margin-bottom: 60px; opacity: 0.8; text-transform: uppercase; letter-spacing: 2px; }
+.menu { display: flex; flex-direction: column; gap: 25px; width: 100%; max-width: 400px; align-items: center; }
+
+.start-btn {
+  background: black;
+  padding: 20px 30px;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: "Press Start 2P", monospace;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 100%;
+  display: flex; justify-content: center; align-items: center;
+  transition: all 0.2s ease;
+  border-width: 3px;
+  border-style: solid;
+}
+
+.btn-back {
+  background: transparent;
+  font-size: 12px;
+  margin-top: 20px;
+  box-shadow: none !important;
+  opacity: 0.8;
+}
+
+.footer { position: absolute; bottom: 30px; font-size: 10px; opacity: 0.6; }
+
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  50% { opacity: 1; }
+  100% { opacity: 0.98; }
+}

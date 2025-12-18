@@ -20,7 +20,7 @@ return (
         GAME MODE
         </Link>
 
-        <Link to="/" className="start-btn btn-back">
+        <Link to="/create-player" className="start-btn btn-back">
         BACK TO MENU
         </Link>
     </div>
