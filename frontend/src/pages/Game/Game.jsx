@@ -30,6 +30,7 @@ export default function Game() {
     const gameTimerRef = useRef(null);
     const cpuTimeoutRef = useRef(null);
     const isInitialized = useRef(false);
+    const pausedPlayerTime = useRef(null);
     
     // Cleanup timers
     const cleanupTimers = () => {
@@ -160,7 +161,13 @@ export default function Game() {
         }
 
         if (currentPlayer === 'player' && !gameStatus) {
-            setPlayerTurnTime(10);
+            // Use paused time if available, otherwise reset to 10
+            if (pausedPlayerTime.current !== null) {
+                setPlayerTurnTime(pausedPlayerTime.current);
+                pausedPlayerTime.current = null;
+            } else {
+                setPlayerTurnTime(10);
+            }
             
             playerTimerRef.current = setInterval(() => {
                 setPlayerTurnTime(prev => {
@@ -300,6 +307,45 @@ export default function Game() {
         }, 100);
     };
 
+    const pauseGame = () => {
+        if (gameStatus) return;
+        
+        // Save current player turn time before pausing
+        if (currentPlayer === 'player') {
+            pausedPlayerTime.current = playerTurnTime;
+        }
+        
+        if (playerTimerRef.current) {
+            clearInterval(playerTimerRef.current);
+            playerTimerRef.current = null;
+        }
+        
+        if (cpuTimeoutRef.current) {
+            clearTimeout(cpuTimeoutRef.current);
+            cpuTimeoutRef.current = null;
+        }
+        
+        setGameStatus('paused');
+        setMessage('Game paused. Click "Resume" to continue.');
+    };
+
+    const resumeGame = () => {
+        if (gameStatus !== 'paused') return;
+        
+        if (playerTimerRef.current) {
+            clearInterval(playerTimerRef.current);
+            playerTimerRef.current = null;
+        }
+        
+        if (cpuTimeoutRef.current) {
+            clearTimeout(cpuTimeoutRef.current);
+            cpuTimeoutRef.current = null;
+        }
+        
+        setGameStatus(null);
+        setMessage('Game resumed. It\'s your turn.');
+    };
+
     return (
         <div className="game-page">
             {/* Top Bar with Header */}
@@ -346,7 +392,13 @@ export default function Game() {
                                     >
                                         Reset Game
                                     </button>
-                                </div>
+                                    {gameStatus !== 'paused' ? <button 
+                                        className="pause-btn"
+                                        onClick={pauseGame}
+                                    >
+                                        Pause Game
+                                    </button> : <button className="resume-btn" onClick={resumeGame}>Resume Game</button>}                                
+                                    </div>
                             </div>
                             <Grid 
                                 title="CPU Board" 
