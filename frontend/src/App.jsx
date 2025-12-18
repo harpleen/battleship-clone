@@ -6,6 +6,7 @@ import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
 import Completed from "./pages/Completed.jsx";
 import PlayerProfile from "./pages/PlayerProfile.jsx";
+import GameModes from "./pages/GameModes";
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
@@ -27,15 +28,18 @@ const router = createBrowserRouter([
     element: <CreatePlayer />
   },
   {
-  path: "/profile",
-  element: <PlayerProfile />,
+    path: '/profile',
+    element: <PlayerProfile />
   },
   {
     path: '/start', 
     element: <Start />
+  },
+  {
+    path: '/game-modes',
+    element: <GameModes />
   }
-
-])
+]);
 
 function App() {
   const [count, setCount] = useState(0)
