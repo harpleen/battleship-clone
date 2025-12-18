@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="crt">
+    <div className="crt home-radar">
       <h1 className="title">WARHEADS</h1>
       <p className="subtitle">NAVAL WAR SIMULATOR</p>
 
