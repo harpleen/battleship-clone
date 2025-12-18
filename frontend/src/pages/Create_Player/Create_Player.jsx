@@ -17,6 +17,12 @@ export default function CreatePlayer() {
             navigate('/start', { state: { playerName } });
         }
     }
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleContinue();
+        }
+    }
     
     return (        
         <div className="create-player-container">
@@ -28,6 +34,7 @@ export default function CreatePlayer() {
                     placeholder="Enter player name" 
                     value={playerName}
                     onChange={handleUsername}
+                    onKeyPress={handleKeyPress}
                 />
                 <button onClick={handleContinue} disabled={!playerName.trim()}>
                     Continue
