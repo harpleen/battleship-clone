@@ -17,12 +17,12 @@ const getSubtitle = () => {
         return isWin ? 'ALL ENEMY SHIPS DESTROYED' : 'ALL YOUR SHIPS DESTROYED';
     }
     if (isTie) {
-        return `EQUAL DAMAGE: ${playerHits} HITS EACH`;
+        return `EQUAL DAMAGE: ${playerHits} STRIKES EACH`;
     }
     if (isWin) {
-        return `YOU INFLICTED MORE DAMAGE: ${playerHits} vs ${cpuHits} HITS`;
+        return `YOU INFLICTED MORE DAMAGE: ${playerHits} vs ${cpuHits} STRIKES`;
     }
-    return `ENEMY INFLICTED MORE DAMAGE: ${cpuHits} vs ${playerHits} HITS`;
+    return `ENEMY INFLICTED MORE DAMAGE: ${cpuHits} vs ${playerHits} STRIKES`;
 };
 
 return (
