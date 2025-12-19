@@ -49,8 +49,7 @@ async function create(req, res) {
 
 async function getUserInfo(req, res) {
     try {
-        const username = req.username;
-        const user = await User.findOne({ username: username });
+        const user = await User.findById(req.user_id);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -90,13 +89,13 @@ async function getUserInfo(req, res) {
             token: token
         });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: 'Error fetching user information' });
     }
 }
 
 async function update(req, res) {
     try {
-        const username = req.username; 
         const { outcome, difficulty, shotsFired, hits, duration } = req.body; 
 
         if (!outcome || !difficulty || shotsFired === undefined || hits === undefined || duration === undefined) {
@@ -117,7 +116,7 @@ async function update(req, res) {
             return res.status(400).json({ message: 'Invalid duration. Must be a positive number' });
         }
 
-        const currentUser = await User.findOne({ username: username });
+        const currentUser = await User.findById(req.user_id);
         if (!currentUser) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -159,8 +158,8 @@ async function update(req, res) {
             }
         };
 
-        const updatedUser = await User.findOneAndUpdate(
-            { username: username },
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user_id,
             updateData,
             { new: true } 
         );
@@ -208,8 +207,7 @@ async function update(req, res) {
 
 async function remove(req, res) {
     try {
-        const username = req.username; 
-        const deletedUser = await User.findOneAndDelete({ username: username });
+        const deletedUser = await User.findByIdAndDelete(req.user_id);
 
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found' });
@@ -221,9 +219,42 @@ async function remove(req, res) {
     }
 }
 
+async function login(req, res) {
+  const { username, password } = req.body;
+  
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username and password required' });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const token = generateToken(user._id);
+    
+    return res.status(200).json({
+      message: 'Login successful',
+      token: token,
+      username: user.username,
+      userId: user._id
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+}
+
 module.exports = {
-    create,
-    getUserInfo,
-    update,
-    delete: remove
+  create,
+  login,     
+  getUserInfo,
+  update,
+  delete: remove
 };

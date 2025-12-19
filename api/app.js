@@ -1,13 +1,12 @@
 const express = require("express");
 const cors = require("cors");
+const userRoutes = require("./routes/users");
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Add the routes here
-// Example: app.use("/api/users", userRoutes);
+app.use("/users", userRoutes);
 
 module.exports = app;

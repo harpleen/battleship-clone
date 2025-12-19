@@ -175,18 +175,49 @@ font-size: 1.2rem;
 color: #0a0;
 font-weight: 500;
 margin-bottom: 20px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+
+.stat-section {
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+
+.stat-title {
+color: #0f0;
+font-weight: 800;
+font-size: 1.2rem;
+text-transform: uppercase;
+letter-spacing: 1px;
+margin: 0;
+text-shadow: 0 0 8px #0f0;
+}
+
+.stat-values {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
 }
 
 .player-moves {
 color: #0f0;
-font-weight: 700;
-font-size: 1.3rem;
+font-weight: 300;
+font-size: 1.1rem;
 }
 
 .cpu-moves {
 color: #0f0;
-font-weight: 700;
-font-size: 1.3rem;
+font-weight: 300;
+font-size: 1.1rem;
+}
+
+.separator {
+color: #0a0;
+font-weight: 300;
 }
 
 .bottom-bar {

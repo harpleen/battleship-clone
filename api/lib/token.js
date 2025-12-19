@@ -8,7 +8,8 @@ const secret = process.env.JWT_SECRET;
  * JWTs in 100 Seconds: https://www.youtube.com/watch?v=UBUNrFtufWo
  */
 function generateToken(user_id) {
-  const TEN_MINS_IN_SECS = 10 * 6000;
+  // 10 minutes in seconds (10 * 60)
+  const TEN_MINS_IN_SECS = 600;
   const issuedAtTime = Math.floor(Date.now() / 1000);
   const expiryTime = issuedAtTime + TEN_MINS_IN_SECS;
 

@@ -9,22 +9,19 @@ const Start = () => {
   return (
     <div className="start-crt">
       
-      {/* title */}
       <h1 className="title">WARHEADS</h1>
       <div className="subtitle">COMBAT SIMULATOR</div>
 
-      {/* menu */}
       <div className="menu">
-        <Link to="/game" state={{ playerName }} className="start-btn">
-          START GAME
-        </Link>
+        <Link to="/game" state={{ isRanked: false, playerName: "Guest" }} className="start-btn">
+          START MISSION
 
         <Link to="/game-modes" state={{ playerName }} className="start-btn">
           GAME MODE
         </Link>
 
         <Link to="/" className="start-btn btn-back">
-          BACK TO MENU
+          RETURN TO BASE
         </Link>
       </div>
     </div>
