@@ -107,13 +107,20 @@ transform: scale(0.9);
 
 .game-grids-container {
 display: flex;
-align-items: center;
+align-items: flex-start;
 justify-content: center;
 gap: 15px;
 position: relative;
 z-index: 3;
 width: 100%;
 flex-wrap: nowrap;
+}
+
+.player-grid-section {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 12px;
 }
 
 .center-info {
@@ -218,6 +225,205 @@ font-size: 1.1rem;
 .separator {
 color: #0a0;
 font-weight: 300;
+}
+
+/* Powerups styling */
+.powerups {
+display: flex;
+gap: 50px;
+justify-content: center;
+align-items: center;
+width: 100%;
+margin-top: 5px;
+}
+
+.powerups > div {
+background: rgba(0, 0, 0, 0.8);
+color: #0f0;
+border: 2px solid #0f0;
+border-radius: 3px;
+padding: 10px;
+font-size: 0.65rem;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.3s ease;
+font-family: 'Courier New', monospace;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+text-shadow: 0 0 5px #0f0;
+width: 70px;
+height: 70px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+word-wrap: break-word;
+flex-shrink: 0;
+gap: 4px;
+}
+
+.powerup-count-badge {
+position: absolute;
+top: -8px;
+right: -8px;
+background: rgba(0, 0, 0, 0.9);
+border: 2px solid;
+border-radius: 50%;
+width: 24px;
+height: 24px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.75rem;
+font-weight: 900;
+z-index: 10;
+}
+
+.powerup-low .powerup-count-badge {
+border-color: #0f0;
+color: #0f0;
+box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.powerup-medium .powerup-count-badge {
+border-color: #00d4ff;
+color: #00d4ff;
+box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+}
+
+.powerup-high .powerup-count-badge {
+border-color: #ff0000;
+color: #ff0000;
+box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+}
+
+.powerup-disabled .powerup-count-badge {
+opacity: 0.3;
+}
+
+.powerup-indicator {
+display: flex;
+gap: 3px;
+font-size: 0.5rem;
+margin-top: 2px;
+}
+
+.powerup-indicator .available {
+opacity: 1;
+}
+
+.powerup-indicator .used {
+opacity: 0.2;
+}
+
+.powerup-disabled {
+pointer-events: none;
+}
+
+/* Low damage - Green (Cluster Bombs: 5 squares) */
+.powerup-low {
+border-color: #0f0;
+color: #0f0;
+text-shadow: 0 0 5px #0f0;
+box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.powerup-low:hover {
+box-shadow: 0 0 20px #0f0;
+}
+
+/* Medium damage - Blue (Missiles: 6 squares) */
+.powerup-medium {
+border-color: #00d4ff;
+color: #00d4ff;
+text-shadow: 0 0 5px #00d4ff;
+box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+.powerup-medium:hover {
+box-shadow: 0 0 20px #00d4ff;
+}
+
+/* High damage - Red (Nuke: 19 squares) */
+.powerup-high {
+border-color: #ff0000;
+color: #ff0000;
+text-shadow: 0 0 5px #ff0000;
+box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+.powerup-high:hover {
+box-shadow: 0 0 20px #ff0000;
+}
+
+.powerup-low:hover {
+box-shadow: 0 0 20px #0f0;
+transform: translateY(-2px);
+}
+
+.powerup-medium:hover {
+box-shadow: 0 0 20px #00d4ff;
+transform: translateY(-2px);
+}
+
+.powerup-high:hover {
+box-shadow: 0 0 20px #ff0000;
+transform: translateY(-2px);
+}
+
+.powerups > div:active {
+transform: translateY(0);
+box-shadow: 0 0 15px #0f0;
+}
+
+.powerup-low.powerup-active {
+border-color: #0f0 !important;
+border-width: 3px !important;
+box-shadow: 0 0 25px #0f0 !important;
+animation: powerup-pulse-green 0.5s infinite alternate;
+}
+
+.powerup-medium.powerup-active {
+border-color: #00d4ff !important;
+border-width: 3px !important;
+box-shadow: 0 0 25px #00d4ff !important;
+animation: powerup-pulse-blue 0.5s infinite alternate;
+}
+
+.powerup-high.powerup-active {
+border-color: #ff0000 !important;
+border-width: 3px !important;
+box-shadow: 0 0 25px #ff0000 !important;
+animation: powerup-pulse-red 0.5s infinite alternate;
+}
+
+@keyframes powerup-pulse-green {
+0% {
+    box-shadow: 0 0 20px #0f0;
+}
+100% {
+    box-shadow: 0 0 35px #0f0;
+}
+}
+
+@keyframes powerup-pulse-blue {
+0% {
+    box-shadow: 0 0 20px #00d4ff;
+}
+100% {
+    box-shadow: 0 0 35px #00d4ff;
+}
+}
+
+@keyframes powerup-pulse-red {
+0% {
+    box-shadow: 0 0 20px #ff0000;
+}
+100% {
+    box-shadow: 0 0 35px #ff0000;
+}
 }
 
 .bottom-bar {

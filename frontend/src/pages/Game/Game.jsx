@@ -6,6 +6,10 @@ import PlayerCard from '../../components/PlayerCard/PlayerCard';
 import GameTimer from '../../components/GameTimer/GameTimer';
 import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
+import { clusterBombs, missiles, nuke, applyPowerup } from '../../utils/Strikes/powerupLogic';
+import ClusterBombs from '../../components/Powerups/Clusterbombs';
+import Missiles from '../../components/Powerups/Missiles';
+import Nuke from '../../components/Powerups/Nuke';
 import './Game.css';
 
 export default function Game() {
@@ -23,6 +27,12 @@ export default function Game() {
     const [cpuBattleships, setCpuBattleships] = useState([]);
     const [playerStrikes, setPlayerStrikes] = useState([]);
     const [cpuStrikes, setCpuStrikes] = useState([]);
+    const [activePowerup, setActivePowerup] = useState(null);
+    const [powerupUsage, setPowerupUsage] = useState({
+        cluster: 0,
+        missiles: 0,
+        nuke: 0
+    }); 
     
     // Update refs when strikes change
     useEffect(() => {
@@ -152,48 +162,17 @@ export default function Game() {
         return strikes.filter(pos => battleships.includes(pos)).length;
     };
     
-    // Game timer (3 minutes)
+    // Game timer
     useEffect(() => {
         // Clear any existing timer first
         if (gameTimerRef.current) {
             clearInterval(gameTimerRef.current);
             gameTimerRef.current = null;
         }
-
+        
         // Don't start timer if game is over or paused
-        if (gameStatus === 'paused' || gameStatus === 'player' || gameStatus === 'cpu' || gameStatus === 'timeout') {
+        if (gameStatus === 'paused' || gameStatus === 'player' || gameStatus === 'cpu' || gameStatus === 'timeout' || gameStatus === 'tie') {
             return;
-        }
-
-        // Start game timer
-        gameTimerRef.current = setInterval(() => {
-            setGameTime(prev => {
-                if (prev <= 1) {
-                    clearInterval(gameTimerRef.current);
-                    gameTimerRef.current = null;
-                    setMessage('Game Over! Time has run out.');
-                    setGameStatus('timeout');
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        // Cleanup on unmount or when dependencies change
-        return () => {
-            if (gameTimerRef.current) {
-                clearInterval(gameTimerRef.current);
-                gameTimerRef.current = null;
-            }
-        };
-    }, [gameStatus]); // Runs when gameStatus changes
-    
-    // Start timer on initial load
-    useEffect(() => {
-        // Clear any existing timer first
-        if (gameTimerRef.current) {
-            clearInterval(gameTimerRef.current);
-            gameTimerRef.current = null;
         }
         
         // Start new game timer
@@ -236,7 +215,7 @@ export default function Game() {
                 gameTimerRef.current = null;
             }
         };
-    }, []); // Empty dependency array - runs once on mount
+    }, [gameStatus]); // Restart timer when game status changes (including reset)
     
     // Player turn timer
     useEffect(() => {
@@ -324,6 +303,12 @@ export default function Game() {
     const handlePlayerStrike = (idx) => {
         if (currentPlayer !== 'player' || gameStatus) return;
         
+        // Check if a powerup is active
+        if (activePowerup) {
+            handlePowerupStrike(idx);
+            return;
+        }
+        
         const result = handleStrike(idx, playerStrikes, cpuBattleships);
         
         if (!result.success) {
@@ -357,6 +342,61 @@ export default function Game() {
         if (!result.isHit) {
             setCurrentPlayer('cpu');
         }
+    };
+
+    const handlePowerupStrike = (idx) => {
+        let powerupStrikes = [];
+        
+        // Get the positions to strike based on powerup type
+        switch (activePowerup) {
+            case 'cluster':
+                powerupStrikes = clusterBombs(idx);
+                break;
+            case 'missiles':
+                powerupStrikes = missiles(idx, playerStrikes);
+                break;
+            case 'nuke':
+                powerupStrikes = nuke(idx);
+                break;
+            default:
+                return;
+        }
+        
+        // Apply the powerup
+        const result = applyPowerup(powerupStrikes, playerStrikes, cpuBattleships);
+        setPlayerStrikes(result.newStrikes);
+        setMessage(result.message);
+        
+        // Clear player timer
+        if (playerTimerRef.current) {
+            clearInterval(playerTimerRef.current);
+            playerTimerRef.current = null;
+        }
+        
+        // Increment powerup usage
+        setPowerupUsage(prev => ({
+            ...prev,
+            [activePowerup]: prev[activePowerup] + 1
+        }));
+        
+        // Deactivate powerup after use
+        setActivePowerup(null);
+        
+        // Check if all enemy ships are destroyed
+        if (checkGameOver(result.newStrikes, cpuBattleships)) {
+            cleanupTimers();
+            const playerHits = countHits(result.newStrikes, cpuBattleships);
+            const cpuHits = countHits(cpuStrikes, playerBattleships);
+            setMessage('🎉 YOU WIN! All enemy ships destroyed!');
+            setGameStatus('player');
+            setTimeout(() => {
+                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true } });
+            }, 2000);
+            return;
+        }
+        
+        // Switch to CPU turn
+        setCurrentPlayer('cpu');
     };
 
     const cpuAttack = (currentStrikes = cpuStrikes) => {
@@ -417,6 +457,14 @@ export default function Game() {
         setPlayerStrikes([]);
         setCpuStrikes([]);
         setGameStatus(null);
+        
+        // Reset powerup usage
+        setPowerupUsage({
+            cluster: 0,
+            missiles: 0,
+            nuke: 0
+        });
+        setActivePowerup(null);
         
         // Generate new ship positions
         setPlayerBattleships(generateRandomPositions());
@@ -567,12 +615,49 @@ export default function Game() {
                         </div>
                         
                         <div className="game-grids-container">
-                            <Grid 
-                                title={`${playerName}\'s Board`}
-                                battleships={playerBattleships} 
-                                strikes={cpuStrikes}
-                                isPlayerBoard={true}
-                            />
+                            <div className="player-grid-section">
+                                <Grid 
+                                    title={`${playerName}\'s Board`}
+                                    battleships={playerBattleships} 
+                                    strikes={cpuStrikes}
+                                    isPlayerBoard={true}
+                                />
+                                <div className="powerups">
+                                    <ClusterBombs 
+                                        onClick={() => {
+                                            if (powerupUsage.cluster < 2) {
+                                                setActivePowerup(activePowerup === 'cluster' ? null : 'cluster');
+                                            }
+                                        }}
+                                        isActive={activePowerup === 'cluster'}
+                                        used={powerupUsage.cluster}
+                                        total={2}
+                                        disabled={powerupUsage.cluster >= 2}
+                                    />
+                                    <Missiles 
+                                        onClick={() => {
+                                            if (powerupUsage.missiles < 1) {
+                                                setActivePowerup(activePowerup === 'missiles' ? null : 'missiles');
+                                            }
+                                        }}
+                                        isActive={activePowerup === 'missiles'}
+                                        used={powerupUsage.missiles}
+                                        total={1}
+                                        disabled={powerupUsage.missiles >= 1}
+                                    />
+                                    <Nuke 
+                                        onClick={() => {
+                                            if (powerupUsage.nuke < 1) {
+                                                setActivePowerup(activePowerup === 'nuke' ? null : 'nuke');
+                                            }
+                                        }}
+                                        isActive={activePowerup === 'nuke'}
+                                        used={powerupUsage.nuke}
+                                        total={1}
+                                        disabled={powerupUsage.nuke >= 1}
+                                    />
+                                </div>
+                            </div>
                             <div className="game-status">
                                 <div className="status-message">
                                     {message}
