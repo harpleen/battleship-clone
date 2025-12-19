@@ -39,6 +39,8 @@ const router = createBrowserRouter([
   {
     path: '/game-modes',
     element: <GameModes />
+  },
+  {
     path: '/login',
     element: <LoginPage />
   },
