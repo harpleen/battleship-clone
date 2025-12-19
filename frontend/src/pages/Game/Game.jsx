@@ -132,7 +132,7 @@ export default function Game() {
             return false;
         };
         
-        const shipLengths = [5, 4, 3, 2];
+        const shipLengths = [5, 4, 3, 2]; // #TODO: assign svg files to different ship lengths
         shipLengths.forEach(length => placeShip(length));
         
         return Array.from(positions);

@@ -13,9 +13,9 @@ const Start = () => {
       <div className="subtitle">COMBAT SIMULATOR</div>
 
       <div className="menu">
-        <Link to="/game" state={{ isRanked: false, playerName: "Guest" }} className="start-btn">
+        <Link to="/game" state={{ isRanked: false, playerName: playerName }} className="start-btn">
           START MISSION
-
+        </Link>
         <Link to="/game-modes" state={{ playerName }} className="start-btn">
           GAME MODE
         </Link>
