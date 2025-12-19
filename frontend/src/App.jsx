@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import SignUpPage from "./pages/SignUpPage/SignUp";
 import Completed from "./pages/Completed/Completed.jsx";
 import PlayerProfile from "./pages/PlayerProfile.jsx";
+import GameModes from "./pages/GameModes";
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
@@ -28,14 +29,16 @@ const router = createBrowserRouter([
     element: <CreatePlayer />
   },
   {
-  path: "/profile",
-  element: <PlayerProfile />,
+    path: '/profile',
+    element: <PlayerProfile />
   },
   {
     path: '/start', 
     element: <Start />
   },
   {
+    path: '/game-modes',
+    element: <GameModes />
     path: '/login',
     element: <LoginPage />
   },
@@ -43,8 +46,7 @@ const router = createBrowserRouter([
     path: '/signup',
     element: <SignUpPage />
   }
-
-])
+]);
 
 function App() {
   return (
