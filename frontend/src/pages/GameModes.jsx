@@ -8,6 +8,14 @@ const GameModes = () => {
 
   return (
     <div className="start-crt">
+
+      {/* BACK ARROW */}
+      <button
+        className="retro-back-btn"
+        onClick={() => window.history.back()}
+        aria-label="Back"
+      />
+
       <h1 className="title">SELECT YOUR COMBAT LEVEL</h1>
       <div className="subtitle">BATTLE ORDERS</div>
 
@@ -36,7 +44,11 @@ const GameModes = () => {
           HARD
         </Link>
 
-        <Link to="/start" state={{ playerName }} className="start-btn btn-back">
+        <Link
+          to="/start"
+          state={{ playerName }}
+          className="start-btn btn-back"
+        >
           BACK
         </Link>
       </div>

@@ -16,10 +16,10 @@ const SignUpPage = () => {
       setError("Passwords do not match");
       return;
     }
-    
+
     try {
       await signup(username, password, confirmPassword);
-      navigate("/login"); 
+      navigate("/login");
     } catch (err) {
       setError(err.message);
     }
@@ -27,6 +27,14 @@ const SignUpPage = () => {
 
   return (
     <div className="signup-container">
+
+      {/* BACK ARROW */}
+      <button
+        className="retro-back-btn"
+        onClick={() => navigate("/login")}
+        aria-label="Back to login"
+      />
+
       <h1 className="signup-title">RECRUITMENT</h1>
       <div className="signup-subtitle">CREATE NEW PROFILE</div>
 
@@ -34,7 +42,7 @@ const SignUpPage = () => {
         <input
           type="text"
           placeholder="CHOOSE USERNAME"
-          className="signup-input" 
+          className="signup-input"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -52,11 +60,13 @@ const SignUpPage = () => {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
-        
+
         {error && <div className="error-msg">{error}</div>}
 
-        <button type="submit" className="signup-btn">REGISTER</button>
-        
+        <button type="submit" className="signup-btn">
+          REGISTER
+        </button>
+
         <Link to="/login" className="signup-btn signup-btn-back">
           ALREADY REGISTERED? LOGIN
         </Link>

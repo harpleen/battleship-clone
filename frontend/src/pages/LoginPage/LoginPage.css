@@ -177,3 +177,91 @@
     width: 90%;
   }
 }
+
+/* BACK BUTTON */
+
+.retro-back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+
+  width: 56px;
+  height: 56px;
+
+  background: radial-gradient(circle at top left, #001a00, #000);
+  border: 3px solid #00ff00;
+
+  cursor: pointer;
+  padding: 0;
+
+  box-shadow:
+    inset 0 0 6px rgba(0, 255, 0, 0.3),
+    0 0 10px #00ff00,
+    0 0 22px rgba(0, 255, 0, 0.6);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+
+  z-index: 9999;
+}
+
+/* ARROW HEAD */
+.retro-back-btn::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 0;
+  height: 0;
+
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 16px solid #00ff00;
+
+  filter: drop-shadow(0 0 4px #00ff00);
+}
+
+/* ARROW SHAFT */
+.retro-back-btn::after {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 14px;
+  height: 6px;
+
+  background: #00ff00;
+  box-shadow: 0 0 4px #00ff00;
+}
+
+/* Hover */
+.retro-back-btn:hover {
+  background: #00ff00;
+  transform: translateX(-4px) scale(1.08);
+
+  box-shadow:
+    inset 0 0 6px rgba(0, 0, 0, 0.5),
+    0 0 14px #00ff00,
+    0 0 32px rgba(0, 255, 0, 0.9);
+}
+
+.retro-back-btn:hover::before {
+  border-right-color: #000;
+  filter: none;
+}
+
+.retro-back-btn:hover::after {
+  background: #000;
+  box-shadow: none;
+}
+
+/* Press */
+.retro-back-btn:active {
+  transform: translateX(-6px) scale(0.95);
+}
