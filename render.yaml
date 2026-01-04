@@ -3,9 +3,9 @@ services:
     name: battleship-api
     env: node
     plan: free
-    region: frankfurt  # Choose: ohio, frankfurt, oregon, singapore (closest to you)
-    buildCommand: npm install
-    startCommand: node index.js
+    region: frankfurt
+    buildCommand: cd api && npm install
+    startCommand: cd api && node index.js
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -14,16 +14,6 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: MONGODB_URL
-        sync: false  # You'll set this manually in Render dashboard
+        sync: false
       - key: PORT
         value: 3000
-    headers:
-      - path: /*
-        name: Access-Control-Allow-Origin
-        value: "*"
-      - path: /*
-        name: Access-Control-Allow-Methods
-        value: "GET, POST, PUT, DELETE, OPTIONS"
-      - path: /*
-        name: Access-Control-Allow-Headers
-        value: "Content-Type, Authorization"
