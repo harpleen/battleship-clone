@@ -13,7 +13,7 @@ import Completed from "./pages/Completed/Completed.jsx";
 import PlayerProfile from "./pages/PlayerProfile.jsx";
 
 // --- MISSING IMPORT ADDED BELOW ---
-import Lobby from './pages/Lobby/Lobby.jsx'; 
+import Lobby from './src/pages/lobby/Lobby.jsx'; 
 
 const router = createBrowserRouter([
   {

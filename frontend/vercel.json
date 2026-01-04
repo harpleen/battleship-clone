@@ -39,6 +39,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://battleship-api.onrender.com"
+    "VITE_API_URL": "https://battleship-api-ips7.onrender.com"
   }
 }
