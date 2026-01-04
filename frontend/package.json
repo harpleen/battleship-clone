@@ -8,12 +8,16 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "vercel-build": "npm run build",
+    "deploy": "vercel --prod",
+    "deploy-dev": "vercel"
   },
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.10.1"
+    "react-router-dom": "^7.10.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.5",

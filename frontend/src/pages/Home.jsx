@@ -1,5 +1,6 @@
-import "./Home.css";
+import React from 'react';
 import { Link } from "react-router-dom";
+import "./Home.css";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       <p className="subtitle">NAVAL WAR SIMULATOR</p>
 
       <div className="menu">
+        {/* Quick Game - Points to existing CPU setup */}
         <Link 
           to="/create-player" 
           className="start-btn"
@@ -15,11 +17,18 @@ export default function Home() {
           ▶ Quick Game
         </Link>
 
-        <Link to="/login" className="start-btn">
+        {/* Ranked Match - Points to Login first */}
+        {/* We pass 'state' so the Login page knows where to send us next */}
+        <Link 
+          to="/login" 
+          state={{ from: "ranked" }} 
+          className="start-btn"
+        >
             ▶ Ranked Match
         </Link>
       </div>
 
+      {/* Decorative Radar Animations */}
       <div className="ping ring-1"></div>
       <div className="ping ring-2"></div>
       <div className="ping ring-3"></div>

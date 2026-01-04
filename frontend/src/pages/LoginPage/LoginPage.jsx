@@ -7,13 +7,16 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate("/game", { state: { isRanked: true, playerName: username } });
+      // FIX: Always go to Profile, never straight to Lobby
+      navigate('/profile'); 
+
     } catch (err) {
       setError(err.message);
     }

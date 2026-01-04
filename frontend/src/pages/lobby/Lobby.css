@@ -1,0 +1,213 @@
+.lobby-container {
+    background-color: #000;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Courier New', monospace;
+    color: #0f0;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Radar Animation Effect */
+.lobby-container::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border: 2px solid #030;
+    border-radius: 50%;
+    background: 
+        linear-gradient(90deg, transparent 49.5%, #0f0 50%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, #0f0 50%, transparent 50.5%);
+    z-index: 1;
+    opacity: 0.3;
+}
+
+.lobby-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 255, 0, 0.1) 60deg, rgba(0, 255, 0, 0.4) 90deg, transparent 91deg);
+    animation: radar-spin 4s linear infinite;
+    z-index: 1;
+    opacity: 0.2;
+}
+
+.lobby-card {
+    background: rgba(0, 20, 0, 0.85);
+    border: 2px solid #0f0;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+    z-index: 2;
+    position: relative;
+}
+
+.lobby-card h2 {
+    color: #0f0;
+    text-shadow: 0 0 10px #0f0;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.player-info {
+    background: rgba(0, 50, 0, 0.5);
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #0a0;
+    font-size: 1.1rem;
+}
+
+.player-info p {
+    margin: 5px 0;
+}
+
+.player-info strong {
+    color: #0ff;
+}
+
+.status-display {
+    background: rgba(0, 30, 0, 0.7);
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+    border: 1px solid #0a0;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.status-text {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #0f0;
+    text-shadow: 0 0 10px #0f0;
+}
+
+.queue-info {
+    font-size: 1.1rem;
+}
+
+.queue-info p {
+    margin: 8px 0;
+}
+
+.timer {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #0ff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 8px #0ff;
+}
+
+.searching-animation {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.searching-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #0f0;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.searching-dot:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.searching-dot:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.lobby-btn {
+    padding: 12px 30px;
+    margin: 10px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.join-btn {
+    background: linear-gradient(45deg, #0f0, #0a0);
+    color: #000;
+    border: 2px solid #0f0;
+}
+
+.join-btn:hover:not(:disabled) {
+    background: linear-gradient(45deg, #0f0, #fff);
+    box-shadow: 0 0 20px #0f0;
+    transform: translateY(-2px);
+}
+
+.join-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.leave-btn {
+    background: linear-gradient(45deg, #f00, #800);
+    color: white;
+    border: 2px solid #f00;
+}
+
+.leave-btn:hover {
+    background: linear-gradient(45deg, #f00, #fff);
+    box-shadow: 0 0 20px #f00;
+    transform: translateY(-2px);
+}
+
+.back-btn {
+    background: transparent;
+    color: #0f0;
+    border: 2px solid #0f0;
+}
+
+.back-btn:hover {
+    background: #0f0;
+    color: #000;
+    box-shadow: 0 0 15px #0f0;
+    transform: translateY(-2px);
+}
+
+@keyframes radar-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+}
