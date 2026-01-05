@@ -1,3 +1,4 @@
+import clusterBombImage from '../../assets/powerups/clusterbomb.png';
 
 export default function ClusterBombs({ onClick, isActive, used, total, disabled }) {
     const remaining = total - used;
@@ -13,7 +14,8 @@ export default function ClusterBombs({ onClick, isActive, used, total, disabled 
             }}
         >
             <div className="powerup-count-badge">{remaining}</div>
-            <div>Cluster Bombs</div>
+            <img src={clusterBombImage} alt="Cluster Bombs" style={{ width: '50px', height: '50px', marginBottom: '5px' }} />
+            {/* <div>Cluster Bombs</div> */}
             <div className="powerup-indicator">
                 {[...Array(total)].map((_, i) => (
                     <span key={i} className={i < used ? 'used' : 'available'}>●</span>

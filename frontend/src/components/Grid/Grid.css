@@ -17,6 +17,10 @@
     margin: 0;
 }
 
+.board-grid-wrapper {
+    position: relative;
+}
+
 .board-grid {
     display: grid;
     grid-template-columns: repeat(10, 50px);

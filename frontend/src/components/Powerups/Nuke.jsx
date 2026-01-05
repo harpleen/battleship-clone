@@ -1,3 +1,5 @@
+import nukeImage from '../../assets/powerups/nuke.png';
+
 export default function Nuke({ onClick, isActive, used, total, disabled }) {
     const remaining = total - used;
     
@@ -12,7 +14,8 @@ export default function Nuke({ onClick, isActive, used, total, disabled }) {
             }}
         >
             <div className="powerup-count-badge">{remaining}</div>
-            <div>Nuke</div>
+            <img src={nukeImage} alt="Nuke" style={{ width: '50px', height: '50px', marginBottom: '5px' }} />
+            {/* <div>Nuke</div> */}
             <div className="powerup-indicator">
                 {[...Array(total)].map((_, i) => (
                     <span key={i} className={i < used ? 'used' : 'available'}>●</span>
