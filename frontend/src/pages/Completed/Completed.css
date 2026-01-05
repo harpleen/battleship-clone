@@ -28,7 +28,8 @@
 .lose-mode {
   color: #ff003c;
 }
-.lose-mode .title { text-shadow: 0 0 15px #ff003c; }
+.lose-mode .title { color: #ff003c; text-shadow: 0 0 15px #ff003c; }
+.lose-mode .subtitle { color: #ff003c; }
 .lose-mode .start-btn { border-color: #ff003c; color: #ff003c; box-shadow: 0 0 15px #ff003c; }
 .lose-mode .start-btn:hover { background: #ff003c; color: black; }
 

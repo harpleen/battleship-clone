@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import './App.css'
 import Home from './pages/Home'
-import Game from './pages/Game/Game'
-import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
+import Game from "./pages/Game/Game";import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
-import Completed from "./pages/Completed.jsx";
+import LoginPage from './pages/LoginPage/LoginPage';
+import SignUpPage from "./pages/SignUpPage/SignUp";
+import Completed from "./pages/Completed/Completed.jsx";
 import PlayerProfile from "./pages/PlayerProfile.jsx";
+import GameModes from "./pages/GameModes";
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
@@ -27,19 +29,28 @@ const router = createBrowserRouter([
     element: <CreatePlayer />
   },
   {
-  path: "/profile",
-  element: <PlayerProfile />,
+    path: '/profile',
+    element: <PlayerProfile />
   },
   {
     path: '/start', 
     element: <Start />
+  },
+  {
+    path: '/game-modes',
+    element: <GameModes />
+  },
+  {
+    path: '/login',
+    element: <LoginPage />
+  },
+  {
+    path: '/signup',
+    element: <SignUpPage />
   }
-
-])
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <RouterProvider router={router} />
