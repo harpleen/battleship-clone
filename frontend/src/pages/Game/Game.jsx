@@ -16,6 +16,8 @@ export default function Game() {
     const location = useLocation();
     const navigate = useNavigate();
     const playerName = location.state?.playerName || 'Player';
+    const difficulty = location.state?.difficulty || 'easy';
+    console.log('Selected difficulty:', difficulty);
     
     // Timer state
     const [gameTime, setGameTime] = useState(60);
@@ -402,7 +404,7 @@ export default function Game() {
     const cpuAttack = (currentStrikes = cpuStrikes) => {
         if (gameStatus) return;
         
-        const result = cpuStrike(cpuStrikes, playerBattleships, 'easy');
+        const result = cpuStrike(cpuStrikes, playerBattleships, difficulty);
 
         
         if (!result) return;
