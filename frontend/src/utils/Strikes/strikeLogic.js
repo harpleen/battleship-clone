@@ -1,3 +1,5 @@
+import { getCPUStrike, updateAIState, resetHuntMode } from './cpuAI';
+
 export const handleStrike = (idx, strikes, battleships) => {
     if (strikes.includes(idx)) {
         return {
@@ -17,7 +19,7 @@ export const handleStrike = (idx, strikes, battleships) => {
     };
 };
 
-export const cpuStrike = (strikes, battleships) => {
+export const cpuStrike = (strikes, battleships, difficulty = 'medium') => {
     const availablePositions = Array.from({ length: 100 }, (_, i) => i)
         .filter(pos => !strikes.includes(pos));
     
@@ -25,13 +27,21 @@ export const cpuStrike = (strikes, battleships) => {
         return null;
     }
 
-    const randomPos = availablePositions[Math.floor(Math.random() * availablePositions.length)];
-    const row = Math.floor(randomPos / 10);
-    const col = randomPos % 10;
-    const isHit = battleships.includes(randomPos);
+    const position = getCPUStrike(difficulty, strikes, battleships);
+    
+    if (position === null || position === undefined) {
+        return null;
+    }
+
+    const row = Math.floor(position / 10);
+    const col = position % 10;
+    const isHit = battleships.includes(position);
+
+    const newStrikes = [...strikes, position];
+    updateAIState(position, isHit, newStrikes, battleships);
 
     return {
-        position: randomPos,
+        position: position,
         row: row,
         col: col,
         isHit: isHit,

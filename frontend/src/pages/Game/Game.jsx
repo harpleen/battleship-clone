@@ -308,7 +308,8 @@ export default function Game() {
     const cpuAttack = (currentStrikes = cpuStrikes) => {
         if (gameStatus) return;
         
-        const result = cpuStrike(currentStrikes, playerBattleships);
+        const result = cpuStrike(cpuStrikes, playerBattleships, 'easy');
+
         
         if (!result) return;
 
