@@ -1,3 +1,5 @@
+import missileImage from '../../assets/powerups/missile.png';
+
 export default function Missiles({ onClick, isActive, used, total, disabled }) {
     const remaining = total - used;
     
@@ -12,7 +14,8 @@ export default function Missiles({ onClick, isActive, used, total, disabled }) {
             }}
         >
             <div className="powerup-count-badge">{remaining}</div>
-            <div>Missiles</div>
+            <img src={missileImage} alt="Missiles" style={{ width: '50px', height: '50px', marginBottom: '5px' }} />
+            {/* <div>Missiles</div> */}
             <div className="powerup-indicator">
                 {[...Array(total)].map((_, i) => (
                     <span key={i} className={i < used ? 'used' : 'available'}>●</span>
