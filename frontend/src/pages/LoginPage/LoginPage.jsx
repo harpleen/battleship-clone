@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../../services/authService";
-import "./LoginPage.css"; 
+import "./LoginPage.css";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -21,6 +22,14 @@ const LoginPage = () => {
 
   return (
     <div className="login-container">
+
+      {/* Back Arrow */}
+      <button
+        className="retro-back-btn"
+        onClick={() => navigate("/")}
+        aria-label="Back to Home"
+      />
+
       <h1 className="login-title">IDENTIFICATION</h1>
       <div className="login-subtitle">ENTER CREDENTIALS</div>
 
@@ -28,10 +37,11 @@ const LoginPage = () => {
         <input
           type="text"
           placeholder="USERNAME"
-          className="login-input" 
+          className="login-input"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+
         <input
           type="password"
           placeholder="PASSWORD"
@@ -39,15 +49,17 @@ const LoginPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        
+
         {error && <div className="error-msg">{error}</div>}
 
-        <button type="submit" className="login-btn">LOGIN</button>
-        
+        <button type="submit" className="login-btn">
+          LOGIN
+        </button>
+
         <Link to="/signup" className="login-btn login-btn-back">
           NEW RECRUIT? ENLIST
         </Link>
-        
+
         <Link to="/" className="login-btn login-btn-back">
           CANCEL
         </Link>

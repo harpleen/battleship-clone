@@ -1,4 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+/* CONTAINER */
+
 .create-player-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -7,6 +12,8 @@
   background-color: #000;
   color: #00ff00;
 }
+
+/* CONTENT */
 
 .create-player-content {
   flex: 1;
@@ -17,7 +24,9 @@
   gap: 1rem;
 }
 
-/* INPUT  */
+/* INPUT */
+
+
 .create-player-content input {
   padding: 15px;
   margin-top: -20px;
@@ -38,7 +47,8 @@
   outline: none;
 }
 
-/* BUTTONS / LINKS */
+/* BUTTONS */
+
 .create-player-content a,
 .create-player-content button {
   background: #000;
@@ -59,10 +69,11 @@
     0 0 6px #00ff00,
     0 0 14px #00ff00;
 
-  transition: transform 0.15s ease,
-              box-shadow 0.15s ease,
-              background-color 0.15s ease,
-              color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .create-player-content a:hover,
@@ -84,10 +95,99 @@
   transform: none;
 }
 
+/* HEADER */
 
 .create-player-header {
   font-size: 45px;
   margin-bottom: 1.5rem;
   color: #00ff00;
   text-shadow: 0 0 8px #00ff26;
+}
+
+/* RETRO BACK ARROW */
+
+
+.retro-back-btn {
+  position: fixed;
+  top: 20px;
+  left: 6px; 
+
+  width: 72px;
+  height: 72px;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  padding: 0;
+  margin: 0;
+
+  cursor: pointer;
+  z-index: 9999;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+
+  outline: none;
+
+  transition: transform 0.15s ease;
+}
+
+/* ARROW HEAD */
+
+.retro-back-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-65%, -50%);
+
+  border-top: 15px solid transparent;
+  border-bottom: 14px solid transparent;
+  border-right: 22px solid #00ff00;
+
+  filter: drop-shadow(0 0 6px #00ff00);
+
+  pointer-events: none;
+}
+
+/* ARROW SHAFT */
+
+.retro-back-btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-10%, -50%);
+
+  width: 22px;
+  height: 8px;
+
+  background: #00ff00;
+  box-shadow: 0 0 6px #00ff00;
+
+  pointer-events: none;
+}
+
+/* HOVER */
+
+.retro-back-btn:hover {
+  transform: translateX(-4px) scale(1.1);
+}
+
+/* ACTIVE */
+
+.retro-back-btn:active {
+  transform: translateX(-6px) scale(0.95);
+}
+
+/* FOCUS */
+
+.retro-back-btn:focus,
+.retro-back-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
