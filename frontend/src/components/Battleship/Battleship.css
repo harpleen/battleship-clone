@@ -1,4 +1,29 @@
 .battleship{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.battleship-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    animation: ship-pulse 2s infinite;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.battleship-length-2 .battleship-image {
+    transform: scaleX(1.7);
+}
+
+.battleship-length-5 .battleship-image {
+    transform: scaleX(1.2);
+}
+
+.battleship-placeholder {
     width: 100%;
     height: 100%;
     background-color: #0f0;

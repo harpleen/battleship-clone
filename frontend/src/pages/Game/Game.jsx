@@ -25,8 +25,8 @@ export default function Game() {
     const [playerTurnTime, setPlayerTurnTime] = useState(10);
     const [cpuTurnTime, setCpuTurnTime] = useState(10);
     const [showQuitConfirm, setShowQuitConfirm] = useState(false);
-    const [playerBattleships, setPlayerBattleships] = useState([]);
-    const [cpuBattleships, setCpuBattleships] = useState([]);
+    const [playerBattleships, setPlayerBattleships] = useState({ positions: [], ships: [] });
+    const [cpuBattleships, setCpuBattleships] = useState({ positions: [], ships: [] });
     const [playerStrikes, setPlayerStrikes] = useState([]);
     const [cpuStrikes, setCpuStrikes] = useState([]);
     const [activePowerup, setActivePowerup] = useState(null);
@@ -64,8 +64,8 @@ export default function Game() {
     const pausedPlayerTime = useRef(null);
     const playerStrikesRef = useRef([]);
     const cpuStrikesRef = useRef([]);
-    const playerBattleshipsRef = useRef([]);
-    const cpuBattleshipsRef = useRef([]);
+    const playerBattleshipsRef = useRef({ positions: [], ships: [] });
+    const cpuBattleshipsRef = useRef({ positions: [], ships: [] });
     
     // Cleanup timers
     const cleanupTimers = () => {
@@ -86,6 +86,7 @@ export default function Game() {
     // Generate random ship positions
     const generateRandomPositions = () => {
         const positions = new Set();
+        const ships = [];
         
         const canPlaceShip = (startPos, length, isHorizontal) => {
             const row = Math.floor(startPos / 10);
@@ -133,10 +134,17 @@ export default function Game() {
                 const isHorizontal = Math.random() < 0.5;
                 
                 if (canPlaceShip(startPos, length, isHorizontal)) {
+                    const shipPositions = [];
                     for (let i = 0; i < length; i++) {
                         const pos = isHorizontal ? startPos + i : startPos + (i * 10);
                         positions.add(pos);
+                        shipPositions.push(pos);
                     }
+                    ships.push({
+                        length,
+                        positions: shipPositions,
+                        orientation: isHorizontal ? 'horizontal' : 'vertical'
+                    });
                     return true;
                 }
                 attempts++;
@@ -144,10 +152,10 @@ export default function Game() {
             return false;
         };
         
-        const shipLengths = [5, 4, 3, 2]; // #TODO: assign svg files to different ship lengths
+        const shipLengths = [5, 4, 3, 2];
         shipLengths.forEach(length => placeShip(length));
         
-        return Array.from(positions);
+        return { positions: Array.from(positions), ships };
     };
     
     // Initialize battleship positions
@@ -183,8 +191,8 @@ export default function Game() {
                 if (prev <= 0) {
                     cleanupTimers();
                     // Compare hit counts to determine winner
-                    const playerHits = countHits(playerStrikesRef.current, cpuBattleshipsRef.current);
-                    const cpuHits = countHits(cpuStrikesRef.current, playerBattleshipsRef.current);
+                    const playerHits = countHits(playerStrikesRef.current, cpuBattleshipsRef.current.positions);
+                    const cpuHits = countHits(cpuStrikesRef.current, playerBattleshipsRef.current.positions);
                     
                     if (playerHits > cpuHits) {
                         setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
@@ -311,7 +319,7 @@ export default function Game() {
             return;
         }
         
-        const result = handleStrike(idx, playerStrikes, cpuBattleships);
+        const result = handleStrike(idx, playerStrikes, cpuBattleships.positions);
         
         if (!result.success) {
             console.log(result.message);
@@ -329,10 +337,10 @@ export default function Game() {
         }
 
         // Check if all enemy ships are destroyed
-        if (checkGameOver(newStrikes, cpuBattleships)) {
+        if (checkGameOver(newStrikes, cpuBattleships.positions)) {
             cleanupTimers();
-            const playerHits = countHits(newStrikes, cpuBattleships);
-            const cpuHits = countHits(cpuStrikes, playerBattleships);
+            const playerHits = countHits(newStrikes, cpuBattleships.positions);
+            const cpuHits = countHits(cpuStrikes, playerBattleships.positions);
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
             setTimeout(() => {
@@ -365,7 +373,7 @@ export default function Game() {
         }
         
         // Apply the powerup
-        const result = applyPowerup(powerupStrikes, playerStrikes, cpuBattleships);
+        const result = applyPowerup(powerupStrikes, playerStrikes, cpuBattleships.positions);
         setPlayerStrikes(result.newStrikes);
         setMessage(result.message);
         
@@ -385,10 +393,10 @@ export default function Game() {
         setActivePowerup(null);
         
         // Check if all enemy ships are destroyed
-        if (checkGameOver(result.newStrikes, cpuBattleships)) {
+        if (checkGameOver(result.newStrikes, cpuBattleships.positions)) {
             cleanupTimers();
-            const playerHits = countHits(result.newStrikes, cpuBattleships);
-            const cpuHits = countHits(cpuStrikes, playerBattleships);
+            const playerHits = countHits(result.newStrikes, cpuBattleships.positions);
+            const cpuHits = countHits(cpuStrikes, playerBattleships.positions);
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
             setTimeout(() => {
@@ -404,8 +412,7 @@ export default function Game() {
     const cpuAttack = (currentStrikes = cpuStrikes) => {
         if (gameStatus) return;
         
-        const result = cpuStrike(cpuStrikes, playerBattleships, difficulty);
-
+        const result = cpuStrike(currentStrikes, playerBattleships.positions, difficulty);
         
         if (!result) return;
 
@@ -414,10 +421,10 @@ export default function Game() {
         setMessage(result.message);
 
         // Check if all player ships are destroyed
-        if (checkGameOver(newStrikes, playerBattleships)) {
+        if (checkGameOver(newStrikes, playerBattleships.positions)) {
             cleanupTimers();
-            const playerHits = countHits(playerStrikes, cpuBattleships);
-            const cpuHits = countHits(newStrikes, playerBattleships);
+            const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+            const cpuHits = countHits(newStrikes, playerBattleships.positions);
             setMessage('💀 CPU WINS! All your ships destroyed!');
             setGameStatus('cpu');
             setTimeout(() => {
@@ -669,16 +676,16 @@ export default function Game() {
                                     <div className="stat-section">
                                         <p className="stat-title">Strikes Landed</p>
                                         <div className="stat-values">
-                                            <span className="player-moves">You {countHits(playerStrikes, cpuBattleships)}</span>
+                                            <span className="player-moves">You {countHits(playerStrikes, cpuBattleships.positions)}</span>
                                             <span className="separator"> | </span>
-                                            <span className="cpu-moves">CPU {countHits(cpuStrikes, playerBattleships)}</span>
+                                            <span className="cpu-moves">CPU {countHits(cpuStrikes, playerBattleships.positions)}</span>
                                         </div>
                                     </div>
                                     <div className="stat-section">
                                         <p className="stat-title">Accuracy</p>
                                         <div className="stat-values">
                                             <span className="player-moves">
-                                                {playerStrikes.length > 0 ? Math.round((countHits(playerStrikes, cpuBattleships) / playerStrikes.length) * 100) : 0}%
+                                                {playerStrikes.length > 0 ? Math.round((countHits(playerStrikes, cpuBattleships.positions) / playerStrikes.length) * 100) : 0}%
                                             </span>
                                         </div>
                                     </div>
