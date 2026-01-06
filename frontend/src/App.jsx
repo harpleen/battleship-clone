@@ -1,15 +1,18 @@
 import { useState } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './App.css'
+
+// --- PAGES --–
 import Home from './pages/Home'
-import Game from "./pages/Game/Game";import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
+import Game from "./pages/Game/Game";
+import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
 import Start from './pages/Start.jsx' 
 import LoginPage from './pages/LoginPage/LoginPage';
 import SignUpPage from "./pages/SignUpPage/SignUp";
 import Completed from "./pages/Completed/Completed.jsx";
 import PlayerProfile from "./pages/PlayerProfile.jsx";
 import GameModes from "./pages/GameModes";
-
-import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import Lobby from './pages/lobby/Lobby.jsx'; // <--- ADD THIS IMPORT
 
 const router = createBrowserRouter([
   {
@@ -47,6 +50,11 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <SignUpPage />
+  },
+  // --- ADD THIS ROUTE BLOCK ---
+  {
+    path: '/lobby', 
+    element: <Lobby />
   }
 ]);
 

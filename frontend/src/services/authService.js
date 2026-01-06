@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/users"; 
+const API_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/users` : "http://localhost:3000/users";
 
 export const login = async (username, password) => {
   const response = await fetch(`${API_URL}/login`, {
@@ -31,16 +31,37 @@ export const signup = async (username, password, confirmPassword) => {
   }
 };
 
-export const updateStats = async (stats) => {
+export const getUserProfile = async () => {
   const token = localStorage.getItem("token");
-  if (!token) return;
+  if (!token) throw new Error("No authentication token found");
 
-  await fetch(`${API_URL}/stats`, {
-    method: "PUT",
+  const response = await fetch(`${API_URL}/me`, {
+    method: "GET",
     headers: { 
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
     },
-    body: JSON.stringify(stats),
   });
+
+  const data = await response.json();
+  if (response.ok) return data;
+  throw new Error(data.message);
+};
+
+// --- NEW FUNCTION ---
+export const getLeaderboardData = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token");
+
+  const response = await fetch(`${API_URL}/leaderboard`, {
+    method: "GET",
+    headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    },
+  });
+
+  const data = await response.json();
+  if (response.ok) return data;
+  throw new Error(data.message);
 };

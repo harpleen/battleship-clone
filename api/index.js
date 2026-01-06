@@ -1,16 +1,28 @@
-// docs: https://github.com/motdotla/dotenv#%EF%B8%8F-usage
 require("dotenv").config();
-
+const http = require('http');
+const { Server } = require("socket.io");
+const mongoose = require("mongoose");
 const app = require("./app.js");
 const { connectToDatabase } = require("./db/db.js");
 
-function listenForRequests() {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log("Now listening on port", port);
-  });
-}
+// 1. Create HTTP Server
+const server = http.createServer(app);
 
+// 2. Setup Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow all connections for now (Simpler for Vercel)
+    methods: ["GET", "POST"]
+  }
+});
+
+// 3. Register Socket Handlers
+require("./socket/socketHandler")(io);
+
+// 4. Connect & Listen
 connectToDatabase().then(() => {
-  listenForRequests();
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });

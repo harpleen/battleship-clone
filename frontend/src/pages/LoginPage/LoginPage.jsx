@@ -7,14 +7,15 @@ const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate("/game", { state: { isRanked: true, playerName: username } });
+      // SUCCESS: Go to the Command Center (Profile)
+      navigate('/profile'); 
     } catch (err) {
       setError(err.message);
     }
@@ -22,7 +23,6 @@ const LoginPage = () => {
 
   return (
     <div className="login-container">
-
       {/* Back Arrow */}
       <button
         className="retro-back-btn"

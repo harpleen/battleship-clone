@@ -8,48 +8,22 @@ const GameModes = () => {
 
   return (
     <div className="start-crt">
-
-      {/* BACK ARROW */}
-      <button
-        className="retro-back-btn"
-        onClick={() => window.history.back()}
-        aria-label="Back"
-      />
-
-      <h1 className="title">SELECT YOUR COMBAT LEVEL</h1>
-      <div className="subtitle">BATTLE ORDERS</div>
+      <button className="retro-back-btn" onClick={() => window.history.back()} />
+      <h1 className="title">SELECT COMBAT MODE</h1>
 
       <div className="menu">
-        <Link
-          to="/game"
-          state={{ playerName, difficulty: "easy" }}
-          className="start-btn"
-        >
-          EASY
+        {/* PvP Button */}
+        <Link to="/lobby" className="start-btn" style={{borderColor: '#0f0', color: '#0f0'}}>
+          ONLINE RANKED (PvP)
         </Link>
 
-        <Link
-          to="/game"
-          state={{ playerName, difficulty: "medium" }}
-          className="start-btn"
-        >
-          MEDIUM
+        {/* Single Player Buttons */}
+        <Link to="/game" state={{ playerName, difficulty: "easy" }} className="start-btn">
+          SKIRMISH (EASY)
         </Link>
-
-        <Link
-          to="/game"
-          state={{ playerName, difficulty: "hard" }}
-          className="start-btn"
-        >
-          HARD
-        </Link>
-
-        <Link
-          to="/start"
-          state={{ playerName }}
-          className="start-btn btn-back"
-        >
-          BACK
+        
+        <Link to="/game" state={{ playerName, difficulty: "medium" }} className="start-btn">
+          SKIRMISH (MEDIUM)
         </Link>
       </div>
     </div>

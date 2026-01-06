@@ -7,6 +7,7 @@ const router = express.Router();
 router.post('/', usersController.create);              
 router.post('/login', usersController.login);           
 router.get('/me', tokenChecker, usersController.getUserInfo); 
+router.get('/leaderboard', tokenChecker, usersController.getLeaderboard); // <--- NEW ROUTE
 router.put('/stats', tokenChecker, usersController.update);   
 router.delete('/', tokenChecker, usersController.delete);     
 
