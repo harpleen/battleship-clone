@@ -11,7 +11,7 @@ const server = http.createServer(app);
 // 2. Setup Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all connections for now (Simpler for Vercel)
+    origin: "*", // Allow all connections (Simplifies Vercel/Render connection)
     methods: ["GET", "POST"]
   }
 });
@@ -22,7 +22,8 @@ require("./socket/socketHandler")(io);
 // 4. Connect & Listen
 connectToDatabase().then(() => {
   const PORT = process.env.PORT || 3000;
-  server.listen(PORT, () => {
+  
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
   });
 });
