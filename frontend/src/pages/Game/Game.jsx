@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import playagain from '../../assets/sound_effects/playagain.mp3'; 
 import Grid from "../../components/Grid/Grid";
 import GameHeader from '../../components/GameHeader/GameHeader';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
@@ -192,6 +193,7 @@ export default function Game() {
                     const playerHits = countHits(playerStrikesRef.current, cpuBattleshipsRef.current.positions);
                     const cpuHits = countHits(cpuStrikesRef.current, playerBattleshipsRef.current.positions);
                     
+
                     if (playerHits > cpuHits) {
                         setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
                         setGameStatus('player');
@@ -431,6 +433,7 @@ export default function Game() {
             return;
         }
 
+
         if (result.isHit) {
             setTimeout(() => {
                 cpuAttack(newStrikes);
@@ -525,8 +528,17 @@ export default function Game() {
         }, 100);
     };
 
+    const handlePlayAgain = () => {
+        const sound = new Audio(playagain);
+        // sound.play().catch(error => console.log('Play again sound error:', error));
+    };
+
     const pauseGame = () => {
         if (gameStatus) return;
+        
+        // Play sound effect
+        const sound = new Audio(playagain);
+        sound.play().catch(error => console.log('Sound error:', error));
         
         // Save current player turn time before pausing
         if (currentPlayer === 'player') {
