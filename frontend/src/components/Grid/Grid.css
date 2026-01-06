@@ -1,88 +1,389 @@
 .board-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    position: relative;
-    z-index: 3;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 15px;
+position: relative;
+z-index: 3;
 }
 
 .board-container h3 {
-    color: #0f0;
-    font-family: 'Courier New', monospace;
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px #0f0;
-    margin: 0;
+color: #0f0;
+font-family: 'Courier New', monospace;
+font-size: 1.4rem;
+text-transform: uppercase;
+letter-spacing: 2px;
+text-shadow: 0 0 10px #0f0;
+margin: 0;
 }
 
 .board-grid-wrapper {
-    position: relative;
+position: relative;
 }
 
 .board-grid {
-    display: grid;
-    grid-template-columns: repeat(10, 50px);
-    grid-template-rows: repeat(10, 50px);
-    gap: 0;
-    border: 2px solid #0f0;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-    background: rgba(0, 0, 0, 0.8);
+display: grid;
+grid-template-columns: repeat(10, 50px);
+grid-template-rows: repeat(10, 50px);
+gap: 0;
+border: 2px solid #0f0;
+box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+background: rgba(0, 0, 0, 0.8);
 }
 
 .squares {
-    width: 50px;
-    height: 50px;
-    border: 1px solid rgba(0, 255, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    background: rgba(0, 0, 0, 0.5);
-    transition: all 0.2s ease;
+width: 50px;
+height: 50px;
+border: 1px solid rgba(0, 255, 0, 0.3);
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+position: relative;
+background: rgba(0, 0, 0, 0.5);
+transition: all 0.2s ease;
 }
 
 .squares:hover {
-    background-color: rgba(0, 255, 0, 0.2);
-    border-color: #0f0;
-    box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+background-color: rgba(0, 255, 0, 0.2);
+border-color: #0f0;
+box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
 }
 
+/* Simple hit styling */
 .squares.hit {
-    background-color: rgba(255, 0, 0, 0.4);
-    border-color: #f00;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+background-color: rgba(255, 50, 0, 0.15);
+border-color: rgba(255, 100, 0, 0.4);
 }
 
 .squares.miss {
-    background-color: rgba(100, 100, 100, 0.3);
-    border-color: rgba(100, 100, 100, 0.5);
+background-color: rgba(100, 100, 100, 0.3);
+border-color: rgba(100, 100, 100, 0.5);
 }
 
-.strike-marker {
-    font-size: 30px;
-    font-weight: bold;
-    color: #0f0;
-    position: absolute;
-    z-index: 10;
-    text-shadow: 0 0 10px #0f0;
-    animation: strike-appear 0.3s ease-out;
+/* Miss marker */
+.miss-marker {
+font-size: 24px;
+font-weight: bold;
+color: rgba(255, 255, 255, 0.7);
+text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+animation: fade-in 0.3s ease-out;
 }
 
-.squares.hit .strike-marker {
-    color: #f00;
-    text-shadow: 0 0 10px #f00;
+@keyframes fade-in {
+from {
+    opacity: 0;
+    transform: scale(0.5);
+}
+to {
+    opacity: 1;
+    transform: scale(1);
+}
 }
 
-@keyframes strike-appear {
-    from {
-        transform: scale(0);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+/* ... (previous styles remain the same until flame section) ... */
+
+/* Flame container */
+.ship-flame {
+pointer-events: none;
 }
+
+/* Main flame structure - Reduced brightness */
+.real-flame {
+position: relative;
+width: 18px;  /* Slightly smaller */
+height: 28px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+/* Flame layers with reduced brightness */
+.flame-layer-1 {
+position: absolute;
+width: 14px;
+height: 26px;
+background: linear-gradient(to top,
+    rgba(255, 220, 100, 0.9) 0%,        /* Less bright yellow */
+    rgba(255, 180, 50, 0.8) 30%,        /* Darker orange */
+    rgba(255, 130, 30, 0.7) 60%,        /* Darker red-orange */
+    rgba(220, 80, 20, 0.6) 90%,         /* Darker red */
+    transparent 100%
+);
+border-radius: 50% 50% 20% 20%;
+filter: blur(1px);
+animation: flame-dance-1 0.8s infinite alternate;
+z-index: 3;
+}
+
+.flame-layer-2 {
+position: absolute;
+width: 10px;
+height: 22px;
+background: linear-gradient(to top,
+    rgba(255, 240, 180, 0.8) 0%,        /* Less bright */
+    rgba(255, 220, 120, 0.7) 40%,       /* Softer yellow */
+    rgba(255, 180, 80, 0.6) 70%,        /* Softer orange */
+    transparent 100%
+);
+border-radius: 50% 50% 25% 25%;
+filter: blur(0.5px);
+animation: flame-dance-2 0.6s infinite alternate;
+z-index: 4;
+}
+
+.flame-layer-3 {
+position: absolute;
+width: 6px;
+height: 18px;
+background: linear-gradient(to top,
+    rgba(255, 250, 220, 0.7) 0%,        /* Less white */
+    rgba(255, 240, 180, 0.6) 50%,       /* Softer light */
+    rgba(255, 220, 140, 0.5) 80%,       /* Soft yellow */
+    transparent 100%
+);
+border-radius: 50% 50% 30% 30%;
+animation: flame-dance-3 0.4s infinite alternate;
+z-index: 5;
+}
+
+/* Fire glow around the flame - Reduced opacity */
+.flame-glow {
+position: absolute;
+width: 28px;
+height: 38px;
+background: radial-gradient(ellipse at center,
+    rgba(255, 180, 50, 0.3) 0%,         /* Reduced opacity */
+    rgba(255, 130, 30, 0.25) 40%,       /* Reduced opacity */
+    rgba(220, 80, 20, 0.2) 70%,         /* Reduced opacity */
+    transparent 100%
+);
+border-radius: 50%;
+filter: blur(3px);
+animation: glow-pulse 1.2s infinite alternate;
+z-index: 2;
+}
+
+/* Flame dance animations remain the same */
+@keyframes flame-dance-1 {
+0% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.7;  /* Reduced from 0.9 */
+    border-radius: 50% 50% 20% 20%;
+}
+25% {
+    transform: scaleY(1.1) translateY(-2px);
+    opacity: 0.8;  /* Reduced from 1.0 */
+    border-radius: 40% 60% 25% 30%;
+}
+50% {
+    transform: scaleY(0.95) translateY(1px);
+    opacity: 0.65; /* Reduced from 0.85 */
+    border-radius: 60% 40% 15% 25%;
+}
+75% {
+    transform: scaleY(1.05) translateY(-1px);
+    opacity: 0.75; /* Reduced from 0.95 */
+    border-radius: 45% 55% 20% 25%;
+}
+100% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.7;  /* Reduced from 0.9 */
+    border-radius: 50% 50% 20% 20%;
+}
+}
+
+@keyframes flame-dance-2 {
+0% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.65; /* Reduced from 0.8 */
+}
+33% {
+    transform: scaleY(1.15) translateY(-3px) translateX(1px);
+    opacity: 0.8;  /* Reduced from 1.0 */
+}
+66% {
+    transform: scaleY(0.9) translateY(2px) translateX(-1px);
+    opacity: 0.6;  /* Reduced from 0.7 */
+}
+100% {
+    transform: scaleY(1.05) translateY(-1px);
+    opacity: 0.7;  /* Reduced from 0.9 */
+}
+}
+
+@keyframes flame-dance-3 {
+0% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.6;  /* Reduced from 0.7 */
+}
+50% {
+    transform: scaleY(1.2) translateY(-4px);
+    opacity: 0.8;  /* Reduced from 1.0 */
+}
+100% {
+    transform: scaleY(0.9) translateY(1px);
+    opacity: 0.65; /* Reduced from 0.8 */
+}
+}
+
+@keyframes glow-pulse {
+0% {
+    transform: scale(1);
+    opacity: 0.4;  /* Reduced from 0.5 */
+}
+100% {
+    transform: scale(1.2);
+    opacity: 0.5;  /* Reduced from 0.7 */
+}
+}
+
+/* Embers/sparks flying up - Less bright */
+.ember {
+position: absolute;
+width: 2px;  /* Smaller */
+height: 2px;
+background: rgba(255, 220, 140, 0.7);  /* Less bright */
+border-radius: 50%;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%);
+animation: ember-float 1.5s infinite;
+filter: blur(0.5px);
+z-index: 6;
+}
+
+.ember:nth-child(2) {
+left: 40%;
+animation-delay: 0.3s;
+animation-duration: 1.8s;
+}
+
+.ember:nth-child(3) {
+left: 60%;
+animation-delay: 0.6s;
+animation-duration: 1.2s;
+}
+
+@keyframes ember-float {
+0% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 0;
+}
+20% {
+    opacity: 0.7;  /* Reduced from 1.0 */
+}
+80% {
+    opacity: 0.6;  /* Reduced from 0.8 */
+}
+100% {
+    transform: translateX(calc(-50% + 10px)) translateY(-40px) scale(0.3);
+    opacity: 0;
+}
+}
+
+/* Smoke wisp - More subtle */
+.smoke-wisp {
+position: absolute;
+width: 10px;
+height: 6px;
+background: rgba(40, 40, 40, 0.15);  /* Darker smoke */
+border-radius: 50%;
+bottom: 5px;
+left: 50%;
+transform: translateX(-50%);
+animation: smoke-rise 3s infinite;
+filter: blur(3px);  /* Less blur */
+z-index: 1;
+}
+
+@keyframes smoke-rise {
+0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0) scale(0.8);
+}
+30% {
+    opacity: 0.2;  /* Reduced from 0.3 */
+}
+100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50px) scale(2);
+}
+}
+
+/* For larger flames on end positions or fully hit ships - Less intense */
+.ship-flame.large-flame .real-flame {
+width: 22px;  /* Slightly smaller */
+height: 34px;
+}
+
+.ship-flame.large-flame .flame-layer-1 {
+width: 18px;
+height: 32px;
+}
+
+.ship-flame.large-flame .flame-layer-2 {
+width: 14px;
+height: 26px;
+}
+
+.ship-flame.large-flame .flame-layer-3 {
+width: 10px;
+height: 20px;
+}
+
+.ship-flame.large-flame .flame-glow {
+width: 34px;
+height: 46px;
+}
+
+/* Heat wave effect - More subtle */
+.heat-wave {
+position: absolute;
+width: 38px;
+height: 38px;
+border-radius: 50%;
+background: radial-gradient(circle,
+    rgba(220, 100, 30, 0.08) 0%,  /* Much more subtle */
+    rgba(200, 50, 10, 0.04) 30%,  /* Much more subtle */
+    transparent 70%
+);
+filter: blur(4px);
+animation: heat-wave-pulse 2s infinite;
+z-index: 0;
+}
+
+@keyframes heat-wave-pulse {
+0% {
+    transform: scale(1);
+    opacity: 0.15;  /* Reduced from 0.3 */
+}
+50% {
+    transform: scale(1.5);
+    opacity: 0.05;  /* Reduced from 0.1 */
+}
+100% {
+    transform: scale(1);
+    opacity: 0.15;  /* Reduced from 0.3 */
+}
+}
+
+/* Also reduce the hit square background brightness */
+.squares.hit {
+background-color: rgba(200, 60, 20, 0.12);  /* Darker, more subtle */
+border-color: rgba(220, 100, 40, 0.3);       /* Less intense border */
+}
+
+/* Optional: Add a subtle shadow to flames for depth without brightness */
+.flame-layer-1::before {
+content: '';
+position: absolute;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.1);
+border-radius: 50% 50% 20% 20%;
+filter: blur(0.5px);
+z-index: -1;
+}
+
+/* ... (rest of the CSS remains the same) ... */
