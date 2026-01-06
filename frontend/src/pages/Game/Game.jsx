@@ -7,7 +7,7 @@ import GameTimer from '../../components/GameTimer/GameTimer';
 import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import { clusterBombs, missiles, nuke, applyPowerup } from '../../utils/Strikes/powerupLogic';
-import ClusterBombs from '../../components/Powerups/Clusterbombs';
+import Clusterbombs from '../../components/Powerups/ClusterBombs';
 import Missiles from '../../components/Powerups/Missiles';
 import Nuke from '../../components/Powerups/Nuke';
 import './Game.css';
