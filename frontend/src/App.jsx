@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import './App.css'
-import Home from './pages/Home'
-import Game from "./pages/Game/Game";import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
-import Start from './pages/Start.jsx' 
+import Home from './pages/Home/Home.jsx'
+import Game from "./pages/Game/Game";
+import CreatePlayer from './pages/Create_Player/Create_Player.jsx'
+import Start from './pages/Start/Start.jsx' 
 import LoginPage from './pages/LoginPage/LoginPage';
 import SignUpPage from "./pages/SignUpPage/SignUp";
 import Completed from "./pages/Completed/Completed.jsx";
-import PlayerProfile from "./pages/PlayerProfile.jsx";
-import GameModes from "./pages/GameModes";
+import PlayerProfile from "./pages/PlayerProfile/PlayerProfile.jsx";
+import GameModes from "./pages/GameModes/GameModes.jsx";
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
