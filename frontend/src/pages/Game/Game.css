@@ -106,15 +106,28 @@ transform: scale(0.9);
 }
 
 .game-grids-container {
-display: flex;
-align-items: flex-start;
-justify-content: center;
-gap: 15px;
-position: relative;
-z-index: 3;
-width: 100%;
-flex-wrap: nowrap;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 60px; /* more padding between center box and the grids */
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    flex-wrap: nowrap;
+    transform: translateY(-80px); /* nudge the grids further upward */
 }
+
+@media (max-width: 768px) {
+    .game-grids-container {
+        gap: 28px; /* smaller gap on mobile */
+    }
+}
+
+@media (max-width: 768px) {
+    .game-grids-container {
+        transform: translateY(-18px); /* slightly larger nudge on mobile */
+    }
+} 
 
 .player-grid-section {
 display: flex;
@@ -140,18 +153,26 @@ margin-bottom: 8px;
 }
 
 .vs-text {
-font-size: 2rem;
-font-weight: 800;
-color: #0f0;
-text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
-letter-spacing: 3px;
-animation: vs-pulse 2s infinite;
-font-family: 'Courier New', monospace;
-background: #000;
-padding: 6px 16px;
-border: 3px solid #0f0;
-border-radius: 5px;
-margin: 0;
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: #0f0;
+
+    text-shadow:
+        0 0 12px #0f0,
+        0 0 28px #0f0,
+        0 0 48px #0f0;
+
+    letter-spacing: 4px;
+    animation: vs-pulse 2s infinite;
+
+    font-family: 'Courier New', monospace;
+
+    background: #000;
+    padding: 10px 22px;
+    border: 3px solid #0f0;
+    border-radius: 6px;
+
+    transform: translateY(32px); /* PUSH DOWN */
 }
 
 .game-status {
@@ -170,7 +191,25 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 margin: 0 auto;
-}
+transform: translateY(95px); /* move the middle box further down */
+transition: transform 0.12s ease;
+} 
+
+@media (max-width: 768px) {
+    .game-status {
+        transform: translateY(40px); 
+    }
+
+    .vs-text {
+        font-size: 2rem;
+        transform: translateY(-4px);
+    }
+
+    .game-mode {
+        font-size: 0.9rem;
+        transform: translateY(6px);
+    }
+} 
 
 .status-message {
 font-size: 1.3rem;
@@ -695,6 +734,7 @@ padding: 10px 20px;
 .game-status {
 padding: 20px;
 min-width: 250px;
+transform: translateY(12px); 
 }
 
 .status-message {
@@ -736,19 +776,20 @@ bottom: 15px;
 
 /* GAME MODE DISPLAY */
 .game-mode {
-    margin-top: 10px;
-    margin-left:-33px;
-    font-size: 1.5rem;
-    letter-spacing: 3px;
+    margin: 21px auto 0; /* center horizontally and move down */
+    margin-left: -38px;
+    font-size: 1rem; /* smaller */
+    letter-spacing: 2px;
     text-transform: uppercase;
 
     color: #0f0;
     border: 2px solid #0f0;
-    padding: 6px 15px;
+    padding: 6px 12px;
     display: inline-block;
 
     background: #000;
     text-shadow: 0 0 6px #0f0;
+    transform: translateY(10px); /* nudge downward toward the timer */
 }
 /* God Mode Theme */
 .game-page.god-mode {

@@ -1,12 +1,12 @@
 .game-header {
 text-align: center;
-padding: 5px 10px 0 10px;
+padding: 12px 10px 0 10px;
 position: relative;
 z-index: 3;
 }
 
 .game-header h1 {
-font-size: 2.5rem;
+font-size: 3.2rem;
 color: #0f0;
 margin: 0 0 5px 0;
 font-weight: 700;
@@ -20,7 +20,7 @@ position: relative;
 
 .game-subtitle {
 color: #0a0;
-font-size: 1rem;
+font-size: 0.9rem;
 margin: 0;
 font-weight: 400;
 letter-spacing: 1px;
