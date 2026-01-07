@@ -734,6 +734,22 @@ bottom: 15px;
 }
 }
 
+/* GAME MODE DISPLAY */
+.game-mode {
+    margin-top: 10px;
+    margin-left:-33px;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+
+    color: #0f0;
+    border: 2px solid #0f0;
+    padding: 6px 15px;
+    display: inline-block;
+
+    background: #000;
+    text-shadow: 0 0 6px #0f0;
+}
 /* God Mode Theme */
 .game-page.god-mode {
 background: linear-gradient(135deg, #0a001a, #1a0000, #2d001a);
