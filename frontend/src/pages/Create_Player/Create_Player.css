@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 /* CONTAINER */
-
 .create-player-container {
   position: relative;
   display: flex;
@@ -9,82 +8,153 @@
   min-height: 100vh;
   width: 100%;
   font-family: "Press Start 2P", monospace;
-  background-color: #000;
+  background: #000;
   color: #00ff00;
+  overflow: hidden;
+
+  background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 100% 2px;
+}
+
+/* RADAR RINGS */
+.create-player-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 380px;
+  height: 380px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 1px rgba(0,255,0,0.12),
+    0 0 0 90px rgba(0,255,0,0.04),
+    0 0 0 180px rgba(0,255,0,0.03),
+    0 0 0 260px rgba(0,255,0,0.02);
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* RADAR SWEEP */
+.create-player-container::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%) rotate(0deg);
+  border-radius: 50%;
+
+  background: conic-gradient(
+    rgba(0,255,0,0.18) 0deg,
+    rgba(0,255,0,0.08) 35deg,
+    rgba(0,255,0,0) 120deg
+  );
+
+  animation: sweep 4s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* PINGS */
+.create-player-container .ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #0f0;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center center;
+  animation: ping 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+.create-player-container .ping.ring-1 {
+  transform: rotate(45deg) translateX(60px);
+}
+
+.create-player-container .ping.ring-2 {
+  transform: rotate(140deg) translateX(120px);
+  animation-delay: 1s;
+}
+
+.create-player-container .ping.ring-3 {
+  transform: rotate(260deg) translateX(180px);
+  animation-delay: 2s;
+}
+
+/* ANIMATIONS */
+@keyframes ping {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  60%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes sweep {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* CONTENT */
-
 .create-player-content {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  z-index: 3; /* above radar */
 }
 
 /* INPUT */
-
-
 .create-player-content input {
   padding: 15px;
   margin-top: -20px;
   margin-bottom: 15px;
-
   font-size: 30px;
   font-family: "Press Start 2P", monospace;
-
   min-width: 500px;
   height: 30px;
-
   background-color: #000;
   color: #00ff00;
-
   border-radius: 6px;
   border: 3px solid #00ff00;
-
   outline: none;
 }
 
 /* BUTTONS */
-
 .create-player-content a,
 .create-player-content button {
   background: #000;
   color: #00ff00;
-
   border: 3px solid #00ff00;
   padding: 22px 34px;
   font-size: 20px;
-
   cursor: pointer;
   min-width: 350px;
   text-align: center;
   text-decoration: none;
-
   font-family: "Press Start 2P", monospace;
-
-  box-shadow:
-    0 0 6px #00ff00,
-    0 0 14px #00ff00;
-
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    background-color 0.15s ease,
-    color 0.15s ease;
+  box-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
+  transition: transform 0.15s ease,
+              box-shadow 0.15s ease,
+              background-color 0.15s ease,
+              color 0.15s ease;
 }
 
 .create-player-content a:hover,
 .create-player-content button:hover:not(:disabled) {
   background: #00ff00;
   color: #000;
-
-  box-shadow:
-    0 0 12px #00ff00,
-    0 0 24px #00ff00;
-
+  box-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
   transform: translateY(-2px) scale(1.04);
 }
 
@@ -96,98 +166,90 @@
 }
 
 /* HEADER */
-
 .create-player-header {
   font-size: 45px;
   margin-bottom: 1.5rem;
   color: #00ff00;
   text-shadow: 0 0 8px #00ff26;
+  z-index: 3;
 }
 
 /* RETRO BACK ARROW */
-
-
 .retro-back-btn {
   position: fixed;
   top: 20px;
   left: 6px; 
-
   width: 72px;
   height: 72px;
-
   background: transparent;
   border: none;
   box-shadow: none;
-
   padding: 0;
   margin: 0;
-
   cursor: pointer;
-  z-index: 9999;
-
+  z-index: 3;
   appearance: none;
   -webkit-appearance: none;
   -webkit-tap-highlight-color: transparent;
-
   outline: none;
-
   transition: transform 0.15s ease;
 }
-
-/* ARROW HEAD */
 
 .retro-back-btn::before {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-
   transform: translate(-65%, -50%);
-
   border-top: 15px solid transparent;
   border-bottom: 14px solid transparent;
   border-right: 22px solid #00ff00;
-
   filter: drop-shadow(0 0 6px #00ff00);
-
   pointer-events: none;
 }
-
-/* ARROW SHAFT */
 
 .retro-back-btn::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-
   transform: translate(-10%, -50%);
-
   width: 22px;
   height: 8px;
-
   background: #00ff00;
   box-shadow: 0 0 6px #00ff00;
-
   pointer-events: none;
 }
-
-/* HOVER */
 
 .retro-back-btn:hover {
   transform: translateX(-4px) scale(1.1);
 }
 
-/* ACTIVE */
-
 .retro-back-btn:active {
   transform: translateX(-6px) scale(0.95);
 }
-
-/* FOCUS */
 
 .retro-back-btn:focus,
 .retro-back-btn:focus-visible {
   outline: none;
   box-shadow: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .create-player-content input {
+    min-width: 90%;
+    font-size: 24px;
+  }
+
+  .create-player-content a,
+  .create-player-content button {
+    min-width: 90%;
+    font-size: 16px;
+    padding: 15px 20px;
+  }
+
+  .create-player-header {
+    font-size: 32px;
+  }
 }
