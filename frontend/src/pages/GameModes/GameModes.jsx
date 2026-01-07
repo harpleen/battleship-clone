@@ -45,6 +45,14 @@ const GameModes = () => {
         </Link>
 
         <Link
+          to="/game"
+          state={{ playerName, difficulty: "god" }}
+          className="start-btn god-mode-btn"
+        >
+          GOD MODE
+        </Link>
+
+        <Link
           to="/start"
           state={{ playerName }}
           className="start-btn btn-back"

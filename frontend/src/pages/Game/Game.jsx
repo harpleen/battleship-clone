@@ -7,7 +7,7 @@ import GameTimer from '../../components/GameTimer/GameTimer';
 import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import { clusterBombs, missiles, nuke, applyPowerup } from '../../utils/Strikes/powerupLogic';
-import ClusterBombs from '../../components/Powerups/Clusterbombs';
+import ClusterBombs from '../../components/Powerups/ClusterBombs';
 import Missiles from '../../components/Powerups/Missiles';
 import Nuke from '../../components/Powerups/Nuke';
 import './Game.css';
@@ -17,7 +17,7 @@ export default function Game() {
     const navigate = useNavigate();
     const playerName = location.state?.playerName || 'Player';
     const difficulty = location.state?.difficulty || 'easy';
-    console.log('Selected difficulty:', difficulty);
+    const isGodMode = difficulty === 'god';
     
     // Timer state
     const [gameTime, setGameTime] = useState(60);
@@ -34,7 +34,13 @@ export default function Game() {
         cluster: 0,
         missiles: 0,
         nuke: 0
-    }); 
+    });
+    const [cpuPowerupUsage, setCpuPowerupUsage] = useState({
+        cluster: 0,
+        missiles: 0,
+        nuke: 0
+    });
+    const [turnCount, setTurnCount] = useState(1); 
     
     // Update refs when strikes change
     useEffect(() => {
@@ -198,19 +204,19 @@ export default function Game() {
                         setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
                         setGameStatus('player');
                         setTimeout(() => {
-                            navigate('/completed', { state: { result: 'win', playerHits, cpuHits } });
+                            navigate('/completed', { state: { result: 'win', playerHits, cpuHits, playerName, difficulty } });
                         }, 2000);
                     } else if (cpuHits > playerHits) {
                         setMessage(`⏰ Time's up! CPU WINS with ${cpuHits} hits vs ${playerHits}!`);
                         setGameStatus('cpu');
                         setTimeout(() => {
-                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits } });
+                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, playerName, difficulty } });
                         }, 2000);
                     } else {
                         setMessage(`⏰ Time's up! It's a TIE with ${playerHits} hits each!`);
                         setGameStatus('tie');
                         setTimeout(() => {
-                            navigate('/completed', { state: { result: 'tie', playerHits, cpuHits } });
+                            navigate('/completed', { state: { result: 'tie', playerHits, cpuHits, playerName, difficulty } });
                         }, 2000);
                     }
                     return 0;
@@ -226,6 +232,31 @@ export default function Game() {
             }
         };
     }, [gameStatus]); // Restart timer when game status changes (including reset)
+    
+    // Handle timeout status and navigate to completed page
+    useEffect(() => {
+        if (gameStatus === 'timeout') {
+            const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+            const cpuHits = countHits(cpuStrikes, playerBattleships.positions);
+            
+            if (playerHits > cpuHits) {
+                setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'win', playerHits, cpuHits, playerName, difficulty } });
+                }, 2000);
+            } else if (cpuHits > playerHits) {
+                setMessage(`⏰ Time's up! CPU WINS with ${cpuHits} hits vs ${playerHits}!`);
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, playerName, difficulty } });
+                }, 2000);
+            } else {
+                setMessage(`⏰ Time's up! It's a TIE with ${playerHits} hits each!`);
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'tie', playerHits, cpuHits, playerName, difficulty } });
+                }, 2000);
+            }
+        }
+    }, [gameStatus, playerStrikes, cpuStrikes, playerBattleships.positions, cpuBattleships.positions, navigate]);
     
     // Player turn timer
     useEffect(() => {
@@ -344,7 +375,7 @@ export default function Game() {
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
             setTimeout(() => {
-                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true } });
+                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true, playerName, difficulty } });
             }, 2000);
             return;
         }
@@ -400,7 +431,7 @@ export default function Game() {
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
             setTimeout(() => {
-                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true } });
+                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true, playerName, difficulty } });
             }, 2000);
             return;
         }
@@ -409,13 +440,194 @@ export default function Game() {
         setCurrentPlayer('cpu');
     };
 
-    const cpuAttack = (currentStrikes = cpuStrikes) => {
+    const cpuAttack = async (currentStrikes = cpuStrikes) => {
         if (gameStatus) return;
         
-        const result = cpuStrike(currentStrikes, playerBattleships.positions, difficulty);
+        if (difficulty === 'god') {
+            // God Mode: Use OpenAI for strategic decisions
+            try {
+                const gameState = {
+                    playerStrikes: playerStrikes,
+                    cpuStrikes: currentStrikes,
+                    playerBattleships: playerBattleships.positions,
+                    cpuBattleships: cpuBattleships.positions,
+                    powerupUsage: cpuPowerupUsage,
+                    turnCount: turnCount
+                };
+
+                const response = await fetch('http://localhost:3000/api/godmode/strike', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(gameState)
+                });
+
+                if (!response.ok) {
+                    throw new Error('God Mode API failed');
+                }
+
+                const aiDecision = await response.json();
+                
+                if (aiDecision.success && aiDecision.decision) {
+                    const decision = aiDecision.decision;
+                    setMessage(`🤖 AI: ${decision.strategy} - ${decision.reasoning}`);
+                    
+                    let newStrikes = [...currentStrikes];
+                    
+                    // Handle powerup usage
+                    if (decision.powerup && decision.powerup !== 'null') {
+                        let powerupStrikes = [];
+                        
+                        switch (decision.powerup) {
+                            case 'cluster':
+                                powerupStrikes = clusterBombs(decision.target);
+                                break;
+                            case 'missiles':
+                                powerupStrikes = missiles(decision.target, currentStrikes);
+                                break;
+                            case 'nuke':
+                                powerupStrikes = nuke(decision.target);
+                                break;
+                        }
+                        
+                        const result = applyPowerup(powerupStrikes, currentStrikes, playerBattleships.positions);
+                        newStrikes = result.newStrikes;
+                        
+                        setCpuPowerupUsage(prev => ({
+                            ...prev,
+                            [decision.powerup]: prev[decision.powerup] + 1
+                        }));
+                    } else {
+                        // Normal strike
+                        newStrikes = [...currentStrikes, decision.target];
+                    }
+                    
+                    setCpuStrikes(newStrikes);
+                    setTurnCount(prev => prev + 1);
+
+                    // Check if all player ships are destroyed
+                    if (checkGameOver(newStrikes, playerBattleships.positions)) {
+                        cleanupTimers();
+                        const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+                        const cpuHits = countHits(newStrikes, playerBattleships.positions);
+                        setMessage('🤖 GOD MODE WINS! All your ships destroyed!');
+                        setGameStatus('cpu');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true, playerName, difficulty } });
+                        }, 2000);
+                        return;
+                    }
+
+                    // Continue AI turn if hit
+                    const lastStrike = decision.powerup ? 
+                        newStrikes[newStrikes.length - 1] : decision.target;
+                    const isHit = playerBattleships.positions.includes(lastStrike);
+                    
+                    if (isHit) {
+                        setTimeout(() => {
+                            cpuAttack(newStrikes);
+                        }, 1500);
+                    } else {
+                        setCurrentPlayer('player');
+                    }
+                } else {
+                    throw new Error('Invalid AI decision');
+                }
+            } catch (error) {
+                console.error('God Mode error:', error);
+                // Fallback to hard mode CPU logic with powerups
+                executeRegularCpuLogic(currentStrikes, 'hard');
+            }
+        } else {
+            // Regular CPU logic for all other difficulties
+            executeRegularCpuLogic(currentStrikes);
+        }
+    };
+
+    const executeRegularCpuLogic = (currentStrikes, fallbackDifficulty = difficulty) => {
+        const result = cpuStrike(currentStrikes, playerBattleships.positions, fallbackDifficulty);
         
         if (!result) return;
 
+        // Check if CPU should use powerup based on difficulty
+        if ((fallbackDifficulty === 'hard' || fallbackDifficulty === 'medium') && Math.random() < 0.3) {
+            let shouldUsePowerup = false;
+            let powerupType = null;
+            
+            // Determine powerup based on difficulty and availability
+            if (fallbackDifficulty === 'hard' && cpuPowerupUsage.missiles < 1 && Math.random() < 0.5) {
+                powerupType = 'missiles';
+                shouldUsePowerup = true;
+            } else if ((fallbackDifficulty === 'hard' || fallbackDifficulty === 'medium') && cpuPowerupUsage.cluster < 2) {
+                powerupType = 'cluster';
+                shouldUsePowerup = true;
+            } else if (fallbackDifficulty === 'hard' && cpuPowerupUsage.missiles < 1) {
+                powerupType = 'missiles';
+                shouldUsePowerup = true;
+            }
+            
+            if (shouldUsePowerup) {
+                // Use powerup strategically
+                const availableTargets = [];
+                for (let i = 0; i < 100; i++) {
+                    if (!currentStrikes.includes(i)) {
+                        availableTargets.push(i);
+                    }
+                }
+                const target = availableTargets[Math.floor(Math.random() * availableTargets.length)];
+                
+                let powerupStrikes = [];
+                let powerupMessage = '';
+                
+                switch (powerupType) {
+                    case 'cluster':
+                        powerupStrikes = clusterBombs(target);
+                        powerupMessage = '💀 CPU uses CLUSTER BOMBS!';
+                        break;
+                    case 'missiles':
+                        powerupStrikes = missiles(target, currentStrikes);
+                        powerupMessage = '🚀 CPU uses MISSILES!';
+                        break;
+                }
+                
+                const powerupResult = applyPowerup(powerupStrikes, currentStrikes, playerBattleships.positions);
+                
+                setCpuStrikes(powerupResult.newStrikes);
+                setCpuPowerupUsage(prev => ({
+                    ...prev,
+                    [powerupType]: prev[powerupType] + 1
+                }));
+                setMessage(powerupMessage);
+                
+                // Check if all player ships are destroyed
+                if (checkGameOver(powerupResult.newStrikes, playerBattleships.positions)) {
+                    cleanupTimers();
+                    const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+                    const cpuHits = countHits(powerupResult.newStrikes, playerBattleships.positions);
+                    setMessage('💀 CPU WINS! All your ships destroyed!');
+                    setGameStatus('cpu');
+                    setTimeout(() => {
+                        navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
+                    }, 2000);
+                    return;
+                }
+
+                // Continue turn if hit
+                const lastStrike = powerupResult.newStrikes[powerupResult.newStrikes.length - 1];
+                const isHit = playerBattleships.positions.includes(lastStrike);
+                if (isHit) {
+                    setTimeout(() => {
+                        executeRegularCpuLogic(powerupResult.newStrikes);
+                    }, 1500);
+                } else {
+                    setCurrentPlayer('player');
+                }
+                return; // Skip regular strike logic
+            }
+        }
+        
+        // Regular strike
         const newStrikes = [...currentStrikes, result.position];
         setCpuStrikes(newStrikes);
         setMessage(result.message);
@@ -435,7 +647,7 @@ export default function Game() {
 
         if (result.isHit) {
             setTimeout(() => {
-                cpuAttack(newStrikes);
+                executeRegularCpuLogic(newStrikes);
             }, 1500);
         } else {
             setCurrentPlayer('player');
@@ -600,7 +812,7 @@ export default function Game() {
     };
 
     return (
-        <div className="game-page">
+        <div className={`game-page ${isGodMode ? 'god-mode' : ''}`}>
             {/* Top Bar with Header */}
             <div className="top-bar">
                 <div className="top-bar-center">
@@ -625,7 +837,14 @@ export default function Game() {
                     <div className="vs-section">
                         <div className="center-info">
                             <GameTimer gameTime={gameTime} />
-                            <div className="vs-text">VS</div>
+                            <div className="vs-text">
+                                {isGodMode ? '🤖 GOD MODE' : 'VS'}
+                            </div>
+                            {isGodMode && (
+                                <div className="god-mode-indicator">
+                                    AI Thinking...
+                                </div>
+                            )}
                         </div>
                         
                         <div className="game-grids-container">
@@ -709,13 +928,38 @@ export default function Game() {
                                     </button> : <button className="resume-btn" onClick={resumeGame}>Resume Game</button>}                                
                                     </div>
                             </div>
-                            <Grid 
-                                title="CPU Board" 
-                                battleships={cpuBattleships} 
-                                strikes={playerStrikes}
-                                onStrike={handlePlayerStrike}
-                                isPlayerBoard={false}
-                            />
+                            <div className="cpu-grid-section">
+                                <Grid 
+                                    title="CPU Board" 
+                                    battleships={cpuBattleships} 
+                                    strikes={playerStrikes}
+                                    onStrike={handlePlayerStrike}
+                                    isPlayerBoard={false}
+                                />
+                                <div className="powerups">
+                                    <ClusterBombs 
+                                        onClick={() => {}} 
+                                        isActive={false}
+                                        used={cpuPowerupUsage.cluster}
+                                        total={2}
+                                        disabled={true}
+                                    />
+                                    <Missiles 
+                                        onClick={() => {}} 
+                                        isActive={false}
+                                        used={cpuPowerupUsage.missiles}
+                                        total={1}
+                                        disabled={true}
+                                    />
+                                    <Nuke 
+                                        onClick={() => {}} 
+                                        isActive={false}
+                                        used={cpuPowerupUsage.nuke}
+                                        total={1}
+                                        disabled={true}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
