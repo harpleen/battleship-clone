@@ -605,6 +605,10 @@ export default function Game() {
             <div className="top-bar">
                 <div className="top-bar-center">
                     <GameHeader playerName={playerName}/>
+
+                    <div className="game-mode">
+                        MODE: {difficulty.toUpperCase()}
+                    </div>
                 </div>
             </div>
 
