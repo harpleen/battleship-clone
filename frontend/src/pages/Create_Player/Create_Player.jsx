@@ -19,7 +19,7 @@ export default function CreatePlayer() {
 
       {/* BACK ARROW */}
       <button
-        className="retro-back-btn"
+        className="retro-back-btn start-btn"
         onClick={() => navigate("/")}
         aria-label="Back"
       />

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Home from './pages/Home/Home.jsx'
 import Game from "./pages/Game/Game";
@@ -9,6 +9,8 @@ import SignUpPage from "./pages/SignUpPage/SignUp";
 import Completed from "./pages/Completed/Completed.jsx";
 import PlayerProfile from "./pages/PlayerProfile/PlayerProfile.jsx";
 import GameModes from "./pages/GameModes/GameModes.jsx";
+import btnClick from './assets/sound_effects/btn_click.mp3';
+import { BackgroundMusicProvider } from './context/BackgroundMusicContext';
 
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 
@@ -52,10 +54,33 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const btnAudioRef = useRef(null);
+
+  useEffect(() => {
+    // Setup background music
+    btnAudioRef.current = new Audio(btnClick);
+    btnAudioRef.current.volume = 0.3;
+
+    const handler = (e) => {
+      const el = e.target.closest && e.target.closest('[data-audio="btn"], .start-btn');
+      if (!el) return;
+
+      try {
+        btnAudioRef.current.currentTime = 0;
+        btnAudioRef.current.play();
+      } catch (err) {
+        // ignore play promise errors
+      }
+    };
+
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, []);
+
   return (
-    <>
+    <BackgroundMusicProvider>
       <RouterProvider router={router} />
-    </>
+    </BackgroundMusicProvider>
   )
 }
 
