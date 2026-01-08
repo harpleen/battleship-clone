@@ -11,7 +11,7 @@ export default function CreatePlayer() {
 
       {/* BACK ARROW */}
       <button
-        className="retro-back-btn"
+        className="retro-back-btn start-btn"
         onClick={() => navigate("/")}
         aria-label="Back"
       />
@@ -27,6 +27,7 @@ export default function CreatePlayer() {
         />
 
         <button
+          className="start-btn"
           onClick={() => playerName && navigate("/start", { state: { playerName } })}
           disabled={!playerName}
         >

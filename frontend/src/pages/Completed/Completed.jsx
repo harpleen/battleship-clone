@@ -4,11 +4,13 @@ import './Completed.css';
 import victorySound from '../../assets/sound_effects/victory.mp3';
 import defeatSound from '../../assets/sound_effects/defeat.mp3';
 import defeat2Sound from '../../assets/sound_effects/defeat2.mp3';
-import playagain from '../../assets/sound_effects/playagain.mp3'; 
+import playagain from '../../assets/sound_effects/playagain.mp3';
+import { useBackgroundMusic } from '../../context/BackgroundMusicContext'; 
 
 const Completed = () => {
 const location = useLocation();
 const audioRef = useRef(null);
+const { pauseMusic, resumeMusic } = useBackgroundMusic();
 const gameResult = location.state?.result;
 const playerHits = location.state?.playerHits || 0;
 const cpuHits = location.state?.cpuHits || 0;
@@ -18,9 +20,18 @@ const isTie = gameResult === 'tie';
 
 useEffect(() => {
     if (audioRef.current) {
+        audioRef.current.volume = 0.3;
         audioRef.current.play().catch(error => console.log('Audio play error:', error));
     }
-}, []);
+    
+    // Pause background music on this page
+    pauseMusic();
+    
+    // Resume background music when leaving this page
+    return () => {
+        resumeMusic();
+    };
+}, [pauseMusic, resumeMusic]);
 
 // Generate subtitle based on game outcome
 const getSubtitle = () => {
