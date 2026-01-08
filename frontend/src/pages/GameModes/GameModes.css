@@ -18,10 +18,18 @@ html, body {
 }
 /* TEXT */
 .title {
-  font-size: 36px;
+  font-size: 20px;
   margin-bottom: 15px;
   text-shadow: 0 0 8px #00FF26;
   text-transform: uppercase;
+}
+.combat-level-title {
+  font-size: 48px;
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px #00FF26;
+  text-transform: uppercase;
+  color: #00FF00;
+  font-family: "Press Start 2P", monospace;
 }
 .subtitle {
   font-size: 12px;

@@ -37,7 +37,7 @@ const GameModes = () => {
         aria-label="Back"
       />
 
-      <h1 className="title">SELECT YOUR COMBAT LEVEL</h1>
+      <h1 className="combat-level-title">SELECT YOUR COMBAT LEVEL</h1>
       <div className="subtitle">BATTLE ORDERS</div>
 
       <div className="menu">
