@@ -9,7 +9,7 @@ z-index: 3;
 
 .board-container h3 {
 color: #0f0;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 font-size: 1.4rem;
 text-transform: uppercase;
 letter-spacing: 2px;
@@ -80,8 +80,6 @@ to {
     transform: scale(1);
 }
 }
-
-/* ... (previous styles remain the same until flame section) ... */
 
 /* Flame container */
 .ship-flame {
@@ -344,8 +342,8 @@ width: 38px;
 height: 38px;
 border-radius: 50%;
 background: radial-gradient(circle,
-    rgba(220, 100, 30, 0.08) 0%,  /* Much more subtle */
-    rgba(200, 50, 10, 0.04) 30%,  /* Much more subtle */
+    rgba(220, 100, 30, 0.08) 0%, 
+    rgba(200, 50, 10, 0.04) 30%, 
     transparent 70%
 );
 filter: blur(4px);
@@ -374,7 +372,6 @@ background-color: rgba(200, 60, 20, 0.12);  /* Darker, more subtle */
 border-color: rgba(220, 100, 40, 0.3);       /* Less intense border */
 }
 
-/* Optional: Add a subtle shadow to flames for depth without brightness */
 .flame-layer-1::before {
 content: '';
 position: absolute;
@@ -386,4 +383,3 @@ filter: blur(0.5px);
 z-index: -1;
 }
 
-/* ... (rest of the CSS remains the same) ... */

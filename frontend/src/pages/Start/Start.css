@@ -1,51 +1,133 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* START PAGE */
-
+/* CONTAINER */
 .start-crt {
-  background: #020202;
-  height: 100vh;
-  width: 100vw;
+  position: relative;
+  background: #000;
+  color: #0f0;
+  font-family: "Press Start 2P", monospace;
+  min-height: 100vh;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  color: #00ff9c;
-  font-family: "Press Start 2P", monospace;
-  text-align: center;
+  overflow: hidden;
 
-  animation: flicker 0.15s infinite;
+  /* CRT background lines */
+  background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 100% 2px;
+  z-index: 0;
 }
 
-/* TEXT */
+/* RADAR RINGS */
+.start-crt::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 380px;
+  height: 380px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
 
+  box-shadow:
+    0 0 0 1px rgba(0,255,0,0.12),
+    0 0 0 90px rgba(0,255,0,0.04),
+    0 0 0 180px rgba(0,255,0,0.03),
+    0 0 0 260px rgba(0,255,0,0.02);
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* RADAR SWEEP */
+.start-crt::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%) rotate(0deg);
+  border-radius: 50%;
+
+  background: conic-gradient(
+    rgba(0,255,0,0.18) 0deg,
+    rgba(0,255,0,0.08) 35deg,
+    rgba(0,255,0,0) 120deg
+  );
+
+  animation: sweep 4s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* PINGS */
+.start-crt .ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #0f0;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center center;
+  animation: ping 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+.start-crt .ping.ring-1 {
+  transform: rotate(45deg) translateX(60px);
+}
+
+.start-crt .ping.ring-2 {
+  transform: rotate(140deg) translateX(120px);
+  animation-delay: 1s;
+}
+
+.start-crt .ping.ring-3 {
+  transform: rotate(260deg) translateX(180px);
+  animation-delay: 2s;
+}
+
+/* ANIMATIONS */
+@keyframes ping {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  60%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes sweep {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* HEADER */
 .title {
-  font-size: 56px;
-  margin-bottom: 20px;
+  font-size: 36px;
+  margin-bottom: 15px;
+  color: #00ff00;
   text-shadow: 0 0 8px #00ff26;
   text-transform: uppercase;
+  z-index: 3;
 }
 
 .subtitle {
-  font-size: 14px;
-  margin-bottom: 60px;
-  opacity: 0.8;
+  font-size: 12px;
+  margin-bottom: 50px;
+  color: #00ff00;
+  opacity: 0.85;
   letter-spacing: 2px;
   text-transform: uppercase;
+  z-index: 3;
 }
 
 /* MENU */
-
 .menu {
   display: flex;
   flex-direction: column;
@@ -53,119 +135,83 @@ html, body, #root {
   width: 100%;
   max-width: 400px;
   align-items: center;
+  z-index: 3;
 }
 
 /* BUTTONS */
-
 .start-btn {
-  background: black;
-  color: #00ff9c;
-  border: 3px solid #00ff9c;
   padding: 20px 30px;
   font-size: 16px;
-  cursor: pointer;
-
-  box-shadow: 0 0 15px #00ff9c;
-
-  font-family: "Press Start 2P", monospace;
+  width: 100%;
   text-decoration: none;
   text-transform: uppercase;
-
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: all 0.2s ease;
+  text-align: center;
+  cursor: pointer;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
+  font-family: "Press Start 2P", monospace;
+  background: #000;
+  color: #00ff00;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .start-btn:hover {
-  background: #00ff9c;
-  color: black;
-  transform: scale(1.05);
-  box-shadow: 0 0 25px #00ff9c;
-}
-
-.btn-back {
-  background: transparent;
-  border: 2px solid rgba(0, 255, 156, 0.5);
-  font-size: 12px;
-}
-
-.btn-back:hover {
-  background: rgba(0, 255, 156, 0.1);
-  border-color: #00ff9c;
-  transform: none;
+  background: #000; /* keep inside dark */
+  color: #00ff00;
+  box-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00, inset 0 0 10px rgba(0,255,0,0.2);
+  transform: scale(1.06);
 }
 
 /* BACK BUTTON */
+.btn-back {
+  opacity: 0.85;
+  border-width: 2px;
+}
 
+/* RETRO BACK ARROW */
 .retro-back-btn {
   position: fixed;
   top: 20px;
   left: 20px;
-
   width: 56px;
   height: 56px;
-
-  background: radial-gradient(circle at top left, #003322, #000);
-  border: 3px solid #00ff9c;
-
+  background: radial-gradient(circle at top left, #001a00, #000);
+  border: 3px solid #00ff00;
   cursor: pointer;
   padding: 0;
-
-  box-shadow:
-    inset 0 0 6px rgba(0, 255, 156, 0.3),
-    0 0 10px #00ff9c,
-    0 0 22px rgba(0, 255, 156, 0.6);
-
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease;
-
-  z-index: 9999;
+  box-shadow: inset 0 0 6px rgba(0,255,0,0.3), 0 0 10px #00ff00, 0 0 22px rgba(0,255,0,0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  z-index: 3;
 }
 
-/* ARROW HEAD */
 .retro-back-btn::before {
   content: "";
   position: absolute;
   left: 5px;
   top: 50%;
   transform: translateY(-50%);
-
   border-top: 12px solid transparent;
   border-bottom: 12px solid transparent;
-  border-right: 30px solid #00ff9c;
-
-  filter: drop-shadow(0 0 4px #00ff9c);
+  border-right: 30px solid #00ff00;
+  filter: drop-shadow(0 0 4px #00ff00);
 }
 
-/* ARROW SHAFT */
 .retro-back-btn::after {
   content: "";
   position: absolute;
   left: 32px;
   top: 50%;
   transform: translateY(-50%);
-
   width: 14px;
   height: 6px;
-
-  background: #00ff9c;
-  box-shadow: 0 0 4px #00ff9c;
+  background: #00ff00;
+  box-shadow: 0 0 4px #00ff00;
 }
 
-/* HOVER */
 .retro-back-btn:hover {
-  background: #00ff9c;
+  background: #00ff00;
   transform: translateX(-4px) scale(1.08);
-
-  box-shadow:
-    inset 0 0 6px rgba(0, 0, 0, 0.5),
-    0 0 14px #00ff9c,
-    0 0 32px rgba(0, 255, 156, 0.9);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5), 0 0 14px #00ff00, 0 0 32px rgba(0,255,0,0.9);
 }
 
 .retro-back-btn:hover::before {
@@ -178,32 +224,14 @@ html, body, #root {
   box-shadow: none;
 }
 
-/* ACTIVE */
 .retro-back-btn:active {
   transform: translateX(-6px) scale(0.95);
 }
 
-/* FLICKER */
-
-@keyframes flicker {
-  0% { opacity: 0.97; }
-  50% { opacity: 1; }
-  100% { opacity: 0.98; }
-}
-
 /* RESPONSIVE */
-
 @media (max-width: 768px) {
-  .title {
-    font-size: 32px;
-  }
-
-  .start-btn {
-    font-size: 12px;
-    padding: 15px;
-  }
-
-  .menu {
-    width: 90%;
-  }
+  .title { font-size: 24px; }
+  .subtitle { font-size: 12px; }
+  .menu { width: 90%; }
+  .start-btn { font-size: 12px; padding: 15px; }
 }

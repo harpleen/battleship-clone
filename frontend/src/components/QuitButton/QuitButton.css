@@ -17,7 +17,7 @@ position: relative;
 overflow: hidden;
 min-width: 200px;
 text-transform: uppercase;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 }
 
 .quit-button:hover {
