@@ -818,8 +818,8 @@ export default function Game() {
                 <div className="top-bar-center">
                     <GameHeader playerName={playerName}/>
 
-                    <div className="game-mode">
-                        MODE: {difficulty.toUpperCase()}
+                    <div className={`game-mode ${isGodMode ? 'god-mode-active' : ''}`}>
+                        {isGodMode ? <span className="god-mode-indicator">🤖 GOD MODE</span> : `MODE: ${difficulty.toUpperCase()}`}
                     </div>
                 </div>
             </div>
@@ -837,14 +837,7 @@ export default function Game() {
                     <div className="vs-section">
                         <div className="center-info">
                             <GameTimer gameTime={gameTime} />
-                            <div className="vs-text">
-                                {isGodMode ? '🤖 GOD MODE' : 'VS'}
-                            </div>
-                            {isGodMode && (
-                                <div className="god-mode-indicator">
-                                    AI Thinking...
-                                </div>
-                            )}
+                            <div className="vs-text">VS</div>
                         </div>
                         
                         <div className="game-grids-container">

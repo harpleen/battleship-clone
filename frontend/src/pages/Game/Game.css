@@ -807,6 +807,25 @@ bottom: 15px;
     text-shadow: 0 0 6px #0f0;
     transform: translateY(10px); /* nudge downward toward the timer */
 }
+
+/* God mode uses the pink indicator inside the same box */
+.game-mode.god-mode-active {
+    background: rgba(255, 0, 255, 0.06);
+    color: #ff00ff;
+    border-color: rgba(255, 0, 255, 0.25);
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.12);
+}
+
+.game-mode.god-mode-active .god-mode-indicator {
+    background: transparent;
+    padding: 0;
+    font-size: 0.95rem;
+    color: #ff66ff;
+    text-shadow: 0 0 8px #ff00ff;
+    border: none;
+    box-shadow: none;
+    display: inline-block;
+}
 /* God Mode Theme */
 .game-page.god-mode {
 background: linear-gradient(135deg, #0a001a, #1a0000, #2d001a);
