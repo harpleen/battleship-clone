@@ -1,0 +1,87 @@
+.grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.grid-title {
+  color: #0f0;
+  font-family: "Courier New", monospace;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px #0f0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 36px);
+  grid-template-rows: repeat(10, 36px);
+  gap: 3px;
+}
+
+.cell {
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 50, 80, 0.6);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s ease;
+}
+
+.cell:hover {
+  background: rgba(0, 120, 180, 0.7);
+}
+
+/* HIT (SHIP DAMAGE) */
+
+.cell.hit {
+  background: radial-gradient(circle, #ff0000 20%, #600000 70%);
+  box-shadow: 0 0 15px red;
+}
+
+.hit-core {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, #ffcc00, red);
+  border-radius: 50%;
+  animation: hit-pulse 0.6s ease-out;
+}
+
+@keyframes hit-pulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+
+.cell.miss {
+  background: radial-gradient(circle, #00bfff 20%, #003a5f 80%);
+}
+
+.water-splash {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 200, 255, 0.8);
+  animation: splash 0.6s ease-out;
+}
+
+@keyframes splash {
+  0% {
+    transform: scale(0.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}

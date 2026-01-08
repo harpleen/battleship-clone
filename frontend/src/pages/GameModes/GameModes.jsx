@@ -36,6 +36,7 @@ const GameModes = () => {
       <div className="subtitle">BATTLE ORDERS</div>
 
       <div className="menu">
+        {/* EASY MODE */}
         <Link
           to="/game"
           state={{ playerName, difficulty: "easy" }}
@@ -45,6 +46,7 @@ const GameModes = () => {
           EASY {lastDifficulty === 'easy' && '★'}
         </Link>
 
+        {/* MEDIUM MODE */}
         <Link
           to="/game"
           state={{ playerName, difficulty: "medium" }}
@@ -54,6 +56,7 @@ const GameModes = () => {
           MEDIUM {lastDifficulty === 'medium' && '★'}
         </Link>
 
+        {/* HARD MODE */}
         <Link
           to="/game"
           state={{ playerName, difficulty: "hard" }}
@@ -63,6 +66,7 @@ const GameModes = () => {
           HARD {lastDifficulty === 'hard' && '★'}
         </Link>
 
+        {/* GOD MODE */}
         <Link
           to="/game"
           state={{ playerName, difficulty: "god" }}
@@ -72,6 +76,7 @@ const GameModes = () => {
           GOD MODE {lastDifficulty === 'god' && '★'}
         </Link>
 
+        {/* BACK BUTTON */}
         <Link
           to="/start"
           state={{ playerName }}
