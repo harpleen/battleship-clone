@@ -30,7 +30,7 @@ const Start = () => {
       />
 
       <h1 className="title">WARHEADS</h1>
-      <div className="subtitle">COMBAT SIMULATOR</div>
+      <div className="subtitle">Naval War SIMULATOR</div>
 
       <div className="menu">
         <Link
