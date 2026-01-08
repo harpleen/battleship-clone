@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Start.css";
 
 const Start = () => {
   const location = useLocation();
-  const playerName = location.state?.playerName || "Player";
+  const [playerName, setPlayerName] = useState("Player");
+  const [lastDifficulty, setLastDifficulty] = useState("medium");
+
+  // Load player name and last difficulty from localStorage
+  useEffect(() => {
+    const nameFromState = location.state?.playerName;
+    const savedName = localStorage.getItem('playerName');
+    const savedDifficulty = localStorage.getItem('lastDifficulty');
+    
+    setPlayerName(nameFromState || savedName || "Player");
+    setLastDifficulty(savedDifficulty || "medium");
+    
+    console.log('Start page - Loaded difficulty:', savedDifficulty || "medium");
+  }, [location.state]);
 
   return (
     <div className="start-crt">
@@ -22,7 +35,7 @@ const Start = () => {
       <div className="menu">
         <Link
           to="/game"
-          state={{ isRanked: false, playerName }}
+          state={{ isRanked: false, playerName, difficulty: lastDifficulty }}
           className="start-btn"
         >
           START MISSION

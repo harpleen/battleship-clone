@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Completed.css';
 import victorySound from '../../assets/sound_effects/victory.mp3';
 import defeatSound from '../../assets/sound_effects/defeat.mp3';
@@ -8,15 +8,48 @@ import playagain from '../../assets/sound_effects/playagain.mp3';
 import { useBackgroundMusic } from '../../context/BackgroundMusicContext'; 
 
 const Completed = () => {
-const location = useLocation();
-const audioRef = useRef(null);
-const { pauseMusic, resumeMusic } = useBackgroundMusic();
-const gameResult = location.state?.result;
-const playerHits = location.state?.playerHits || 0;
-const cpuHits = location.state?.cpuHits || 0;
-const allShipsDestroyed = location.state?.allShipsDestroyed || false;
-const isWin = gameResult === 'win';
-const isTie = gameResult === 'tie';
+    const audioRef = useRef(null);
+    const { pauseMusic, resumeMusic } = useBackgroundMusic();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const gameResult = location.state?.result;
+    const playerHits = location.state?.playerHits || 0;
+    const cpuHits = location.state?.cpuHits || 0;
+    const allShipsDestroyed = location.state?.allShipsDestroyed || false;
+    const playerName = location.state?.playerName || 'Player';
+    const difficulty = location.state?.difficulty || 'easy';
+    const isWin = gameResult === 'win';
+    const isTie = gameResult === 'tie';
+
+    // Store game state in sessionStorage for Play Again functionality
+    useEffect(() => {
+        const gameState = {
+            playerName,
+            difficulty
+        };
+        console.log('Storing game state:', gameState);
+        sessionStorage.setItem('lastGameState', JSON.stringify(gameState));
+        
+        // Verify it was stored
+        const stored = sessionStorage.getItem('lastGameState');
+        console.log('Stored state verification:', stored);
+    }, [playerName, difficulty]);
+
+    const handlePlayAgain = () => {
+        console.log('Play Again clicked');
+        const savedState = sessionStorage.getItem('lastGameState');
+        console.log('Retrieved saved state:', savedState);
+        
+        if (savedState) {
+            const gameState = JSON.parse(savedState);
+            console.log('Parsed game state:', gameState);
+            console.log('Navigating to /game with state:', gameState);
+            navigate('/game', { state: gameState });
+        } else {
+            console.log('No saved state found, navigating to /game without state');
+            navigate('/game');
+        }
+    };
 
 useEffect(() => {
     if (audioRef.current) {
@@ -69,9 +102,11 @@ return (
     </div>
 
     <div className="menu">
-        <Link to="/game" className="start-btn" >
+//         <Link to="/game" className="start-btn" 
+        
+        <button onClick={handlePlayAgain} className="start-btn">
         PLAY AGAIN
-        </Link>
+        </button>
 
         <Link to="/" className="start-btn btn-back">
         END GAME

@@ -1,10 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
-/* LOGIN CONTAINER WITH RADAR */
-.login-container {
+/* CONTAINER */
+.start-crt {
   position: relative;
   background: #000;
-  color: #00ff00;
+  color: #0f0;
   font-family: "Press Start 2P", monospace;
   min-height: 100vh;
 
@@ -15,14 +15,14 @@
 
   overflow: hidden;
 
-  /* CRT lines */
+  /* CRT background lines */
   background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
   background-size: 100% 2px;
   z-index: 0;
 }
 
 /* RADAR RINGS */
-.login-container::before {
+.start-crt::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -43,7 +43,7 @@
 }
 
 /* RADAR SWEEP */
-.login-container::after {
+.start-crt::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -65,7 +65,7 @@
 }
 
 /* PINGS */
-.login-container .ping {
+.start-crt .ping {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -80,9 +80,19 @@
   z-index: 2;
 }
 
-.login-container .ping.ring-1 { transform: rotate(45deg) translateX(60px); }
-.login-container .ping.ring-2 { transform: rotate(140deg) translateX(120px); animation-delay: 1s; }
-.login-container .ping.ring-3 { transform: rotate(260deg) translateX(180px); animation-delay: 2s; }
+.start-crt .ping.ring-1 {
+  transform: rotate(45deg) translateX(60px);
+}
+
+.start-crt .ping.ring-2 {
+  transform: rotate(140deg) translateX(120px);
+  animation-delay: 1s;
+}
+
+.start-crt .ping.ring-3 {
+  transform: rotate(260deg) translateX(180px);
+  animation-delay: 2s;
+}
 
 /* ANIMATIONS */
 @keyframes ping {
@@ -97,22 +107,19 @@
   to   { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* EXISTING LOGIN STYLES KEPT AS-IS */
-
-/* TITLE */
-.login-title {
-  font-size: 48px;
-  margin-bottom: 20px;
+/* HEADER */
+.title {
+  font-size: 36px;
+  margin-bottom: 15px;
   color: #00ff00;
-  text-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
+  text-shadow: 0 0 8px #00ff26;
   text-transform: uppercase;
-  line-height: 1.2;
   z-index: 3;
 }
 
-.login-subtitle {
-  font-size: 14px;
-  margin-bottom: 60px;
+.subtitle {
+  font-size: 12px;
+  margin-bottom: 50px;
   color: #00ff00;
   opacity: 0.85;
   letter-spacing: 2px;
@@ -120,90 +127,45 @@
   z-index: 3;
 }
 
-/* FORM */
-.login-form {
+/* MENU */
+.menu {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
   width: 100%;
   max-width: 400px;
   align-items: center;
   z-index: 3;
 }
 
-/* INPUT */
-.login-input {
-  background: transparent;
-  color: #00ff00;
-  border: 3px solid #00ff00;
-  padding: 15px;
-  font-size: 14px;
-  font-family: "Press Start 2P", monospace;
-  text-align: center;
-  width: 100%;
-  outline: none;
-  box-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
-  transition: box-shadow 0.2s ease;
-  z-index: 3;
-}
-
-.login-input:focus {
-  box-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-}
-
-.login-input::placeholder {
-  color: rgba(0, 255, 0, 0.45);
-}
-
 /* BUTTONS */
-.login-btn {
+.start-btn {
+  padding: 20px 30px;
+  font-size: 16px;
+  width: 100%;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
+  font-family: "Press Start 2P", monospace;
   background: #000;
   color: #00ff00;
-  border: 3px solid #00ff00;
-  padding: 15px;
-  font-size: 14px;
-  cursor: pointer;
-  width: 100%;
-  font-family: "Press Start 2P", monospace;
-  text-transform: uppercase;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
-  z-index: 3;
 }
 
-.login-btn:hover {
-  background: #00ff00;
-  color: #000;
-  box-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
-  transform: scale(1.03);
+.start-btn:hover {
+  background: #000; /* keep inside dark */
+  color: #00ff00;
+  box-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00, inset 0 0 10px rgba(0,255,0,0.2);
+  transform: scale(1.06);
 }
 
 /* BACK BUTTON */
-.login-btn-back {
-  background: transparent;
-  border: 2px solid rgba(0, 255, 0, 0.6);
-  font-size: 10px;
-  padding: 12px;
-  box-shadow: none;
-  z-index: 3;
-}
-
-.login-btn-back:hover {
-  border-color: #00ff00;
-  box-shadow: 0 0 6px #00ff00;
-}
-
-/* ERROR */
-.error-msg {
-  color: #ff003c;
-  font-size: 10px;
-  text-shadow: 0 0 6px #ff003c;
-  margin-top: -10px;
-  z-index: 3;
+.btn-back {
+  opacity: 0.85;
+  border-width: 2px;
 }
 
 /* RETRO BACK ARROW */
@@ -225,21 +187,19 @@
 .retro-back-btn::before {
   content: "";
   position: absolute;
-  left: 18px;
+  left: 5px;
   top: 50%;
   transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 16px solid #00ff00;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 30px solid #00ff00;
   filter: drop-shadow(0 0 4px #00ff00);
 }
 
 .retro-back-btn::after {
   content: "";
   position: absolute;
-  left: 28px;
+  left: 32px;
   top: 50%;
   transform: translateY(-50%);
   width: 14px;
@@ -254,15 +214,24 @@
   box-shadow: inset 0 0 6px rgba(0,0,0,0.5), 0 0 14px #00ff00, 0 0 32px rgba(0,255,0,0.9);
 }
 
-.retro-back-btn:hover::before { border-right-color: #000; filter: none; }
-.retro-back-btn:hover::after { background: #000; box-shadow: none; }
-.retro-back-btn:active { transform: translateX(-6px) scale(0.95); }
+.retro-back-btn:hover::before {
+  border-right-color: #000;
+  filter: none;
+}
+
+.retro-back-btn:hover::after {
+  background: #000;
+  box-shadow: none;
+}
+
+.retro-back-btn:active {
+  transform: translateX(-6px) scale(0.95);
+}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  .login-title { font-size: 28px; }
-  .login-subtitle { font-size: 12px; }
-  .login-form { width: 90%; }
-  .login-input { font-size: 12px; padding: 12px; }
-  .login-btn { font-size: 12px; padding: 12px; }
+  .title { font-size: 24px; }
+  .subtitle { font-size: 12px; }
+  .menu { width: 90%; }
+  .start-btn { font-size: 12px; padding: 15px; }
 }

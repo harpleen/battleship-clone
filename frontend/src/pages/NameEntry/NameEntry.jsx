@@ -1,13 +1,22 @@
 import { useState } from "react";
-import "./Home.css";
+import { useNavigate } from "react-router-dom";
+import "./NameEntry.css";
 
 export default function NameEntry() {
   const [name, setName] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
     if (!name.trim()) return;
     console.log("Player name:", name);
-    // later → navigate to game page
+    // Navigate to start page with player name
+    navigate("/start", { state: { playerName: name.trim() } });
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
   };
 
   return (
@@ -20,6 +29,7 @@ export default function NameEntry() {
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        onKeyPress={handleKeyPress}
         placeholder="CALL SIGN"
         maxLength={12}
       />

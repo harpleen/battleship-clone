@@ -1,0 +1,237 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* GAME MODES CONTAINER */
+.start-crt {
+  background: #000;
+  height: 100vh;
+  width: 100vw;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: #00ff00;
+  font-family: "Press Start 2P", monospace;
+  text-align: center;
+}
+
+/* TEXT */
+.title {
+  font-size: 36px;
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px #00ff26;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: 12px;
+  margin-bottom: 50px;
+  opacity: 0.85;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* MENU */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+  max-width: 400px;
+  align-items: center;
+}
+
+/* BASE BUTTON STYLES */
+.start-btn {
+  padding: 20px 30px;
+  font-size: 16px;
+  width: 100%;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+  border: 3px solid;
+  box-shadow: 0 0 6px, 0 0 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+/* EASY MODE BUTTON */
+.easy-btn {
+  background: linear-gradient(135deg, #003300, #00cc00);
+  color: #66ff66;
+  border-color: #66ff66;
+  box-shadow: 0 0 8px #66ff66, 0 0 18px #66ff66, inset 0 0 12px rgba(102, 255, 102, 0.3);
+}
+
+.easy-btn:hover {
+  background: linear-gradient(135deg, #00cc00, #00ff33);
+  color: #000;
+  box-shadow: 0 0 16px #66ff66, 0 0 32px #66ff66;
+  transform: scale(1.06);
+}
+
+/* MEDIUM MODE BUTTON */
+.medium-btn {
+  background: linear-gradient(135deg, #663300, #ff6600);
+  color: #ffcc33;
+  border-color: #ffcc33;
+  box-shadow: 0 0 8px #ffcc33, 0 0 18px #ffcc33, inset 0 0 12px rgba(255, 204, 51, 0.3);
+}
+
+.medium-btn:hover {
+  background: linear-gradient(135deg, #ff6600, #ff9933);
+  color: #000;
+  box-shadow: 0 0 16px #ffcc33, 0 0 32px #ffcc33;
+  transform: scale(1.06);
+}
+
+/* HARD MODE BUTTON */
+.hard-btn {
+  background: linear-gradient(135deg, #660000, #ff3333);
+  color: #ff6666;
+  border-color: #ff6666;
+  box-shadow: 0 0 8px #ff6666, 0 0 18px #ff6666, inset 0 0 12px rgba(255, 102, 102, 0.3);
+}
+
+.hard-btn:hover {
+  background: linear-gradient(135deg, #ff3333, #ff6666);
+  color: #000;
+  box-shadow: 0 0 16px #ff6666, 0 0 32px #ff6666;
+  transform: scale(1.06);
+}
+
+.last-played {
+  border-color: #ffff00;
+  box-shadow:
+    0 0 8px #ffff00,
+    0 0 16px #ffff00;
+  animation: last-played-glow 1.5s infinite;
+}
+
+@keyframes last-played-glow {
+  0%, 100% { 
+    box-shadow:
+      0 0 8px #ffff00,
+      0 0 16px #ffff00;
+  }
+  50% { 
+    box-shadow:
+      0 0 12px #ffff00,
+      0 0 24px #ffff00,
+      0 0 32px rgba(255, 255, 0, 0.3);
+  }
+}
+
+/* GOD MODE BUTTON  */
+.god-mode-btn {
+  background: linear-gradient(135deg, #4a0080, #8b0000);
+  color: #ff00ff;
+  border: 3px solid #ff00ff;
+  box-shadow: 0 0 6px #ff00ff, 0 0 14px #ff00ff, inset 0 0 10px rgba(255, 0, 255, 0.2);
+}
+
+.god-mode-btn:hover {
+  background: linear-gradient(135deg, #6a00a0, #b00000);
+  color: #ffffff;
+  box-shadow: 0 0 12px #ff00ff, 0 0 24px #ff00ff, 0 0 36px rgba(255, 0, 255, 0.5);
+  transform: scale(1.06);
+}
+
+/* BACK BUTTON */
+.btn-back {
+  opacity: 0.85;
+  border-width: 2px;
+  background: #000;
+  color: #00ff00;
+  border-color: #00ff00;
+  box-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
+}
+
+.btn-back:hover {
+  color: #000;
+  background: #00ff00;
+  box-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00;
+  transform: scale(1.06);
+}
+
+/* RETRO BACK BUTTON */
+.retro-back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 56px;
+  height: 56px;
+  background: radial-gradient(circle at top left, #001a00, #000);
+  border: 3px solid #00ff00;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: inset 0 0 6px rgba(0,255,0,0.3), 0 0 10px #00ff00, 0 0 22px rgba(0,255,0,0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  z-index: 9999;
+}
+
+.retro-back-btn::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 30px solid #00ff00;
+  filter: drop-shadow(0 0 4px #00ff00);
+}
+
+.retro-back-btn::after {
+  content: "";
+  position: absolute;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 6px;
+  background: #00ff00;
+  box-shadow: 0 0 4px #00ff00;
+}
+
+.retro-back-btn:hover {
+  background: #00ff00;
+  transform: translateX(-4px) scale(1.08);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5), 0 0 14px #00ff00, 0 0 32px rgba(0,255,0,0.9);
+}
+
+.retro-back-btn:hover::before {
+  border-right-color: #000;
+  filter: none;
+}
+
+.retro-back-btn:hover::after {
+  background: #000;
+  box-shadow: none;
+}
+
+.retro-back-btn:active {
+  transform: translateX(-6px) scale(0.95);
+}
+
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 24px;
+  }
+
+  .menu {
+    width: 90%;
+  }
+
+  .start-btn {
+    font-size: 12px;
+    padding: 15px;
+  }
+}

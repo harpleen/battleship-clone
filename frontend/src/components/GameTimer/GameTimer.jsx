@@ -11,7 +11,7 @@ return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0'
 return (
 <div className="game-timer-container">
     <div className="game-timer-header">
-    <div className="timer-icon">[TIME]</div>
+    <div className="timer-icon"></div>
     <h3>Game Timer</h3>
     </div>
     <div className="game-timer-display">

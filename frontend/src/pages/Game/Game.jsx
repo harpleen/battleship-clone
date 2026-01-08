@@ -12,7 +12,8 @@ import GameTimer from '../../components/GameTimer/GameTimer';
 import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import { clusterBombs, missiles, nuke, applyPowerup } from '../../utils/Strikes/powerupLogic';
-import ClusterBombs from '../../components/Powerups/Clusterbombs';
+import { getCPUStrike, updateCPUState, resetCPUState } from '../../utils/Strikes/cpu';
+import ClusterBombs from '../../components/Powerups/ClusterBombs';
 import Missiles from '../../components/Powerups/Missiles';
 import Nuke from '../../components/Powerups/Nuke';
 import './Game.css';
@@ -20,10 +21,51 @@ import './Game.css';
 export default function Game() {
     const location = useLocation();
     const navigate = useNavigate();
-    const playerName = location.state?.playerName || 'Player';
     
+    // Try to get state from location first, then from sessionStorage
+    console.log('🔍 Game.jsx - location.state:', location.state);
+    
+    let playerName = location.state?.playerName;
+    let difficulty = location.state?.difficulty;
+    
+    console.log('📍 From location.state - playerName:', playerName, 'difficulty:', difficulty);
+    
+    // If not in location.state, check sessionStorage
+    if (!difficulty) {
+        console.log('⚠️ No difficulty in location.state, checking sessionStorage...');
+        const savedState = sessionStorage.getItem('lastGameState');
+        console.log('💾 sessionStorage value:', savedState);
+        
+        if (savedState) {
+            const gameState = JSON.parse(savedState);
+            console.log('📦 Parsed gameState:', gameState);
+            playerName = playerName || gameState.playerName;
+            difficulty = gameState.difficulty;
+            console.log('✅ Loaded from sessionStorage - playerName:', playerName, 'difficulty:', difficulty);
+        } else {
+            console.log('❌ No saved state in sessionStorage');
+        }
+    }
+    
+    // Final fallbacks
+    playerName = playerName || 'Player';
+    difficulty = difficulty || 'easy';
+    
+    const isGodMode = difficulty === 'god';
+    console.log('🎮 FINAL - Difficulty:', difficulty, 'Player:', playerName);
+
+    // Save current game state to sessionStorage for Play Again functionality
+    useEffect(() => {
+        const gameState = {
+            playerName,
+            difficulty
+        };
+        sessionStorage.setItem('lastGameState', JSON.stringify(gameState));
+        console.log('Saved game state to sessionStorage:', gameState);
+    }, [playerName, difficulty]);
+
     // Timer state
-    const [gameTime, setGameTime] = useState(60);
+    const [gameTime, setGameTime] = useState(30);
     const [currentPlayer, setCurrentPlayer] = useState('player');
     const [playerTurnTime, setPlayerTurnTime] = useState(10);
     const [cpuTurnTime, setCpuTurnTime] = useState(10);
@@ -37,7 +79,13 @@ export default function Game() {
         cluster: 0,
         missiles: 0,
         nuke: 0
-    }); 
+    });
+    const [cpuPowerupUsage, setCpuPowerupUsage] = useState({
+        cluster: 0,
+        missiles: 0,
+        nuke: 0
+    });
+    const [turnCount, setTurnCount] = useState(1); 
     
     // Update refs when strikes change
     useEffect(() => {
@@ -219,19 +267,19 @@ export default function Game() {
                         setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
                         setGameStatus('player');
                         setTimeout(() => {
-                            navigate('/completed', { state: { result: 'win', playerHits, cpuHits } });
+                            navigate('/completed', { state: { result: 'win', playerHits, cpuHits, playerName, difficulty } });
                         }, 2000);
                     } else if (cpuHits > playerHits) {
                         setMessage(`⏰ Time's up! CPU WINS with ${cpuHits} hits vs ${playerHits}!`);
                         setGameStatus('cpu');
                         setTimeout(() => {
-                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits } });
+                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, playerName, difficulty } });
                         }, 2000);
                     } else {
                         setMessage(`⏰ Time's up! It's a TIE with ${playerHits} hits each!`);
                         setGameStatus('tie');
                         setTimeout(() => {
-                            navigate('/completed', { state: { result: 'tie', playerHits, cpuHits } });
+                            navigate('/completed', { state: { result: 'tie', playerHits, cpuHits, playerName, difficulty } });
                         }, 2000);
                     }
                     return 0;
@@ -247,6 +295,31 @@ export default function Game() {
             }
         };
     }, [gameStatus]); // Restart timer when game status changes (including reset)
+    
+    // Handle timeout status and navigate to completed page
+    useEffect(() => {
+        if (gameStatus === 'timeout') {
+            const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+            const cpuHits = countHits(cpuStrikes, playerBattleships.positions);
+            
+            if (playerHits > cpuHits) {
+                setMessage(`⏰ Time's up! YOU WIN with ${playerHits} hits vs ${cpuHits}!`);
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'win', playerHits, cpuHits, playerName, difficulty } });
+                }, 2000);
+            } else if (cpuHits > playerHits) {
+                setMessage(`⏰ Time's up! CPU WINS with ${cpuHits} hits vs ${playerHits}!`);
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, playerName, difficulty } });
+                }, 2000);
+            } else {
+                setMessage(`⏰ Time's up! It's a TIE with ${playerHits} hits each!`);
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'tie', playerHits, cpuHits, playerName, difficulty } });
+                }, 2000);
+            }
+        }
+    }, [gameStatus, playerStrikes, cpuStrikes, playerBattleships.positions, cpuBattleships.positions, navigate]);
     
     // Player turn timer
     useEffect(() => {
@@ -296,7 +369,10 @@ export default function Game() {
     
     // CPU turn timer and attack
     useEffect(() => {
+        console.log('⚡ CPU Turn useEffect triggered - Player:', currentPlayer, 'Status:', gameStatus);
+        
         if (currentPlayer === 'cpu' && !gameStatus) {
+            console.log('✅ CPU turn starting...');
             setCpuTurnTime(10);
             
             // Clear any existing CPU timeout
@@ -317,6 +393,7 @@ export default function Game() {
             
             // CPU attacks after 1.5 seconds
             cpuTimeoutRef.current = setTimeout(() => {
+                console.log('⏰ CPU timeout complete, calling cpuAttack...');
                 clearInterval(cpuTimerInterval);
                 cpuAttack();
             }, 1500);
@@ -375,7 +452,7 @@ export default function Game() {
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
             setTimeout(() => {
-                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true } });
+                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true, playerName, difficulty } });
             }, 2000);
             return;
         }
@@ -449,7 +526,7 @@ export default function Game() {
             setMessage('🎉 YOU WIN! All enemy ships destroyed!');
             setGameStatus('player');
             setTimeout(() => {
-                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true } });
+                navigate('/completed', { state: { result: 'win', playerHits, cpuHits, allShipsDestroyed: true, playerName, difficulty } });
             }, 2000);
             return;
         }
@@ -458,16 +535,33 @@ export default function Game() {
         setCurrentPlayer('cpu');
     };
 
-    const cpuAttack = (currentStrikes = cpuStrikes) => {
-        if (gameStatus) return;
+    const cpuAttack = async (currentStrikes = cpuStrikes) => {
+        console.log('🎮 cpuAttack called - Current Player:', currentPlayer, 'Game Status:', gameStatus);
         
-        const result = cpuStrike(currentStrikes, playerBattleships.positions);
+        if (gameStatus) {
+            console.log('⚠️ Game already ended, skipping CPU attack');
+            return;
+        }
         
-        if (!result) return;
+        if (difficulty === 'god') {
+            // God Mode: Use OpenAI for strategic decisions
+            try {
+                const gameState = {
+                    playerStrikes: playerStrikes,
+                    cpuStrikes: currentStrikes,
+                    playerBattleships: playerBattleships.positions,
+                    cpuBattleships: cpuBattleships.positions,
+                    powerupUsage: cpuPowerupUsage,
+                    turnCount: turnCount
+                };
 
-        const newStrikes = [...currentStrikes, result.position];
-        setCpuStrikes(newStrikes);
-        setMessage(result.message);
+                const response = await fetch('http://localhost:3000/api/godmode/strike', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(gameState)
+                });
 
         // Check if any ships were destroyed
         checkForDestroyedShips(newStrikes, currentStrikes, playerBattleships);
@@ -497,8 +591,170 @@ export default function Game() {
             setTimeout(() => {
                 cpuAttack(newStrikes);
             }, 1500);
+                if (!response.ok) {
+                    throw new Error('God Mode API failed');
+                }
+
+                const aiDecision = await response.json();
+                
+                if (aiDecision.success && aiDecision.decision) {
+                    const decision = aiDecision.decision;
+                    setMessage(`🤖 AI: ${decision.strategy} - ${decision.reasoning}`);
+                    
+                    let newStrikes = [...currentStrikes];
+                    
+                    // Handle powerup usage
+                    if (decision.powerup && decision.powerup !== 'null') {
+                        let powerupStrikes = [];
+                        
+                        switch (decision.powerup) {
+                            case 'cluster':
+                                powerupStrikes = clusterBombs(decision.target);
+                                break;
+                            case 'missiles':
+                                powerupStrikes = missiles(decision.target, currentStrikes);
+                                break;
+                            case 'nuke':
+                                powerupStrikes = nuke(decision.target);
+                                break;
+                        }
+                        
+                        const result = applyPowerup(powerupStrikes, currentStrikes, playerBattleships.positions);
+                        newStrikes = result.newStrikes;
+                        
+                        setCpuPowerupUsage(prev => ({
+                            ...prev,
+                            [decision.powerup]: prev[decision.powerup] + 1
+                        }));
+                    } else {
+                        // Normal strike
+                        newStrikes = [...currentStrikes, decision.target];
+                    }
+                    
+                    setCpuStrikes(newStrikes);
+                    setTurnCount(prev => prev + 1);
+
+                    // Check if all player ships are destroyed
+                    if (checkGameOver(newStrikes, playerBattleships.positions)) {
+                        cleanupTimers();
+                        const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+                        const cpuHits = countHits(newStrikes, playerBattleships.positions);
+                        setMessage('🤖 GOD MODE WINS! All your ships destroyed!');
+                        setGameStatus('cpu');
+                        setTimeout(() => {
+                            navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true, playerName, difficulty } });
+                        }, 2000);
+                        return;
+                    }
+
+                    // Continue AI turn if hit
+                    const lastStrike = decision.powerup ? 
+                        newStrikes[newStrikes.length - 1] : decision.target;
+                    const isHit = playerBattleships.positions.includes(lastStrike);
+                    
+                    if (isHit) {
+                        setTimeout(() => {
+                            cpuAttack(newStrikes);
+                        }, 1500);
+                    } else {
+                        setCurrentPlayer('player');
+                    }
+                } else {
+                    throw new Error('Invalid AI decision');
+                }
+            } catch (error) {
+                console.error('God Mode error:', error);
+                // Fallback to god mode CPU logic
+                executeRegularCpuLogic(currentStrikes, 'god');
+            }
         } else {
-            setCurrentPlayer('player');
+            // Regular CPU logic for all other difficulties
+            executeRegularCpuLogic(currentStrikes);
+        }
+    };
+
+    const executeRegularCpuLogic = (currentStrikes, fallbackDifficulty = difficulty) => {
+        console.log('🤖 CPU Logic Starting - Strikes:', currentStrikes.length, 'Difficulty:', fallbackDifficulty);
+        
+        const result = getCPUStrike(fallbackDifficulty, currentStrikes, playerBattleships, cpuPowerupUsage);
+        
+        console.log('🤖 CPU Result:', result);
+        
+        if (!result) {
+            console.error('❌ No result from CPU!');
+            return;
+        }
+
+        // Handle powerup usage
+        if (result.type === 'cluster' || result.type === 'missiles' || result.type === 'nuke') {
+            // Powerup was used
+            const powerupResult = result.powerupResult;
+            setCpuStrikes(powerupResult.newStrikes);
+            setCpuPowerupUsage(prev => ({
+                ...prev,
+                [result.type]: prev[result.type] + 1
+            }));
+            setMessage(result.message);
+            
+            // Update AI state with powerup hits
+            powerupResult.hits.forEach(hit => {
+                updateCPUState(hit, true, powerupResult.newStrikes, playerBattleships);
+            });
+            
+            // Check if all player ships are destroyed
+            if (checkGameOver(powerupResult.newStrikes, playerBattleships.positions)) {
+                cleanupTimers();
+                const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+                const cpuHits = countHits(powerupResult.newStrikes, playerBattleships.positions);
+                setMessage('💀 CPU WINS! All your ships destroyed!');
+                setGameStatus('cpu');
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
+                }, 2000);
+                return;
+            }
+
+            // Continue turn if hit
+            const lastStrike = powerupResult.newStrikes[powerupResult.newStrikes.length - 1];
+            const isHit = playerBattleships.positions.includes(lastStrike);
+            if (isHit) {
+                setTimeout(() => {
+                    executeRegularCpuLogic(powerupResult.newStrikes);
+                }, 1500);
+            } else {
+                setCurrentPlayer('player');
+            }
+        } else {
+            // Regular strike
+            const isHit = playerBattleships.positions.includes(result.position);
+            const newStrikes = [...currentStrikes, result.position];
+            
+            // Update AI state with the result
+            updateCPUState(result.position, isHit, newStrikes, playerBattleships);
+            
+            setCpuStrikes(newStrikes);
+            setMessage(result.message);
+            
+            // Check if all player ships are destroyed
+            if (checkGameOver(newStrikes, playerBattleships.positions)) {
+                cleanupTimers();
+                const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+                const cpuHits = countHits(newStrikes, playerBattleships.positions);
+                setMessage('💀 CPU WINS! All your ships destroyed!');
+                setGameStatus('cpu');
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
+                }, 2000);
+                return;
+            }
+
+            if (isHit) {
+                setTimeout(() => {
+                    executeRegularCpuLogic(newStrikes);
+                }, 1500);
+            } else {
+                setCurrentPlayer('player');
+            }
         }
     };
     
@@ -516,11 +772,22 @@ export default function Game() {
     };
     
     const resetGame = () => {
+        // Store current game state before reset
+        const currentGameState = {
+            playerName,
+            difficulty
+        };
+        console.log('Resetting game - storing state:', currentGameState);
+        sessionStorage.setItem('lastGameState', JSON.stringify(currentGameState));
+        
+        // Reset AI state
+        resetCPUState();
+        
         // Clean up all timers
         cleanupTimers();
         
         // Reset all state variables
-        setGameTime(180);
+        setGameTime(30);
         setCurrentPlayer('player');
         setPlayerTurnTime(10);
         setCpuTurnTime(10);
@@ -670,11 +937,15 @@ export default function Game() {
     };
 
     return (
-        <div className="game-page">
+        <div className={`game-page ${isGodMode ? 'god-mode' : ''}`}>
             {/* Top Bar with Header */}
             <div className="top-bar">
                 <div className="top-bar-center">
                     <GameHeader playerName={playerName}/>
+
+                    <div className="game-mode">
+                        MODE: {difficulty.toUpperCase()}
+                    </div>
                 </div>
             </div>
 
@@ -691,7 +962,14 @@ export default function Game() {
                     <div className="vs-section">
                         <div className="center-info">
                             <GameTimer gameTime={gameTime} />
-                            <div className="vs-text">VS</div>
+                            <div className="vs-text">
+                                {isGodMode ? '🤖 GOD MODE' : 'VS'}
+                            </div>
+                            {isGodMode && (
+                                <div className="god-mode-indicator">
+                                    AI Thinking...
+                                </div>
+                            )}
                         </div>
                         
                         <div className="game-grids-container">
@@ -775,13 +1053,38 @@ export default function Game() {
                                     </button> : <button className="resume-btn" onClick={resumeGame}>Resume Game</button>}                                
                                     </div>
                             </div>
-                            <Grid 
-                                title="CPU Board" 
-                                battleships={cpuBattleships} 
-                                strikes={playerStrikes}
-                                onStrike={handlePlayerStrike}
-                                isPlayerBoard={false}
-                            />
+                            <div className="cpu-grid-section">
+                                <Grid 
+                                    title="CPU Board" 
+                                    battleships={cpuBattleships} 
+                                    strikes={playerStrikes}
+                                    onStrike={handlePlayerStrike}
+                                    isPlayerBoard={false}
+                                />
+                                <div className="powerups">
+                                    <ClusterBombs 
+                                        onClick={() => {}} 
+                                        isActive={false}
+                                        used={cpuPowerupUsage.cluster}
+                                        total={2}
+                                        disabled={true}
+                                    />
+                                    <Missiles 
+                                        onClick={() => {}} 
+                                        isActive={false}
+                                        used={cpuPowerupUsage.missiles}
+                                        total={1}
+                                        disabled={true}
+                                    />
+                                    <Nuke 
+                                        onClick={() => {}} 
+                                        isActive={false}
+                                        used={cpuPowerupUsage.nuke}
+                                        total={1}
+                                        disabled={true}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     

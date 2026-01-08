@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Create_Player.css";
 
 export default function CreatePlayer() {
   const [playerName, setPlayerName] = useState("");
   const navigate = useNavigate();
+
+  // Load saved player name on mount
+  useEffect(() => {
+    const savedName = localStorage.getItem('playerName');
+    if (savedName) {
+      setPlayerName(savedName);
+    }
+  }, []);
 
   return (
     <div className="create-player-container">
@@ -27,8 +35,12 @@ export default function CreatePlayer() {
         />
 
         <button
-          className="start-btn"
-          onClick={() => playerName && navigate("/start", { state: { playerName } })}
+          onClick={() => {
+            if (playerName) {
+              localStorage.setItem('playerName', playerName);
+              navigate("/start", { state: { playerName } });
+            }
+          }}
           disabled={!playerName}
         >
           Continue

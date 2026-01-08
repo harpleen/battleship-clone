@@ -3,7 +3,7 @@ min-height: 100vh;
 min-width: 100vw;
 background: #000;
 color: #0f0;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace; /* match other pages */
 position: fixed;
 top: 0;
 left: 0;
@@ -14,7 +14,7 @@ padding: 0;
 overflow: hidden;
 display: flex;
 flex-direction: column;
-}
+} 
 
 /* CRT Monitor Effect */
 .game-page::before {
@@ -106,21 +106,41 @@ transform: scale(0.9);
 }
 
 .game-grids-container {
-display: flex;
-align-items: flex-start;
-justify-content: center;
-gap: 15px;
-position: relative;
-z-index: 3;
-width: 100%;
-flex-wrap: nowrap;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 60px; /* more padding between center box and the grids */
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    flex-wrap: nowrap;
+    transform: translateY(-80px); /* nudge the grids further upward */
 }
+
+@media (max-width: 768px) {
+    .game-grids-container {
+        gap: 28px; /* smaller gap on mobile */
+    }
+}
+
+@media (max-width: 768px) {
+    .game-grids-container {
+        transform: translateY(-18px); /* slightly larger nudge on mobile */
+    }
+} 
 
 .player-grid-section {
 display: flex;
 flex-direction: column;
 align-items: center;
 gap: 12px;
+}
+
+.cpu-grid-section {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 12px;  
 }
 
 .center-info {
@@ -133,19 +153,28 @@ margin-bottom: 8px;
 }
 
 .vs-text {
-font-size: 2rem;
-font-weight: 800;
-color: #0f0;
-text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
-letter-spacing: 3px;
-animation: vs-pulse 2s infinite;
-font-family: 'Courier New', monospace;
-background: #000;
-padding: 6px 16px;
-border: 3px solid #0f0;
-border-radius: 5px;
-margin: 0;
-}
+    font-size: 2.4rem; /* slightly smaller */
+    font-weight: 900;
+    color: #0f0;
+
+    text-shadow:
+        0 0 10px #0f0,
+        0 0 20px #0f0,
+        0 0 36px #0f0;
+
+    letter-spacing: 3px;
+    animation: vs-pulse 2s infinite;
+
+    font-family: "Press Start 2P", monospace; /* match site font */
+    text-transform: uppercase;
+
+    background: #000;
+    padding: 8px 16px; /* smaller box */
+    border: 3px solid #0f0;
+    border-radius: 6px;
+
+    transform: translateY(8px); /* move closer to the timer */
+} 
 
 .game-status {
 background: rgba(0, 255, 0, 0.05);
@@ -163,7 +192,27 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 margin: 0 auto;
-}
+transform: translateY(95px); /* move the middle box further down */
+transition: transform 0.12s ease;
+} 
+
+@media (max-width: 768px) {
+    .game-status {
+        transform: translateY(40px); 
+    }
+
+    .vs-text {
+        font-size: 2rem;
+        transform: translateY(-4px);
+        font-family: "Press Start 2P", monospace;
+    }
+
+    .game-mode {
+        font-size: 0.9rem;
+        transform: translateY(6px);
+        font-family: "Press Start 2P", monospace;
+    }
+} 
 
 .status-message {
 font-size: 1.3rem;
@@ -247,7 +296,7 @@ font-size: 0.65rem;
 font-weight: 700;
 cursor: pointer;
 transition: all 0.3s ease;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 text-transform: uppercase;
 letter-spacing: 0.5px;
 text-shadow: 0 0 5px #0f0;
@@ -457,7 +506,7 @@ font-size: 0.9rem;
 font-weight: 700;
 cursor: pointer;
 transition: all 0.3s ease;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 text-transform: uppercase;
 letter-spacing: 1.5px;
 text-shadow: 0 0 5px #0f0;
@@ -526,7 +575,7 @@ width: 90%;
 border: 3px solid #f00;
 box-shadow: 0 0 40px #f00;
 animation: modal-appear 0.3s ease-out;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 }
 
 .modal-content h3 {
@@ -560,7 +609,7 @@ font-weight: 700;
 cursor: pointer;
 transition: all 0.3s ease;
 min-width: 150px;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 text-transform: uppercase;
 letter-spacing: 2px;
 }
@@ -620,11 +669,24 @@ box-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
 
 /* Make PlayerCard components properly sized */
 .player-card {
-transform: scale(0.7);
-margin: 0;
-min-width: 200px;
-max-width: 230px;
-flex-shrink: 0;
+    transform: scale(0.7) translateY(70px); /* move player cards down to align with middle box */
+    margin: 0;
+    min-width: 200px;
+    max-width: 230px;
+    flex-shrink: 0;
+}
+
+/* keep player cards aligned on medium screens */
+@media (max-width: 1024px) {
+    .player-card {
+        transform: scale(1) translateY(30px);
+    }
+}
+
+@media (max-height: 800px) {
+    .player-card {
+        transform: scale(0.9) translateY(30px);
+    }
 }
 
 /* Responsive Design */
@@ -688,6 +750,7 @@ padding: 10px 20px;
 .game-status {
 padding: 20px;
 min-width: 250px;
+transform: translateY(12px); 
 }
 
 .status-message {
@@ -725,4 +788,134 @@ transform: scale(0.9);
 .bottom-bar {
 bottom: 15px;
 }
+}
+
+/* GAME MODE DISPLAY */
+.game-mode {
+    margin: 21px auto 0; /* center horizontally and move down */
+    margin-left: -38px;
+    font-size: 1rem; /* smaller */
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    color: #0f0;
+    border: 2px solid #0f0;
+    padding: 6px 12px;
+    display: inline-block;
+
+    background: #000;
+    text-shadow: 0 0 6px #0f0;
+    transform: translateY(10px); /* nudge downward toward the timer */
+}
+/* God Mode Theme */
+.game-page.god-mode {
+background: linear-gradient(135deg, #0a001a, #1a0000, #2d001a);
+color: #ff00ff;
+position: relative;
+overflow: hidden;
+}
+
+.game-page.god-mode::before {
+background: 
+radial-gradient(circle at 20% 50%, rgba(255, 0, 255, 0.15) 0%, transparent 50%),
+radial-gradient(circle at 80% 50%, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
+linear-gradient(45deg, rgba(255, 0, 255, 0.05) 25%, transparent 25%),
+linear-gradient(-45deg, rgba(139, 0, 0, 0.05) 25%, transparent 25%),
+linear-gradient(45deg, transparent 75%, rgba(255, 0, 255, 0.05) 75%),
+linear-gradient(-45deg, transparent 75%, rgba(139, 0, 0, 0.05) 75%);
+background-size: 200% 200%, 200% 200%, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
+animation: god-mode-bg-shift 10s ease-in-out infinite;
+}
+
+@keyframes god-mode-bg-shift {
+0%, 100% { 
+    background-position: 0% 50%, 100% 50%, 0 0, 10px 10px, 0 10px, 10px 0;
+}
+50% { 
+    background-position: 100% 50%, 0% 50%, 10px 10px, 0 0, 10px 0, 0 10px;
+}
+}
+
+.game-page.god-mode .vs-text {
+color: #ff00ff;
+text-shadow: 
+0 0 10px #ff00ff,
+0 0 20px #ff00ff,
+0 0 30px #ff00ff,
+0 0 40px rgba(255, 0, 255, 0.5);
+font-weight: bold;
+font-size: 1.2em;
+animation: god-mode-text-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes god-mode-text-glow {
+0% { 
+    text-shadow: 
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 30px #ff00ff,
+        0 0 40px rgba(255, 0, 255, 0.5);
+}
+100% { 
+    text-shadow: 
+        0 0 15px #ff00ff,
+        0 0 25px #ff00ff,
+        0 0 35px #ff00ff,
+        0 0 50px rgba(255, 0, 255, 0.8);
+}
+}
+
+.god-mode-indicator {
+font-size: 12px;
+color: #ff00ff;
+text-shadow: 
+0 0 5px #ff00ff,
+0 0 10px #ff00ff,
+0 0 15px rgba(255, 0, 255, 0.5);
+margin-top: 5px;
+font-weight: bold;
+animation: god-mode-pulse 1.5s ease-in-out infinite;
+background: rgba(255, 0, 255, 0.1);
+padding: 4px 8px;
+border-radius: 4px;
+border: 1px solid rgba(255, 0, 255, 0.3);
+}
+
+@keyframes god-mode-pulse {
+0%, 100% { 
+    opacity: 0.8;
+    transform: scale(1);
+    box-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+}
+50% { 
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+}
+}
+
+/* Enhanced powerup effects in God Mode */
+.game-page.god-mode .powerup-btn {
+border-color: #ff00ff !important;
+box-shadow: 
+0 0 8px rgba(255, 0, 255, 0.6),
+inset 0 0 8px rgba(255, 0, 255, 0.2) !important;
+}
+
+.game-page.god-mode .powerup-btn:hover {
+border-color: #ff66ff !important;
+box-shadow: 
+0 0 15px rgba(255, 0, 255, 0.8),
+inset 0 0 12px rgba(255, 0, 255, 0.4) !important;
+transform: scale(1.05) !important;
+}
+
+/* Enhanced grid effects in God Mode */
+.game-page.god-mode .grid-cell {
+border-color: rgba(255, 0, 255, 0.3) !important;
+}
+
+.game-page.god-mode .grid-cell:hover {
+border-color: rgba(255, 0, 255, 0.6) !important;
+box-shadow: 0 0 8px rgba(255, 0, 255, 0.4) !important;
 }
