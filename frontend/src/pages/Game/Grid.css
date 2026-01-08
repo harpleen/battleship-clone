@@ -61,9 +61,6 @@
   }
 }
 
-/* ========================= */
-/* MISS (WATER SPLASH) */
-/* ========================= */
 
 .cell.miss {
   background: radial-gradient(circle, #00bfff 20%, #003a5f 80%);

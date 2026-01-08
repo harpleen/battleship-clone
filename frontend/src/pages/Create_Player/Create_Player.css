@@ -119,15 +119,27 @@
   padding: 15px;
   margin-top: -20px;
   margin-bottom: 15px;
-  font-size: 30px;
+  font-size: 20px; /* match button text size */
   font-family: "Press Start 2P", monospace;
   min-width: 500px;
-  height: 30px;
+  height: 40px;
   background-color: #000;
   color: #00ff00;
   border-radius: 6px;
   border: 3px solid #00ff00;
   outline: none;
+  text-transform: uppercase; /* make input text uppercase like buttons */
+  letter-spacing: 2px;
+}
+
+/* Placeholder styling to match button text */
+.create-player-content input::placeholder {
+  color: #00ff00;
+  opacity: 1; /* ensure visible */
+  font-family: "Press Start 2P", monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 20px;
 }
 
 /* BUTTONS */

@@ -3,7 +3,7 @@ min-height: 100vh;
 min-width: 100vw;
 background: #000;
 color: #0f0;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace; /* match other pages */
 position: fixed;
 top: 0;
 left: 0;
@@ -14,7 +14,7 @@ padding: 0;
 overflow: hidden;
 display: flex;
 flex-direction: column;
-}
+} 
 
 /* CRT Monitor Effect */
 .game-page::before {
@@ -153,27 +153,28 @@ margin-bottom: 8px;
 }
 
 .vs-text {
-    font-size: 3.2rem;
+    font-size: 2.4rem; /* slightly smaller */
     font-weight: 900;
     color: #0f0;
 
     text-shadow:
-        0 0 12px #0f0,
-        0 0 28px #0f0,
-        0 0 48px #0f0;
+        0 0 10px #0f0,
+        0 0 20px #0f0,
+        0 0 36px #0f0;
 
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     animation: vs-pulse 2s infinite;
 
-    font-family: 'Courier New', monospace;
+    font-family: "Press Start 2P", monospace; /* match site font */
+    text-transform: uppercase;
 
     background: #000;
-    padding: 10px 22px;
+    padding: 8px 16px; /* smaller box */
     border: 3px solid #0f0;
     border-radius: 6px;
 
-    transform: translateY(32px); /* PUSH DOWN */
-}
+    transform: translateY(8px); /* move closer to the timer */
+} 
 
 .game-status {
 background: rgba(0, 255, 0, 0.05);
@@ -203,11 +204,13 @@ transition: transform 0.12s ease;
     .vs-text {
         font-size: 2rem;
         transform: translateY(-4px);
+        font-family: "Press Start 2P", monospace;
     }
 
     .game-mode {
         font-size: 0.9rem;
         transform: translateY(6px);
+        font-family: "Press Start 2P", monospace;
     }
 } 
 
@@ -293,7 +296,7 @@ font-size: 0.65rem;
 font-weight: 700;
 cursor: pointer;
 transition: all 0.3s ease;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 text-transform: uppercase;
 letter-spacing: 0.5px;
 text-shadow: 0 0 5px #0f0;
@@ -503,7 +506,7 @@ font-size: 0.9rem;
 font-weight: 700;
 cursor: pointer;
 transition: all 0.3s ease;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 text-transform: uppercase;
 letter-spacing: 1.5px;
 text-shadow: 0 0 5px #0f0;
@@ -572,7 +575,7 @@ width: 90%;
 border: 3px solid #f00;
 box-shadow: 0 0 40px #f00;
 animation: modal-appear 0.3s ease-out;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 }
 
 .modal-content h3 {
@@ -606,7 +609,7 @@ font-weight: 700;
 cursor: pointer;
 transition: all 0.3s ease;
 min-width: 150px;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 text-transform: uppercase;
 letter-spacing: 2px;
 }
@@ -666,11 +669,24 @@ box-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
 
 /* Make PlayerCard components properly sized */
 .player-card {
-transform: scale(0.7);
-margin: 0;
-min-width: 200px;
-max-width: 230px;
-flex-shrink: 0;
+    transform: scale(0.7) translateY(70px); /* move player cards down to align with middle box */
+    margin: 0;
+    min-width: 200px;
+    max-width: 230px;
+    flex-shrink: 0;
+}
+
+/* keep player cards aligned on medium screens */
+@media (max-width: 1024px) {
+    .player-card {
+        transform: scale(1) translateY(30px);
+    }
+}
+
+@media (max-height: 800px) {
+    .player-card {
+        transform: scale(0.9) translateY(30px);
+    }
 }
 
 /* Responsive Design */

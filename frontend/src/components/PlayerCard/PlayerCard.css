@@ -11,7 +11,7 @@
     width: 260px;            
 }
 
-/* ACTIVE PLAYER */
+
 .player-card.active {
     animation: active-glow 2s infinite;
     background: rgba(0, 20, 0, 0.35);
@@ -38,13 +38,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;                     /* ⬆ more spacing */
+    gap: 12px;                    
     margin-bottom: 18px;
 }
 
 /* PLAYER ICON */
 .player-icon-container {
-    width: 70px;                   /* ⬆ bigger */
+    width: 70px;                
     height: 70px;
     border-radius: 50%;
     display: flex;
@@ -63,7 +63,7 @@
     font-size: 1.8rem;            
     font-weight: bold;
     border: 2px solid;
-    font-family: 'Courier New', monospace;
+    font-family: "Press Start 2P", monospace;
 }
 
 /* PLAYER NAME */
@@ -73,7 +73,7 @@
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
-    font-family: 'Courier New', monospace;
+    font-family: "Press Start 2P", monospace;
 }
 
 /* TURN TIMER */
@@ -90,13 +90,13 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 6px;
-    font-family: 'Courier New', monospace;
+    font-family: "Press Start 2P", monospace;
 }
 
 .turn-timer {
     font-size: 3.8rem;          
     font-weight: 700;
-    font-family: 'Courier New', monospace;
+    font-family: "Press Start 2P", monospace;
     text-shadow: 0 0 12px currentColor;
     margin: 6px 0;
     line-height: 1;

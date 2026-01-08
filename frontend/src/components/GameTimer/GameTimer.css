@@ -8,10 +8,10 @@ box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
 position: relative;
 overflow: hidden;
 min-width: 200px;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace; /* match site font */
 transform: scale(1);
 margin: 30px;
-}
+} 
 
 .game-timer-container::before {
 content: '';
@@ -35,7 +35,7 @@ margin-bottom: 15px;
 .timer-icon {
 font-size: 1rem;
 color: #0f0;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 }
 
 .game-timer-header h3 {
@@ -45,19 +45,19 @@ margin: 0;
 font-weight: 600;
 letter-spacing: 2px;
 text-transform: uppercase;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 }
 
 .game-timer-display {
 font-size: 3.5rem;
 font-weight: 700;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 color: #0f0;
 text-shadow: 0 0 10px #0f0;
 margin: 10px 0;
 line-height: 1;
 letter-spacing: 2px;
-}
+} 
 
 .timer-label {
 font-size: 0.8rem;
@@ -65,7 +65,7 @@ color: #0a0;
 text-transform: uppercase;
 letter-spacing: 2px;
 margin-top: 5px;
-font-family: 'Courier New', monospace;
+font-family: "Press Start 2P", monospace;
 }
 
 @keyframes timer-glow {
