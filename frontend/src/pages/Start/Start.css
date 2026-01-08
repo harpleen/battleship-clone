@@ -1,12 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
-/* CONTAINER */
+/* =========================
+   CRT BASE
+========================= */
+
 .start-crt {
   position: relative;
   background: #000;
-  color: #0f0;
+  color: #00ff00;
   font-family: "Press Start 2P", monospace;
   min-height: 100vh;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
@@ -15,13 +19,18 @@
 
   overflow: hidden;
 
-  /* CRT background lines */
-  background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-image: linear-gradient(
+    rgba(0,0,0,0.05) 1px,
+    transparent 1px
+  );
   background-size: 100% 2px;
-  z-index: 0;
 }
 
-/* RADAR RINGS */
+
+/* =========================
+   RADAR RINGS
+========================= */
+
 .start-crt::before {
   content: "";
   position: absolute;
@@ -42,7 +51,11 @@
   z-index: 0;
 }
 
-/* RADAR SWEEP */
+
+/* =========================
+   RADAR SWEEP
+========================= */
+
 .start-crt::after {
   content: "";
   position: absolute;
@@ -50,6 +63,7 @@
   left: 50%;
   width: 400px;
   height: 400px;
+
   transform: translate(-50%, -50%) rotate(0deg);
   border-radius: 50%;
 
@@ -64,174 +78,144 @@
   z-index: 1;
 }
 
-/* PINGS */
-.start-crt .ping {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #0f0;
-  opacity: 0;
-  pointer-events: none;
-  transform-origin: center center;
-  animation: ping 3s ease-in-out infinite;
-  z-index: 2;
-}
 
-.start-crt .ping.ring-1 {
-  transform: rotate(45deg) translateX(60px);
-}
+/* =========================
+   TEXT
+========================= */
 
-.start-crt .ping.ring-2 {
-  transform: rotate(140deg) translateX(120px);
-  animation-delay: 1s;
-}
-
-.start-crt .ping.ring-3 {
-  transform: rotate(260deg) translateX(180px);
-  animation-delay: 2s;
-}
-
-/* ANIMATIONS */
-@keyframes ping {
-  0%   { opacity: 0; }
-  30%  { opacity: 1; }
-  60%  { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-@keyframes sweep {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to   { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-/* HEADER */
-.title {
-  font-size: 36px;
-  margin-bottom: 15px;
-  color: #00ff00;
-  text-shadow: 0 0 8px #00ff26;
+/* WARHEADS */
+.start-crt .title {
+  font-size: 72px;
+  letter-spacing: 8px;
+  margin-bottom: 16px;
   text-transform: uppercase;
+  color: #00ff00;
+
+  /* REDUCED GLOW */
+  text-shadow:
+    0 0 6px #00ff00,
+    0 0 14px #00ff00;
+
   z-index: 3;
 }
 
-.subtitle {
-  font-size: 12px;
-  margin-bottom: 50px;
-  color: #00ff00;
+/* Naval War Simulator */
+.start-crt .subtitle {
+  font-size: 14px;
+  letter-spacing: 4px;
+  margin-bottom: 40px;
   opacity: 0.85;
-  letter-spacing: 2px;
-  text-transform: uppercase;
   z-index: 3;
 }
 
-/* MENU */
+
+/* =========================
+   MENU
+========================= */
+
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 22px;
   width: 100%;
-  max-width: 400px;
-  align-items: center;
+  max-width: 420px;
   z-index: 3;
 }
 
-/* BUTTONS */
+
+/* =========================
+   BUTTONS
+========================= */
+
 .start-btn {
+  background: #000;
+  color: #00ff00;
+  border: 3px solid #00ff00;
+
   padding: 20px 30px;
   font-size: 16px;
   width: 100%;
+
+  cursor: pointer;
   text-decoration: none;
   text-transform: uppercase;
   text-align: center;
-  cursor: pointer;
-  border: 3px solid #00ff00;
-  box-shadow: 0 0 6px #00ff00, 0 0 14px #00ff00;
+
   font-family: "Press Start 2P", monospace;
-  background: #000;
-  color: #00ff00;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+
+  box-shadow:
+    0 0 6px #00ff00,
+    0 0 14px #00ff00;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .start-btn:hover {
-  background: #000; /* keep inside dark */
-  color: #00ff00;
-  box-shadow: 0 0 12px #00ff00, 0 0 24px #00ff00, inset 0 0 10px rgba(0,255,0,0.2);
-  transform: scale(1.06);
+  background: #00ff00;
+  color: #000;
+
+  box-shadow:
+    0 0 12px #00ff00,
+    0 0 24px #00ff00;
+
+  transform: translateY(-2px) scale(1.04);
 }
 
-/* BACK BUTTON */
-.btn-back {
-  opacity: 0.85;
-  border-width: 2px;
-}
 
-/* RETRO BACK ARROW */
+/* =========================
+   RETRO BACK ARROW
+========================= */
+
 .retro-back-btn {
   position: fixed;
   top: 20px;
-  left: 20px;
-  width: 56px;
-  height: 56px;
-  background: radial-gradient(circle at top left, #001a00, #000);
-  border: 3px solid #00ff00;
+  left: 6px;
+  width: 72px;
+  height: 72px;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  padding: 0;
-  box-shadow: inset 0 0 6px rgba(0,255,0,0.3), 0 0 10px #00ff00, 0 0 22px rgba(0,255,0,0.6);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-  z-index: 3;
+  z-index: 4;
 }
 
 .retro-back-btn::before {
   content: "";
   position: absolute;
-  left: 5px;
   top: 50%;
-  transform: translateY(-50%);
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
-  border-right: 30px solid #00ff00;
-  filter: drop-shadow(0 0 4px #00ff00);
+  left: 50%;
+  transform: translate(-65%, -50%);
+  border-top: 15px solid transparent;
+  border-bottom: 14px solid transparent;
+  border-right: 22px solid #00ff00;
+  filter: drop-shadow(0 0 6px #00ff00);
 }
 
 .retro-back-btn::after {
   content: "";
   position: absolute;
-  left: 32px;
   top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
-  height: 6px;
+  left: 50%;
+  transform: translate(-10%, -50%);
+  width: 22px;
+  height: 8px;
   background: #00ff00;
-  box-shadow: 0 0 4px #00ff00;
+  box-shadow: 0 0 6px #00ff00;
 }
 
-.retro-back-btn:hover {
-  background: #00ff00;
-  transform: translateX(-4px) scale(1.08);
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.5), 0 0 14px #00ff00, 0 0 32px rgba(0,255,0,0.9);
-}
 
-.retro-back-btn:hover::before {
-  border-right-color: #000;
-  filter: none;
-}
+/* =========================
+   ANIMATIONS
+========================= */
 
-.retro-back-btn:hover::after {
-  background: #000;
-  box-shadow: none;
-}
-
-.retro-back-btn:active {
-  transform: translateX(-6px) scale(0.95);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .title { font-size: 24px; }
-  .subtitle { font-size: 12px; }
-  .menu { width: 90%; }
-  .start-btn { font-size: 12px; padding: 15px; }
+@keyframes sweep {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }

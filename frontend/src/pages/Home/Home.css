@@ -1,3 +1,6 @@
+/* =========================
+   CRT BASE
+========================= */
 
 .crt {
   position: relative;
@@ -21,7 +24,10 @@
 }
 
 
-/* RADAR RINGS */
+/* =========================
+   RADAR RINGS
+========================= */
+
 .crt::before {
   content: "";
   position: absolute;
@@ -43,7 +49,9 @@
 }
 
 
-/* RADAR SWEEP */
+/* =========================
+   RADAR SWEEP
+========================= */
 
 .crt::after {
   content: "";
@@ -68,7 +76,9 @@
 }
 
 
-/* PINGS */
+/* =========================
+   RADAR PINGS
+========================= */
 
 .crt .ping {
   position: absolute;
@@ -88,63 +98,64 @@
   z-index: 2;
 }
 
-/* Inner ring */
 .crt .ping.ring-1 {
   transform: rotate(45deg) translateX(60px);
 }
 
-/* Middle ring */
 .crt .ping.ring-2 {
   transform: rotate(140deg) translateX(120px);
   animation-delay: 1s;
 }
 
-/* Outer ring */
 .crt .ping.ring-3 {
   transform: rotate(260deg) translateX(180px);
   animation-delay: 2s;
 }
 
-/* ANIMATIONS */
 
-@keyframes ping {
-  0%   { opacity: 0; }
-  30%  { opacity: 1; }
-  60%  { opacity: 0; }
-  100% { opacity: 0; }
-}
+/* =========================
+   TEXT
+========================= */
 
-@keyframes sweep {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
+/* WARHEADS */
+.crt .title {
+  font-size: 72px;
+  letter-spacing: 8px;
+  margin-bottom: 16px;
 
-
-/* UI TEXT */
-
-.title {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #00ff00; /* match button exactly */
-}
-
-.subtitle {
-  font-size: 12px;
-  margin-bottom: 20px;
-  color: #00ff00; /* match button exactly */
-}
-
-.footer {
-  font-size: 8px;
-  margin-top: 30px;
   color: #00ff00;
+  text-transform: uppercase;
+
+  /* REDUCED GLOW */
+  text-shadow:
+    0 0 6px #00ff00,
+    0 0 14px #00ff00;
 }
 
-/* BUTTON */
+/* NAVAL WAR SIMULATOR */
+.crt .subtitle {
+  font-size: 14px;
+  letter-spacing: 4px;
+  margin-bottom: 40px;
+  opacity: 0.85;
+}
+
+
+/* =========================
+   MENU
+========================= */
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 3;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
 
 .start-btn {
   width: 100%;
@@ -153,8 +164,8 @@
   font-size: 16px;
 
   background-color: #000;
-  color: #00ff00 !important;
-  border: 3px solid #00ff00 !important;
+  color: #00ff00;
+  border: 3px solid #00ff00;
 
   font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
@@ -170,19 +181,52 @@
     0 0 6px #00ff00,
     0 0 14px #00ff00;
 
-  transition: transform 0.15s ease,
-              box-shadow 0.15s ease,
-              background-color 0.15s ease,
-              color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .start-btn:hover {
-  background-color: #00ff00 !important;
-  color: #000 !important;
+  background-color: #00ff00;
+  color: #000;
 
   box-shadow:
     0 0 12px #00ff00,
     0 0 24px #00ff00;
 
   transform: translateY(-2px) scale(1.04);
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  font-size: 8px;
+  margin-top: 40px;
+  opacity: 0.8;
+}
+
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes ping {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  60%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes sweep {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
