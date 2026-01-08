@@ -102,7 +102,7 @@ return (
     </div>
 
     <div className="menu">
-//         <Link to="/game" className="start-btn" 
+        {/* <Link to="/game" className="start-btn"></Link>  */}
         
         <button onClick={handlePlayAgain} className="start-btn">
         PLAY AGAIN

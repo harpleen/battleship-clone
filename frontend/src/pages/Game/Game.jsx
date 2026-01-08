@@ -65,7 +65,7 @@ export default function Game() {
     }, [playerName, difficulty]);
 
     // Timer state
-    const [gameTime, setGameTime] = useState(30);
+    const [gameTime, setGameTime] = useState(120);
     const [currentPlayer, setCurrentPlayer] = useState('player');
     const [playerTurnTime, setPlayerTurnTime] = useState(10);
     const [cpuTurnTime, setCpuTurnTime] = useState(10);
@@ -223,6 +223,13 @@ export default function Game() {
         return strikes.filter(pos => battleships.includes(pos)).length;
     };
     
+    // Helper function to play sounds
+    const playSound = (soundFile, volume = 0.3) => {
+        const sound = new Audio(soundFile);
+        sound.volume = volume;
+        sound.play().catch(error => console.log('Sound error:', error));
+    };
+
     // Helper function to check if a ship just became fully destroyed
     const checkForDestroyedShips = (newStrikes, oldStrikes, battleships) => {
         if (!battleships.ships || battleships.ships.length === 0) return;
@@ -233,9 +240,7 @@ export default function Game() {
             
             // If ship just became destroyed, play sound
             if (!wasDestroyed && isNowDestroyed) {
-                const sound = new Audio(shipDestroyedSound);
-                sound.volume = 0.3;
-                sound.play().catch(error => console.log('Sound error:', error));
+                playSound(shipDestroyedSound);
             }
         });
     };
@@ -433,9 +438,7 @@ export default function Game() {
         
         // Play ship strike sound if it's a hit
         if (result.isHit) {
-            const sound = new Audio(shipStrike);
-            sound.volume = 0.3;
-            sound.play().catch(error => console.log('Sound error:', error));
+            playSound(shipStrike);
         }
         
         // Clear player timer
@@ -487,20 +490,14 @@ export default function Game() {
         
         // Play powerup-specific sound
         if (activePowerup === 'cluster') {
-            const sound = new Audio(clusterbomb);
-            sound.volume = 0.3;
-            sound.play().catch(error => console.log('Sound error:', error));
+            playSound(clusterbomb);
         } else if (activePowerup === 'nuke') {
-            const sound = new Audio(nukeSound);
-            sound.volume = 0.3;
-            sound.play().catch(error => console.log('Sound error:', error));
+            playSound(nukeSound);
         }
         
         // Play ship strike sound if any hits were made
         if (result.newStrikes.length > playerStrikes.length) {
-            const sound = new Audio(shipStrike);
-            sound.volume = 0.3;
-            sound.play().catch(error => console.log('Sound error:', error));
+            playSound(shipStrike);
         }
         
         // Clear player timer
@@ -563,34 +560,6 @@ export default function Game() {
                     body: JSON.stringify(gameState)
                 });
 
-        // Check if any ships were destroyed
-        checkForDestroyedShips(newStrikes, currentStrikes, playerBattleships);
-
-        // Play ship strike sound if it's a hit
-        if (result.isHit) {
-            const sound = new Audio(shipStrike);
-            sound.volume = 0.3;
-            sound.play().catch(error => console.log('Sound error:', error));
-        }
-
-        // Check if all player ships are destroyed
-        if (checkGameOver(newStrikes, playerBattleships.positions)) {
-            cleanupTimers();
-            const playerHits = countHits(playerStrikes, cpuBattleships.positions);
-            const cpuHits = countHits(newStrikes, playerBattleships.positions);
-            setMessage('💀 CPU WINS! All your ships destroyed!');
-            setGameStatus('cpu');
-            setTimeout(() => {
-                navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
-            }, 2000);
-            return;
-        }
-
-
-        if (result.isHit) {
-            setTimeout(() => {
-                cpuAttack(newStrikes);
-            }, 1500);
                 if (!response.ok) {
                     throw new Error('God Mode API failed');
                 }
@@ -696,6 +665,21 @@ export default function Game() {
             }));
             setMessage(result.message);
             
+            // Play powerup-specific sound
+            if (result.type === 'cluster') {
+                playSound(clusterbomb);
+            } else if (result.type === 'nuke') {
+                playSound(nukeSound);
+            }
+            
+            // Play ship strike sound if any hits were made
+            if (powerupResult.hits.length > 0) {
+                playSound(shipStrike);
+            }
+            
+            // Check for destroyed ships
+            checkForDestroyedShips(powerupResult.newStrikes, currentStrikes, playerBattleships);
+            
             // Update AI state with powerup hits
             powerupResult.hits.forEach(hit => {
                 updateCPUState(hit, true, powerupResult.newStrikes, playerBattleships);
@@ -728,6 +712,14 @@ export default function Game() {
             // Regular strike
             const isHit = playerBattleships.positions.includes(result.position);
             const newStrikes = [...currentStrikes, result.position];
+            
+            // Play ship strike sound if it's a hit
+            if (isHit) {
+                playSound(shipStrike);
+            }
+            
+            // Check for destroyed ships
+            checkForDestroyedShips(newStrikes, currentStrikes, playerBattleships);
             
             // Update AI state with the result
             updateCPUState(result.position, isHit, newStrikes, playerBattleships);
@@ -787,7 +779,7 @@ export default function Game() {
         cleanupTimers();
         
         // Reset all state variables
-        setGameTime(30);
+        setGameTime(120);
         setCurrentPlayer('player');
         setPlayerTurnTime(10);
         setCpuTurnTime(10);
@@ -863,9 +855,7 @@ export default function Game() {
         if (gameStatus) return;
         
         // Play sound effect
-        const sound = new Audio(playagain);
-        sound.volume = 0.3;
-        sound.play().catch(error => console.log('Sound error:', error));
+        playSound(playagain);
         
         // Save current player turn time before pausing
         if (currentPlayer === 'player') {
