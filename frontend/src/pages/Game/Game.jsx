@@ -7,6 +7,7 @@ import GameTimer from '../../components/GameTimer/GameTimer';
 import QuitButton from '../../components/QuitButton/QuitButton';
 import { handleStrike, cpuStrike, checkGameOver } from '../../utils/Strikes/strikeLogic';
 import { clusterBombs, missiles, nuke, applyPowerup } from '../../utils/Strikes/powerupLogic';
+import { getCPUStrike, updateCPUState, resetCPUState } from '../../utils/Strikes/cpu';
 import ClusterBombs from '../../components/Powerups/ClusterBombs';
 import Missiles from '../../components/Powerups/Missiles';
 import Nuke from '../../components/Powerups/Nuke';
@@ -15,12 +16,51 @@ import './Game.css';
 export default function Game() {
     const location = useLocation();
     const navigate = useNavigate();
-    const playerName = location.state?.playerName || 'Player';
-    const difficulty = location.state?.difficulty || 'easy';
-    const isGodMode = difficulty === 'god';
     
+    // Try to get state from location first, then from sessionStorage
+    console.log('🔍 Game.jsx - location.state:', location.state);
+    
+    let playerName = location.state?.playerName;
+    let difficulty = location.state?.difficulty;
+    
+    console.log('📍 From location.state - playerName:', playerName, 'difficulty:', difficulty);
+    
+    // If not in location.state, check sessionStorage
+    if (!difficulty) {
+        console.log('⚠️ No difficulty in location.state, checking sessionStorage...');
+        const savedState = sessionStorage.getItem('lastGameState');
+        console.log('💾 sessionStorage value:', savedState);
+        
+        if (savedState) {
+            const gameState = JSON.parse(savedState);
+            console.log('📦 Parsed gameState:', gameState);
+            playerName = playerName || gameState.playerName;
+            difficulty = gameState.difficulty;
+            console.log('✅ Loaded from sessionStorage - playerName:', playerName, 'difficulty:', difficulty);
+        } else {
+            console.log('❌ No saved state in sessionStorage');
+        }
+    }
+    
+    // Final fallbacks
+    playerName = playerName || 'Player';
+    difficulty = difficulty || 'easy';
+    
+    const isGodMode = difficulty === 'god';
+    console.log('🎮 FINAL - Difficulty:', difficulty, 'Player:', playerName);
+
+    // Save current game state to sessionStorage for Play Again functionality
+    useEffect(() => {
+        const gameState = {
+            playerName,
+            difficulty
+        };
+        sessionStorage.setItem('lastGameState', JSON.stringify(gameState));
+        console.log('Saved game state to sessionStorage:', gameState);
+    }, [playerName, difficulty]);
+
     // Timer state
-    const [gameTime, setGameTime] = useState(60);
+    const [gameTime, setGameTime] = useState(30);
     const [currentPlayer, setCurrentPlayer] = useState('player');
     const [playerTurnTime, setPlayerTurnTime] = useState(10);
     const [cpuTurnTime, setCpuTurnTime] = useState(10);
@@ -306,7 +346,10 @@ export default function Game() {
     
     // CPU turn timer and attack
     useEffect(() => {
+        console.log('⚡ CPU Turn useEffect triggered - Player:', currentPlayer, 'Status:', gameStatus);
+        
         if (currentPlayer === 'cpu' && !gameStatus) {
+            console.log('✅ CPU turn starting...');
             setCpuTurnTime(10);
             
             // Clear any existing CPU timeout
@@ -327,6 +370,7 @@ export default function Game() {
             
             // CPU attacks after 1.5 seconds
             cpuTimeoutRef.current = setTimeout(() => {
+                console.log('⏰ CPU timeout complete, calling cpuAttack...');
                 clearInterval(cpuTimerInterval);
                 cpuAttack();
             }, 1500);
@@ -441,7 +485,12 @@ export default function Game() {
     };
 
     const cpuAttack = async (currentStrikes = cpuStrikes) => {
-        if (gameStatus) return;
+        console.log('🎮 cpuAttack called - Current Player:', currentPlayer, 'Game Status:', gameStatus);
+        
+        if (gameStatus) {
+            console.log('⚠️ Game already ended, skipping CPU attack');
+            return;
+        }
         
         if (difficulty === 'god') {
             // God Mode: Use OpenAI for strategic decisions
@@ -536,8 +585,8 @@ export default function Game() {
                 }
             } catch (error) {
                 console.error('God Mode error:', error);
-                // Fallback to hard mode CPU logic with powerups
-                executeRegularCpuLogic(currentStrikes, 'hard');
+                // Fallback to god mode CPU logic
+                executeRegularCpuLogic(currentStrikes, 'god');
             }
         } else {
             // Regular CPU logic for all other difficulties
@@ -546,111 +595,87 @@ export default function Game() {
     };
 
     const executeRegularCpuLogic = (currentStrikes, fallbackDifficulty = difficulty) => {
-        const result = cpuStrike(currentStrikes, playerBattleships.positions, fallbackDifficulty);
+        console.log('🤖 CPU Logic Starting - Strikes:', currentStrikes.length, 'Difficulty:', fallbackDifficulty);
         
-        if (!result) return;
-
-        // Check if CPU should use powerup based on difficulty
-        if ((fallbackDifficulty === 'hard' || fallbackDifficulty === 'medium') && Math.random() < 0.3) {
-            let shouldUsePowerup = false;
-            let powerupType = null;
-            
-            // Determine powerup based on difficulty and availability
-            if (fallbackDifficulty === 'hard' && cpuPowerupUsage.missiles < 1 && Math.random() < 0.5) {
-                powerupType = 'missiles';
-                shouldUsePowerup = true;
-            } else if ((fallbackDifficulty === 'hard' || fallbackDifficulty === 'medium') && cpuPowerupUsage.cluster < 2) {
-                powerupType = 'cluster';
-                shouldUsePowerup = true;
-            } else if (fallbackDifficulty === 'hard' && cpuPowerupUsage.missiles < 1) {
-                powerupType = 'missiles';
-                shouldUsePowerup = true;
-            }
-            
-            if (shouldUsePowerup) {
-                // Use powerup strategically
-                const availableTargets = [];
-                for (let i = 0; i < 100; i++) {
-                    if (!currentStrikes.includes(i)) {
-                        availableTargets.push(i);
-                    }
-                }
-                const target = availableTargets[Math.floor(Math.random() * availableTargets.length)];
-                
-                let powerupStrikes = [];
-                let powerupMessage = '';
-                
-                switch (powerupType) {
-                    case 'cluster':
-                        powerupStrikes = clusterBombs(target);
-                        powerupMessage = '💀 CPU uses CLUSTER BOMBS!';
-                        break;
-                    case 'missiles':
-                        powerupStrikes = missiles(target, currentStrikes);
-                        powerupMessage = '🚀 CPU uses MISSILES!';
-                        break;
-                }
-                
-                const powerupResult = applyPowerup(powerupStrikes, currentStrikes, playerBattleships.positions);
-                
-                setCpuStrikes(powerupResult.newStrikes);
-                setCpuPowerupUsage(prev => ({
-                    ...prev,
-                    [powerupType]: prev[powerupType] + 1
-                }));
-                setMessage(powerupMessage);
-                
-                // Check if all player ships are destroyed
-                if (checkGameOver(powerupResult.newStrikes, playerBattleships.positions)) {
-                    cleanupTimers();
-                    const playerHits = countHits(playerStrikes, cpuBattleships.positions);
-                    const cpuHits = countHits(powerupResult.newStrikes, playerBattleships.positions);
-                    setMessage('💀 CPU WINS! All your ships destroyed!');
-                    setGameStatus('cpu');
-                    setTimeout(() => {
-                        navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
-                    }, 2000);
-                    return;
-                }
-
-                // Continue turn if hit
-                const lastStrike = powerupResult.newStrikes[powerupResult.newStrikes.length - 1];
-                const isHit = playerBattleships.positions.includes(lastStrike);
-                if (isHit) {
-                    setTimeout(() => {
-                        executeRegularCpuLogic(powerupResult.newStrikes);
-                    }, 1500);
-                } else {
-                    setCurrentPlayer('player');
-                }
-                return; // Skip regular strike logic
-            }
-        }
+        const result = getCPUStrike(fallbackDifficulty, currentStrikes, playerBattleships, cpuPowerupUsage);
         
-        // Regular strike
-        const newStrikes = [...currentStrikes, result.position];
-        setCpuStrikes(newStrikes);
-        setMessage(result.message);
-
-        // Check if all player ships are destroyed
-        if (checkGameOver(newStrikes, playerBattleships.positions)) {
-            cleanupTimers();
-            const playerHits = countHits(playerStrikes, cpuBattleships.positions);
-            const cpuHits = countHits(newStrikes, playerBattleships.positions);
-            setMessage('💀 CPU WINS! All your ships destroyed!');
-            setGameStatus('cpu');
-            setTimeout(() => {
-                navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
-            }, 2000);
+        console.log('🤖 CPU Result:', result);
+        
+        if (!result) {
+            console.error('❌ No result from CPU!');
             return;
         }
 
-        if (result.isHit) {
-            setTimeout(() => {
-                executeRegularCpuLogic(newStrikes);
-            }, 1500);
+        // Handle powerup usage
+        if (result.type === 'cluster' || result.type === 'missiles' || result.type === 'nuke') {
+            // Powerup was used
+            const powerupResult = result.powerupResult;
+            setCpuStrikes(powerupResult.newStrikes);
+            setCpuPowerupUsage(prev => ({
+                ...prev,
+                [result.type]: prev[result.type] + 1
+            }));
+            setMessage(result.message);
+            
+            // Update AI state with powerup hits
+            powerupResult.hits.forEach(hit => {
+                updateCPUState(hit, true, powerupResult.newStrikes, playerBattleships);
+            });
+            
+            // Check if all player ships are destroyed
+            if (checkGameOver(powerupResult.newStrikes, playerBattleships.positions)) {
+                cleanupTimers();
+                const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+                const cpuHits = countHits(powerupResult.newStrikes, playerBattleships.positions);
+                setMessage('💀 CPU WINS! All your ships destroyed!');
+                setGameStatus('cpu');
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
+                }, 2000);
+                return;
+            }
+
+            // Continue turn if hit
+            const lastStrike = powerupResult.newStrikes[powerupResult.newStrikes.length - 1];
+            const isHit = playerBattleships.positions.includes(lastStrike);
+            if (isHit) {
+                setTimeout(() => {
+                    executeRegularCpuLogic(powerupResult.newStrikes);
+                }, 1500);
+            } else {
+                setCurrentPlayer('player');
+            }
         } else {
-            setCurrentPlayer('player');
+            // Regular strike
+            const isHit = playerBattleships.positions.includes(result.position);
+            const newStrikes = [...currentStrikes, result.position];
+            
+            // Update AI state with the result
+            updateCPUState(result.position, isHit, newStrikes, playerBattleships);
+            
+            setCpuStrikes(newStrikes);
+            setMessage(result.message);
+            
+            // Check if all player ships are destroyed
+            if (checkGameOver(newStrikes, playerBattleships.positions)) {
+                cleanupTimers();
+                const playerHits = countHits(playerStrikes, cpuBattleships.positions);
+                const cpuHits = countHits(newStrikes, playerBattleships.positions);
+                setMessage('💀 CPU WINS! All your ships destroyed!');
+                setGameStatus('cpu');
+                setTimeout(() => {
+                    navigate('/completed', { state: { result: 'lose', playerHits, cpuHits, allShipsDestroyed: true } });
+                }, 2000);
+                return;
+            }
+
+            if (isHit) {
+                setTimeout(() => {
+                    executeRegularCpuLogic(newStrikes);
+                }, 1500);
+            } else {
+                setCurrentPlayer('player');
+            }
         }
     };
     
@@ -668,11 +693,22 @@ export default function Game() {
     };
     
     const resetGame = () => {
+        // Store current game state before reset
+        const currentGameState = {
+            playerName,
+            difficulty
+        };
+        console.log('Resetting game - storing state:', currentGameState);
+        sessionStorage.setItem('lastGameState', JSON.stringify(currentGameState));
+        
+        // Reset AI state
+        resetCPUState();
+        
         // Clean up all timers
         cleanupTimers();
         
         // Reset all state variables
-        setGameTime(180);
+        setGameTime(30);
         setCurrentPlayer('player');
         setPlayerTurnTime(10);
         setCpuTurnTime(10);
