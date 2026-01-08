@@ -1,10 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./GameModes.css";
 
 const GameModes = () => {
   const location = useLocation();
-  const playerName = location.state?.playerName || "Player";
+  const [playerName, setPlayerName] = useState("Player");
+  const [lastDifficulty, setLastDifficulty] = useState(null);
+
+  // Load player name and last difficulty on mount
+  useEffect(() => {
+    const nameFromState = location.state?.playerName;
+    const savedName = localStorage.getItem('playerName');
+    const savedDifficulty = localStorage.getItem('lastDifficulty');
+    
+    setPlayerName(nameFromState || savedName || "Player");
+    setLastDifficulty(savedDifficulty);
+  }, [location.state]);
+
+  // Save difficulty when clicking a mode
+  const handleDifficultySelect = (difficulty) => {
+    localStorage.setItem('lastDifficulty', difficulty);
+  };
 
   return (
     <div className="start-crt">
@@ -23,33 +39,37 @@ const GameModes = () => {
         <Link
           to="/game"
           state={{ playerName, difficulty: "easy" }}
-          className="start-btn"
+          className={`start-btn ${lastDifficulty === 'easy' ? 'last-played' : ''}`}
+          onClick={() => handleDifficultySelect("easy")}
         >
-          EASY
+          EASY {lastDifficulty === 'easy' && '★'}
         </Link>
 
         <Link
           to="/game"
           state={{ playerName, difficulty: "medium" }}
-          className="start-btn"
+          className={`start-btn ${lastDifficulty === 'medium' ? 'last-played' : ''}`}
+          onClick={() => handleDifficultySelect("medium")}
         >
-          MEDIUM
+          MEDIUM {lastDifficulty === 'medium' && '★'}
         </Link>
 
         <Link
           to="/game"
           state={{ playerName, difficulty: "hard" }}
-          className="start-btn"
+          className={`start-btn ${lastDifficulty === 'hard' ? 'last-played' : ''}`}
+          onClick={() => handleDifficultySelect("hard")}
         >
-          HARD
+          HARD {lastDifficulty === 'hard' && '★'}
         </Link>
 
         <Link
           to="/game"
           state={{ playerName, difficulty: "god" }}
-          className="start-btn god-mode-btn"
+          className={`start-btn god-mode-btn ${lastDifficulty === 'god' ? 'last-played' : ''}`}
+          onClick={() => handleDifficultySelect("god")}
         >
-          GOD MODE
+          GOD MODE {lastDifficulty === 'god' && '★'}
         </Link>
 
         <Link

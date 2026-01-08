@@ -1,4 +1,4 @@
-import { getCPUStrike, updateAIState, resetHuntMode } from './cpuAI';
+import { getCPUStrike, updateCPUState, resetCPUState } from './cpu';
 
 export const handleStrike = (idx, strikes, battleships) => {
     if (strikes.includes(idx)) {
@@ -38,7 +38,7 @@ export const cpuStrike = (strikes, battleships, difficulty = 'medium') => {
     const isHit = battleships.includes(position);
 
     const newStrikes = [...strikes, position];
-    updateAIState(position, isHit, newStrikes, battleships);
+    updateCPUState(position, isHit, newStrikes, { positions: battleships, ships: [] });
 
     return {
         position: position,
