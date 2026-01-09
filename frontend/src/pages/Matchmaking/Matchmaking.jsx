@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connectSocket, disconnectSocket } from '../../services/socket';
+import { connectSocket } from '../../services/socket'; // REMOVED disconnectSocket import
 import './Matchmaking.css';
 
 export default function Matchmaking() {
@@ -47,7 +47,6 @@ export default function Matchmaking() {
 
         socket.on('disconnect', () => {
             console.log('🔌 Socket disconnected');
-            hasJoinedQueue.current = false; // Reset on disconnect
         });
 
         // Listen for queue events
@@ -102,13 +101,13 @@ export default function Matchmaking() {
                 clearInterval(timerRef.current);
             }
             
-            // Only send leave_queue if not already leaving via button
-            if (socketRef.current && socketRef.current.connected && !isLeavingQueue.current) {
-                console.log('🚪 Auto-leaving queue on unmount...');
+            // Only send leave_queue if still searching (not matched) and not manually leaving
+            if (socketRef.current && socketRef.current.connected && !isLeavingQueue.current && queueStatus === 'searching') {
+                console.log('🚪 Leaving queue on unmount...');
                 socketRef.current.emit('leave_queue', { token });
             }
             
-            // Cleanup socket listeners
+            // Cleanup socket listeners but DON'T disconnect
             if (socketRef.current) {
                 socketRef.current.off('connect');
                 socketRef.current.off('connect_error');
@@ -119,13 +118,11 @@ export default function Matchmaking() {
                 socketRef.current.off('already_in_queue');
                 socketRef.current.off('queue_left');
                 
-                // Only disconnect if not already leaving manually
-                if (!isLeavingQueue.current) {
-                    socketRef.current.disconnect();
-                }
+                // DON'T disconnect the socket - PvPGame needs it!
+                // The socket stays alive for PvPGame to reuse
             }
         };
-    }, []);
+    }, [navigate, queueStatus]);
 
     const handleCancelQueue = () => {
         console.log('🚫 User clicked cancel - leaving queue...');
@@ -144,7 +141,7 @@ export default function Matchmaking() {
             // Listen for confirmation before navigating
             socketRef.current.once('queue_left', () => {
                 console.log('✅ Queue left confirmed, navigating...');
-                socketRef.current.disconnect();
+                // Still don't disconnect - let user rejoin if they want
                 navigate('/ranked-lobby');
             });
             
@@ -154,9 +151,6 @@ export default function Matchmaking() {
             setTimeout(() => {
                 if (isLeavingQueue.current) {
                     console.log('⏱️ Timeout reached, navigating anyway...');
-                    if (socketRef.current) {
-                        socketRef.current.disconnect();
-                    }
                     navigate('/ranked-lobby');
                 }
             }, 500);
