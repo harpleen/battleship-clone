@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSocket } from '../../services/socket';
+import { connectSocket } from '../../services/socket'; 
 import Grid from "../../components/Grid/Grid";
 import GameHeader from '../../components/GameHeader/GameHeader';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
@@ -54,12 +54,27 @@ export default function PvPGame() {
             return;
         }
 
-        const socket = getSocket();
+
+        const socket = connectSocket();
         socketRef.current = socket;
         const token = localStorage.getItem('token');
 
+
+        socket.on('connect', () => {
+            console.log('✅ Socket connected in PvPGame:', socket.id);
+            console.log('🎮 Room ID:', roomId);
+            console.log('👤 Player Index:', playerIndex);
+            console.log('🎲 Is Your Turn:', isYourTurn);
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('❌ Socket connection error:', error);
+        });
+
         // Listen for strike results
         socket.on('strike_result', ({ playerIndex: strikerIndex, positions, isHit, message: msg, currentTurn: newTurn, powerup }) => {
+            console.log('📥 Strike result received:', { strikerIndex, positions, isHit, newTurn });
+            
             if (strikerIndex === playerIndex) {
                 // Your strike
                 setYourStrikes(prev => [...prev, ...positions]);
@@ -132,6 +147,8 @@ export default function PvPGame() {
         });
 
         return () => {
+            socket.off('connect');
+            socket.off('connect_error');
             socket.off('strike_result');
             socket.off('game_over');
             socket.off('opponent_disconnected');
@@ -145,7 +162,7 @@ export default function PvPGame() {
                 clearInterval(reconnectTimerRef.current);
             }
         };
-    }, [matchData, navigate, playerIndex, opponent]);
+    }, [matchData, navigate, playerIndex, opponent, roomId, isYourTurn]);
 
     // Turn timer
     useEffect(() => {
@@ -184,7 +201,19 @@ export default function PvPGame() {
     };
 
     const handlePlayerStrike = (position) => {
-        if (!isYourTurn || gameOver || opponentDisconnected) return;
+        console.log('🎯 Strike attempted:', {
+            position,
+            isYourTurn,
+            gameOver,
+            opponentDisconnected,
+            roomId,
+            alreadyStruck: yourStrikes.includes(position)
+        });
+        
+        if (!isYourTurn || gameOver || opponentDisconnected) {
+            console.log('❌ Strike blocked');
+            return;
+        }
 
         const socket = socketRef.current;
         const token = localStorage.getItem('token');
@@ -194,6 +223,8 @@ export default function PvPGame() {
             setMessage('Already struck this position!');
             return;
         }
+
+        console.log('📤 Sending strike to server:', { roomId, position, powerup: activePowerup });
 
         // Send strike to server
         socket.emit('player_strike', {
@@ -236,19 +267,14 @@ export default function PvPGame() {
 
     return (
         <div className="game-page pvp-game-page">
-            <div className="pvp-indicator">⚔️ PVP MODE</div>
-            
-            {/* Top Bar */}
-            <div className="top-bar">
-                <div className="top-bar-center">
-                    <GameHeader playerName="YOU" />
-                    <div className="game-mode">RANKED MATCH</div>
-                </div>
+            <div className="pvp-indicator">
+                ⚔️ PvP MODE - LIVE MATCH
             </div>
 
-            {/* Main Content */}
-            <div className="game-content">
-                <div className="players-container">
+            <GameHeader playerName="PvP Battle" />
+
+            <div className="game-container">
+                <div className="game-layout">
                     <PlayerCard
                         playerType="player"
                         isActive={isYourTurn}
@@ -256,15 +282,13 @@ export default function PvPGame() {
                         moves={yourStrikes.length}
                     />
                     
-                    <div className="vs-section">
-                        <div className="center-info">
-                            <div className="vs-text">VS</div>
-                        </div>
+                    <div className="center-section">
+                        <GameTimer gameTime={0} />
                         
-                        <div className="game-grids-container">
+                        <div className="grids-container">
                             <div className="player-grid-section">
                                 <Grid 
-                                    title="Your Board"
+                                    title="Your Board" 
                                     battleships={yourBattleships} 
                                     strikes={opponentStrikes}
                                     isPlayerBoard={true}
