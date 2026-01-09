@@ -1,0 +1,92 @@
+/* src/pages/Lobby/Lobby.css */
+
+.lobby-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #000;
+    color: #00ff00;
+    font-family: "Press Start 2P", monospace;
+    padding: 20px;
+}
+
+.leaderboard-box {
+    background: rgba(0, 20, 0, 0.6);
+    border: 2px solid #00ff00;
+    padding: 20px;
+    width: 100%;
+    max-width: 650px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    border-radius: 4px;
+}
+
+.leaderboard-header {
+    color: #00ff00;
+    font-size: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.table-wrapper {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.leaderboard-table th {
+    background-color: rgba(0, 255, 0, 0.1);
+    border-bottom: 2px solid #00ff00;
+    padding: 12px;
+    text-align: left;
+    color: #00ff00;
+    position: sticky;
+    top: 0;
+}
+
+.leaderboard-table td {
+    padding: 10px;
+    border-bottom: 1px dashed rgba(0, 255, 0, 0.3);
+    color: rgba(0, 255, 0, 0.8);
+}
+
+.leaderboard-table tr:hover {
+    background-color: rgba(0, 255, 0, 0.05);
+}
+
+.rank-cell {
+    color: #ffd700 !important; /* Gold for rank */
+}
+
+.mmr-cell {
+    color: #00ffff !important; /* Cyan for MMR */
+}
+
+.loading-text {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+/* Scrollbar styling for Webkit */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+.table-wrapper::-webkit-scrollbar-track {
+    background: #001100;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #005500;
+    border-radius: 4px;
+}
