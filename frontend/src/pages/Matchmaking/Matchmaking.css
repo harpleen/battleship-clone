@@ -1,0 +1,286 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+.matchmaking-container {
+  position: relative;
+  background: #000;
+  color: #00ff00;
+  font-family: "Press Start 2P", monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 100% 2px;
+}
+
+/* RADAR RINGS */
+.matchmaking-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 380px;
+  height: 380px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(0,255,0,0.12),
+    0 0 0 90px rgba(0,255,0,0.04),
+    0 0 0 180px rgba(0,255,0,0.03),
+    0 0 0 260px rgba(0,255,0,0.02);
+  pointer-events: none;
+  z-index: 0;
+  animation: pulse-ring 3s ease-in-out infinite;
+}
+
+/* RADAR SWEEP */
+.matchmaking-container::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%) rotate(0deg);
+  border-radius: 50%;
+  background: conic-gradient(
+    rgba(0,255,0,0.18) 0deg,
+    rgba(0,255,0,0.08) 35deg,
+    rgba(0,255,0,0) 120deg
+  );
+  animation: sweep 4s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.matchmaking-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  max-width: 600px;
+  padding: 40px;
+}
+
+.matchmaking-title {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.matchmaking-subtitle {
+  font-size: 14px;
+  color: #00ff00;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.queue-status {
+  background: rgba(0, 255, 0, 0.05);
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  padding: 30px;
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.searching-animation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+}
+
+.searching-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.searching-dots span {
+  width: 8px;
+  height: 8px;
+  background: #00ff00;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+.searching-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.searching-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.queue-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.queue-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(0, 255, 0, 0.3);
+}
+
+.queue-stat:last-child {
+  border-bottom: none;
+}
+
+.queue-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.queue-value {
+  font-size: 18px;
+  color: #00ff00;
+  text-shadow: 0 0 8px #00ff00;
+}
+
+.queue-timer {
+  font-size: 32px;
+  color: #00ff00;
+  text-shadow: 0 0 15px #00ff00;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.cancel-queue-btn {
+  background: #000;
+  color: #ff0000;
+  border: 3px solid #ff0000;
+  padding: 15px 30px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: "Press Start 2P", monospace;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.cancel-queue-btn:hover {
+  background: #ff0000;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+  transform: scale(1.05);
+}
+
+.match-found {
+  background: rgba(0, 255, 0, 0.1);
+  border: 3px solid #00ff00;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  animation: flash 0.5s ease-in-out 3;
+}
+
+.match-found-title {
+  font-size: 28px;
+  color: #00ff00;
+  margin-bottom: 20px;
+  text-shadow: 0 0 15px #00ff00;
+}
+
+.opponent-info {
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(0, 255, 0, 0.5);
+  border-radius: 5px;
+}
+
+.opponent-name {
+  font-size: 24px;
+  color: #00ff00;
+  margin-bottom: 10px;
+}
+
+.opponent-mmr {
+  font-size: 16px;
+  color: rgba(0, 255, 0, 0.8);
+}
+
+.starting-message {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-top: 20px;
+  animation: blink 1s infinite;
+}
+
+@keyframes sweep {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(0,255,0,0.12),
+      0 0 0 90px rgba(0,255,0,0.04),
+      0 0 0 180px rgba(0,255,0,0.03),
+      0 0 0 260px rgba(0,255,0,0.02);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(0,255,0,0.18),
+      0 0 0 90px rgba(0,255,0,0.06),
+      0 0 0 180px rgba(0,255,0,0.05),
+      0 0 0 260px rgba(0,255,0,0.03);
+  }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (max-width: 768px) {
+  .matchmaking-title {
+    font-size: 24px;
+  }
+  
+  .matchmaking-content {
+    padding: 20px;
+  }
+  
+  .queue-status {
+    padding: 20px;
+  }
+}

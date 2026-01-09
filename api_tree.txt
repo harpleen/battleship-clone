@@ -1,0 +1,32 @@
+api/
+├─ controllers/
+│  └─ user.js
+├─ db/
+│  └─ db.js
+├─ lib/
+│  └─ token.js
+├─ middleware/
+│  └─ tokenChecker.js
+├─ models/
+│  └─ user.js
+├─ routes/
+│  ├─ godmode.js
+│  └─ users.js
+├─ seeds/
+│  └─ seedData.js
+├─ tests/
+│  ├─ controllers/
+│  │  └─ user.test.js
+│  ├─ lib/
+│  │  └─ token.test.js
+│  ├─ models/
+│  │  └─ user.test.js
+│  └─ mongodb_helper.js
+├─ .env.test
+├─ .gitignore
+├─ app.js
+├─ index.js
+├─ jest.config.js
+├─ package-lock.json
+├─ package.json
+└─ README.md

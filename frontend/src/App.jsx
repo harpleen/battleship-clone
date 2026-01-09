@@ -9,6 +9,10 @@ import SignUpPage from "./pages/SignUpPage/SignUp";
 import Completed from "./pages/Completed/Completed.jsx";
 import PlayerProfile from "./pages/PlayerProfile/PlayerProfile.jsx";
 import GameModes from "./pages/GameModes/GameModes.jsx";
+import Matchmaking from "./pages/Matchmaking/Matchmaking.jsx";
+import PvPGame from "./pages/PvPGame/PvPGame.jsx";
+import Leaderboard from "./pages/Leaderboard/Leaderboard.jsx";
+import RankedLobby from "./pages/RankedLobby/RankedLobby.jsx";
 import btnClick from './assets/sound_effects/btn_click.mp3';
 import { BackgroundMusicProvider } from './context/BackgroundMusicContext';
 
@@ -50,6 +54,22 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <SignUpPage />
+  },
+  {
+    path: '/ranked-lobby',
+    element: <RankedLobby />
+  },
+  {
+    path: '/matchmaking',
+    element: <Matchmaking />
+  },
+  {
+    path: '/pvp-game',
+    element: <PvPGame />
+  },
+  {
+    path: '/leaderboard',
+    element: <Leaderboard />
   }
 ]);
 

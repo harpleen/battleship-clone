@@ -1,0 +1,268 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+.leaderboard-container {
+  position: relative;
+  background: #000;
+  color: #00ff00;
+  font-family: "Press Start 2P", monospace;
+  min-height: 100vh;
+  padding: 40px 20px;
+  overflow-y: auto;
+  background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 100% 2px;
+}
+
+.leaderboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.leaderboard-title {
+  font-size: 48px;
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.leaderboard-subtitle {
+  font-size: 14px;
+  color: rgba(0, 255, 0, 0.8);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.leaderboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.your-rank-card {
+  background: rgba(0, 255, 0, 0.05);
+  border: 3px solid #00ff00;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+}
+
+.your-rank-title {
+  font-size: 18px;
+  color: #00ff00;
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.your-rank-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.rank-stat {
+  text-align: center;
+}
+
+.rank-stat-label {
+  font-size: 10px;
+  color: rgba(0, 255, 0, 0.7);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rank-stat-value {
+  font-size: 24px;
+  color: #00ff00;
+  text-shadow: 0 0 10px #00ff00;
+}
+
+.rank-stat-value.large {
+  font-size: 36px;
+}
+
+.leaderboard-table-container {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.leaderboard-table th {
+  padding: 20px 15px;
+  text-align: left;
+  font-size: 12px;
+  color: #00ff00;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #00ff00;
+}
+
+.leaderboard-table tbody tr {
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+.leaderboard-table tbody tr:hover {
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.leaderboard-table tbody tr.your-rank {
+  background: rgba(0, 255, 0, 0.1);
+  border: 2px solid #00ff00;
+}
+
+.leaderboard-table td {
+  padding: 15px;
+  font-size: 12px;
+  color: rgba(0, 255, 0, 0.9);
+}
+
+.rank-number {
+  font-size: 18px;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 8px #00ff00;
+}
+
+.rank-number.top-1 {
+  color: #ffd700;
+  text-shadow: 0 0 10px #ffd700;
+}
+
+.rank-number.top-2 {
+  color: #c0c0c0;
+  text-shadow: 0 0 10px #c0c0c0;
+}
+
+.rank-number.top-3 {
+  color: #cd7f32;
+  text-shadow: 0 0 10px #cd7f32;
+}
+
+.username {
+  font-weight: bold;
+  color: #00ff00;
+}
+
+.mmr-value {
+  font-weight: bold;
+  font-size: 14px;
+  color: #00ff00;
+  text-shadow: 0 0 8px #00ff00;
+}
+
+.win-rate {
+  color: #00ff00;
+}
+
+.win-rate.high {
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.win-rate.medium {
+  color: #ffaa00;
+}
+
+.win-rate.low {
+  color: #ff6600;
+}
+
+.back-button-container {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.back-to-menu-btn {
+  background: #000;
+  color: #00ff00;
+  border: 3px solid #00ff00;
+  padding: 15px 40px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: "Press Start 2P", monospace;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.back-to-menu-btn:hover {
+  background: #00ff00;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+  transform: scale(1.05);
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 18px;
+  color: #00ff00;
+  padding: 60px;
+}
+
+.error-message {
+  text-align: center;
+  font-size: 16px;
+  color: #ff0000;
+  padding: 40px;
+  background: rgba(255, 0, 0, 0.1);
+  border: 2px solid #ff0000;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+@media (max-width: 768px) {
+  .leaderboard-title {
+    font-size: 28px;
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 10px 8px;
+    font-size: 10px;
+  }
+  
+  .your-rank-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .rank-stat-value {
+    font-size: 18px;
+  }
+  
+  .rank-stat-value.large {
+    font-size: 24px;
+  }
+}
+
+/* Scrollbar styling */
+.leaderboard-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.leaderboard-container::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.leaderboard-container::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #00ff00;
+}
+
+.leaderboard-container::-webkit-scrollbar-thumb:hover {
+  background: #00cc00;
+}

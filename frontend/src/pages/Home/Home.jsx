@@ -1,7 +1,20 @@
 import "./Home.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
+  const handleRankedMatch = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // No token = not logged in, go to login
+      navigate('/login');
+    } else {
+      // Has token = logged in, go to ranked lobby
+      navigate('/ranked-lobby');
+    }
+  };
+
   return (
     <div className="crt home-radar">
       <h1 className="title">WARHEADS</h1>
@@ -15,9 +28,9 @@ export default function Home() {
           ▶ Quick Game
         </Link>
 
-        <Link to="/login" className="start-btn">
-            ▶ Ranked Match
-        </Link>
+        <button onClick={handleRankedMatch} className="start-btn">
+          ⚔️ Ranked Match
+        </button>
       </div>
 
       <div className="ping ring-1"></div>

@@ -1,7 +1,7 @@
-const API_URL = "http://localhost:3000/users"; 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export const login = async (username, password) => {
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${API_URL}/users/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
@@ -17,7 +17,7 @@ export const login = async (username, password) => {
 };
 
 export const signup = async (username, password, confirmPassword) => {
-  const response = await fetch(`${API_URL}/`, {
+  const response = await fetch(`${API_URL}/users/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password, confirmPassword }),
@@ -35,7 +35,7 @@ export const updateStats = async (stats) => {
   const token = localStorage.getItem("token");
   if (!token) return;
 
-  await fetch(`${API_URL}/stats`, {
+  await fetch(`${API_URL}/users/stats`, {
     method: "PUT",
     headers: { 
         "Content-Type": "application/json",

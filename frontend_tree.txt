@@ -1,0 +1,137 @@
+frontend/
+├─ public/
+│  └─ vite.svg
+├─ src/
+│  ├─ __mocks__/
+│  │  └─ fileMock.js
+│  ├─ assets/
+│  │  ├─ battleships/
+│  │  │  ├─ 2length.png
+│  │  │  ├─ 3length.png
+│  │  │  ├─ 4length.png
+│  │  │  └─ 5length.png
+│  │  ├─ powerups/
+│  │  │  ├─ clusterbomb.png
+│  │  │  ├─ missile.png
+│  │  │  └─ nuke.png
+│  │  ├─ sound_effects/
+│  │  │  ├─ background_music.mp3
+│  │  │  ├─ btn_click.mp3
+│  │  │  ├─ clusterbomb.mp3
+│  │  │  ├─ defeat.mp3
+│  │  │  ├─ defeat2.mp3
+│  │  │  ├─ nuke.mp3
+│  │  │  ├─ playagain.mp3
+│  │  │  ├─ radio_beep.mp3
+│  │  │  ├─ ship_destroyed.mp3
+│  │  │  ├─ ship_strike.mp3
+│  │  │  ├─ shipDestroyed.mp3
+│  │  │  ├─ successful_strike.mp3
+│  │  │  └─ victory.mp3
+│  │  ├─ react.svg
+│  │  ├─ War-removebg-preview.png
+│  │  ├─ War.png
+│  │  └─ Warr.png
+│  ├─ components/
+│  │  ├─ Battleship/
+│  │  │  ├─ Battleship.css
+│  │  │  └─ Battleship.jsx
+│  │  ├─ GameHeader/
+│  │  │  ├─ GameHeader.css
+│  │  │  └─ GameHeader.jsx
+│  │  ├─ GameTimer/
+│  │  │  ├─ GameTimer.css
+│  │  │  └─ GameTimer.jsx
+│  │  ├─ Grid/
+│  │  │  ├─ Grid.css
+│  │  │  └─ Grid.jsx
+│  │  ├─ Navbar/
+│  │  │  ├─ Navbar.jsx
+│  │  │  └─ Navbar.test.jsx
+│  │  ├─ PlayerCard/
+│  │  │  ├─ PlayerCard.css
+│  │  │  └─ PlayerCard.jsx
+│  │  ├─ Powerups/
+│  │  │  ├─ ClusterBombs.jsx
+│  │  │  ├─ Missiles.jsx
+│  │  │  └─ Nuke.jsx
+│  │  └─ QuitButton/
+│  │     ├─ QuitButton.css
+│  │     └─ QuitButton.jsx
+│  ├─ context/
+│  │  └─ BackgroundMusicContext.jsx
+│  ├─ pages/
+│  │  ├─ Completed/
+│  │  │  ├─ Completed.css
+│  │  │  └─ Completed.jsx
+│  │  ├─ Create_Player/
+│  │  │  ├─ Create_Player.css
+│  │  │  ├─ Create_Player.jsx
+│  │  │  └─ Create_Player.test.jsx
+│  │  ├─ Game/
+│  │  │  ├─ Game.css
+│  │  │  ├─ Game.jsx
+│  │  │  └─ Grid.css
+│  │  ├─ GameModes/
+│  │  │  ├─ GameModes.css
+│  │  │  └─ GameModes.jsx
+│  │  ├─ Home/
+│  │  │  ├─ Home.css
+│  │  │  └─ Home.jsx
+│  │  ├─ Leaderboard/
+│  │  │  ├─ Leaderboard.css
+│  │  │  └─ Leaderboard.jsx
+│  │  ├─ LoginPage/
+│  │  │  ├─ LoginPage.css
+│  │  │  └─ LoginPage.jsx
+│  │  ├─ Matchmaking/
+│  │  │  ├─ Matchmaking.css
+│  │  │  └─ Matchmaking.jsx
+│  │  ├─ NameEntry/
+│  │  │  └─ NameEntry.jsx
+│  │  ├─ PlayerProfile/
+│  │  │  ├─ PlayerProfile.css
+│  │  │  └─ PlayerProfile.jsx
+│  │  ├─ PvPGame/
+│  │  │  ├─ PvPGame.css
+│  │  │  └─ PvPGame.jsx
+│  │  ├─ RankedLobby/
+│  │  │  ├─ RankedLobby.css
+│  │  │  └─ RankedLobby.jsx
+│  │  ├─ SignUpPage/
+│  │  │  ├─ SignUp.css
+│  │  │  └─ SignUp.jsx
+│  │  └─ Start/
+│  │     ├─ Start.css
+│  │     └─ Start.jsx
+│  ├─ services/
+│  │  ├─ authService.js
+│  │  ├─ socket.js
+│  │  └─ users.js
+│  ├─ utils/
+│  │  └─ Strikes/
+│  │     ├─ cpu.js
+│  │     ├─ cpuAI.ts
+│  │     ├─ powerupLogic.js
+│  │     └─ strikeLogic.js
+│  ├─ App.css
+│  ├─ App.jsx
+│  ├─ index.css
+│  └─ main.jsx
+├─ tests/
+│  ├─ components/
+│  │  └─ Navbar.test.jsx
+│  └─ pages/
+│     └─ Create_Player.test.jsx
+├─ .babelrc
+├─ .env
+├─ .env.example
+├─ .gitignore
+├─ eslint.config.js
+├─ index.html
+├─ jest.config.js
+├─ package-lock.json
+├─ package.json
+├─ README.md
+├─ vite.config.js
+└─ vitest.config.js

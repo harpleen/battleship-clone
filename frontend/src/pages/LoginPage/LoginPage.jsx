@@ -14,7 +14,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate("/game", { state: { isRanked: true, playerName: username } });
+      navigate("/ranked-lobby");
     } catch (err) {
       setError(err.message);
     }
