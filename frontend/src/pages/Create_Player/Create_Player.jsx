@@ -25,7 +25,7 @@ export default function CreatePlayer() {
       />
 
       <div className="create-player-content">
-        <h1 className="create-player-header">Create your Player</h1>
+        <h1 className="create-player-header">CREATE YOUR PLAYER</h1>
 
         <input
           type="text"
@@ -43,7 +43,7 @@ export default function CreatePlayer() {
           }}
           disabled={!playerName}
         >
-          Continue
+          CONTINUE
         </button>
       </div>
     </div>

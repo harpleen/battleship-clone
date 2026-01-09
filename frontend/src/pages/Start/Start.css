@@ -85,7 +85,7 @@
 
 /* WARHEADS */
 .start-crt .title {
-  font-size: 72px;
+  font-size: 82px;
   letter-spacing: 8px;
   margin-bottom: 16px;
   text-transform: uppercase;
@@ -155,14 +155,24 @@
 }
 
 .start-btn:hover {
-  background: #00ff00;
-  color: #000;
+  background: #00ff00 !important;
+  color: #000 !important;
+  border-color: #00ff00 !important;
 
   box-shadow:
     0 0 12px #00ff00,
     0 0 24px #00ff00;
 
   transform: translateY(-2px) scale(1.04);
+}
+
+.start-btn:focus,
+.start-btn:focus-visible,
+.start-btn:active {
+  background: #000 !important;
+  color: #00ff00 !important;
+  border-color: #00ff00 !important;
+  outline: none !important;
 }
 
 

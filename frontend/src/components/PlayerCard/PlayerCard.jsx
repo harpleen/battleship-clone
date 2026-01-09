@@ -5,10 +5,11 @@ const PlayerCard = ({
 playerType, 
 isActive, 
 turnTime, 
-moves = 0 
+moves = 0,
+isGodMode = false
 }) => {
 const isPlayer = playerType === 'player';
-const playerName = isPlayer ? 'You' : 'CPU';
+const playerName = isPlayer ? 'You' : (isGodMode ? 'AI' : 'CPU');
 const borderColor = isActive ? '#0f0' : '#0a0';
 const textColor = isActive ? '#0f0' : '#0a0';
 

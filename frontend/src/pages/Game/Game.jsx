@@ -855,7 +855,7 @@ export default function Game() {
         if (gameStatus) return;
         
         // Play sound effect
-        playSound(playagain);
+        // playSound(playagain);
         
         // Save current player turn time before pausing
         if (currentPlayer === 'player') {
@@ -931,10 +931,10 @@ export default function Game() {
             {/* Top Bar with Header */}
             <div className="top-bar">
                 <div className="top-bar-center">
-                    <GameHeader playerName={playerName}/>
+                    <GameHeader playerName={playerName} isGodMode={isGodMode}/>
 
-                    <div className={`game-mode ${isGodMode ? 'god-mode-active' : ''}`}>
-                        {isGodMode ? <span className="god-mode-indicator">🤖 GOD MODE</span> : `MODE: ${difficulty.toUpperCase()}`}
+                    <div className={`game-mode game-mode-${difficulty}`}>
+                        {isGodMode ? <span className="god-mode-indicator">GOD MODE</span> : `${difficulty.toUpperCase()} MODE`}
                     </div>
                 </div>
             </div>
@@ -1009,7 +1009,7 @@ export default function Game() {
                                         <div className="stat-values">
                                             <span className="player-moves">You {countHits(playerStrikes, cpuBattleships.positions)}</span>
                                             <span className="separator"> | </span>
-                                            <span className="cpu-moves">CPU {countHits(cpuStrikes, playerBattleships.positions)}</span>
+                                            <span className="cpu-moves">{isGodMode ? 'AI' : 'CPU'} {countHits(cpuStrikes, playerBattleships.positions)}</span>
                                         </div>
                                     </div>
                                     <div className="stat-section">
@@ -1038,7 +1038,7 @@ export default function Game() {
                             </div>
                             <div className="cpu-grid-section">
                                 <Grid 
-                                    title="CPU Board" 
+                                    title={isGodMode ? "AI Board" : "CPU Board"} 
                                     battleships={cpuBattleships} 
                                     strikes={playerStrikes}
                                     onStrike={handlePlayerStrike}
@@ -1076,6 +1076,7 @@ export default function Game() {
                         isActive={currentPlayer === 'cpu'}
                         turnTime={cpuTurnTime}
                         moves={cpuStrikes.length}
+                        isGodMode={isGodMode}
                     />
                 </div>
             </div>
